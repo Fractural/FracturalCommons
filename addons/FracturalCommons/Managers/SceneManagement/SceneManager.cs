@@ -24,6 +24,34 @@ namespace Fractural.SceneManagement
 		public bool AutoLoadInititalScene { get; set; }
 		[Export]
 		public PackedScene InitialScene { get; set; }
+		public Node CurrentScene 
+		{
+			get
+			{
+				if (IsSelfContained)
+					return currentScene;
+				else
+					return GetTree().CurrentScene;
+			}
+			set
+			{
+				if (IsSelfContained)
+					currentScene = value;
+				else
+					GetTree().CurrentScene = value;
+			}
+		}
+		private Node currentScene;
+		public Node Root
+		{
+			get
+			{
+				if (IsSelfContained)
+					return this;
+				else
+					return GetTree().Root;
+			}
+		}
 
 		public override void _Ready()
 		{
@@ -41,14 +69,14 @@ namespace Fractural.SceneManagement
 
 		public void GotoScene(PackedScene scene)
 		{
-			GetTree().CurrentScene.QueueFree();
+			CurrentScene?.QueueFree();
 
 			Node instance = scene.Instance();
 
 			EmitSignal(nameof(OnSceneLoaded), instance);
 
-			GetTree().Root.AddChild(instance);
-			GetTree().CurrentScene = instance;
+			Root.AddChild(instance);
+			CurrentScene = instance;
 
 			EmitSignal(nameof(OnSceneReadied), instance);
 		}
@@ -62,13 +90,13 @@ namespace Fractural.SceneManagement
 			
 			await ToSignal(transitionInstance, nameof(SceneTransition.OnTransitionedIn));
 
-			GetTree().CurrentScene.QueueFree();
+			CurrentScene?.QueueFree();
 			Node instance = scene.Instance();
 
 			EmitSignal(nameof(OnSceneLoaded), instance);
 
-			GetTree().Root.AddChild(instance);
-			GetTree().CurrentScene = instance;
+			Root.AddChild(instance);
+			CurrentScene = instance;
 
 			await ToSignal(transitionInstance, nameof(SceneTransition.OnTransitionedOut));
 
