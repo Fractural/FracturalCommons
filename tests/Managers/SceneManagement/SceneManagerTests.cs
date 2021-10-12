@@ -17,7 +17,6 @@ namespace Tests
 		{
 			string relativePath = CSharpUtils.GetRelativePath<SceneManagerTests>();
 
-			GD.Print(relativePath);
 			initialScene = ResourceLoader.Load<PackedScene>(relativePath + "/InitialScene.tscn");
 			targetScene = ResourceLoader.Load<PackedScene>(relativePath + "/TargetScene.tscn");
 		}
@@ -27,11 +26,13 @@ namespace Tests
 		{
 			Describe("When readying");
 
-			Assert.IsTrue(sceneManager.GetChildren().Count == 0, "Then the scene manager has no children at first.");
-
 			sceneManager = CSharpUtils.InstantiateCSharpNode<SceneManager>();
+			sceneManager.IsSelfContained = true;
 			sceneManager.AutoLoadInititalScene = true;
 			sceneManager.InitialScene = initialScene;
+
+			Assert.IsTrue(sceneManager.GetChildren().Count == 0, "Then the scene manager has no children at first.");
+
 			AddChild(sceneManager);
 
 			Assert.IsTrue(sceneManager.GetChildren().Count > 0, "Then the initial scene was created.");

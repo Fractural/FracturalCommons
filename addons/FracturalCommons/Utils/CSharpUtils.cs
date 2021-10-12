@@ -17,10 +17,7 @@ namespace Fractural.Utils
 			// Get all CS scripts, excluding the mono folder
 			List<string> scripts = FileUtils.GetDirFiles("res://", true, new string[] { "cs" }, new string[] { ".mono" });
 			foreach (string path in scripts)
-			{
-				GD.Print(path);
 				CSharpScriptsDict.Add(path.GetFileName(), path);
-			}
 		}
 
 		public static string GetRelativePath<T>()
