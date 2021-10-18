@@ -10,53 +10,73 @@ public class EventLinkerTree : Tree
     public class NodeData : Godot.Object
     {
         public NodeData() { }
-		public NodeData(Node node)
-		{
-			Node = node;
-		}
+        public NodeData(Node node)
+        {
+            Node = node;
+        }
 
-		public Node Node { get; set; }
-	}
+        public Node Node { get; set; }
+    }
 
     public class EventData : Godot.Object
     {
         public EventData() { }
-		public EventData(EventInfo info)
-		{
-			EventInfo = info;
-		}
+        public EventData(EventInfo info)
+        {
+            EventInfo = info;
+        }
 
-		public EventInfo EventInfo { get; set; }
+        public EventInfo EventInfo { get; set; }
         public List<ListenerData> ListenersData { get; set; }
     }
 
     public class ListenerData : Godot.Object
     {
         public ListenerData() { }
-		public ListenerData(Node targetNode, MethodInfo info)
-		{
-			TargetNode = targetNode;
-			MethodInfo = info;
-		}
+        public ListenerData(Node targetNode, MethodInfo info)
+        {
+            TargetNode = targetNode;
+            MethodInfo = info;
+        }
 
-		public Node TargetNode { get; set; }
+        public Node TargetNode { get; set; }
         public MethodInfo MethodInfo { get; set; }
-	}
-    
+    }
+
     public enum ButtonID
     {
         AddListener,
         RemoveListener,
-		GotoNode,
-	}
+        GotoNode,
+    }
 
     public static int NodeColumn => 0;
     public static int MethodColumn => 1;
 
     [Signal]
     public delegate void GotoNode(Node node);
+    [Signal]
+    public delegate void EventsChanged();
 
     public Node SceneRoot => GetNode(testTreeRootPath);
+    public Node EventLinker
+    {
+        get
+        {
+            CSharpEventLinker eventLinker;
+            if (SceneRoot.HasNode("EventLinker"))
+                eventLinker = SceneRoot.GetNode<CSharpEventLinker>("EventLinker");
+            else
+            {
+                eventLinker = CSharpUtils.InstantiateCSharpNode<CSharpEventLinker>();
+                eventLinker.Name = "EventLinker";
+                SceneRoot.AddChild(eventLinker);
+            }
+            if (eventLinker.GetPositionInParent() != SceneRoot.GetChildCount() - 1)
+                SceneRoot.MoveChild(eventLinker, SceneRoot.GetChildCount() - 1);
+            return eventLinker;
+        }
+    }
 
     [Export]
     private NodePath testTreeRootPath;
@@ -73,6 +93,7 @@ public class EventLinkerTree : Tree
         editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
         editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
 
+        Connect(nameof(EventsChanged), this, nameof(TempTestEventChanged));
         Connect("custom_popup_edited", this, nameof(OnCustomPopupEdited));
         Connect("button_pressed", this, nameof(OnButtonPressed));
         editTargetNodePopup.Connect(nameof(NodeSelectPopup.NodeSelected), this, nameof(OnTargetNodeSelected));
@@ -86,12 +107,61 @@ public class EventLinkerTree : Tree
         CreateTree(SceneRoot);
     }
 
+    public void TempTestEventChanged()
+    {
+        GD.Print("New Source:");
+        GD.Print(GenerateEventLinkerSourceText(EventLinker));
+    }
+
 	public void CreateTree(Node node)
     {
         Clear();
         TreeItem root = this.CreateItem();
         CreateTreeRecursive(node);
 	}
+
+    public string GenerateEventLinkerSourceText(Node eventLinker)
+    {
+        string lines = "";
+
+        var nodeItem = this.GetRoot().GetChildren();
+        while (nodeItem != null)
+        {
+            var nodeData = (NodeData)nodeItem.GetMeta("nodeData");
+            var eventItem = nodeItem.GetChildren();
+            while (eventItem != null)
+            {
+                var eventData = (EventData)eventItem.GetMeta("eventData");
+                var listenerItem = eventItem.GetChildren();
+                while (listenerItem != null)
+                {
+                    var listenerData = (ListenerData) listenerItem.GetMeta("listenerData");
+                    if (listenerData.TargetNode != null && listenerData.MethodInfo != null)
+                    {
+                        lines += $"\t\tGetNode<{nodeData.Node.GetClass()}>(\"{eventLinker.GetPathTo(nodeData.Node)}\").{eventData.EventInfo.Name} += GetNode<{listenerData.TargetNode.GetClass()}>(\"{eventLinker.GetPathTo(listenerData.TargetNode)}\").{listenerData.MethodInfo.Name};\n";
+                    }
+                    listenerItem = listenerItem.GetNext();
+				}
+
+                eventItem = eventItem.GetNext();
+            }
+
+            nodeItem = nodeItem.GetNext();
+        }
+
+        string sourceText = 
+$@"using Godot;
+using System;
+
+public class EventLinker : Node
+{{
+    public override void _EnterTree()
+    {{
+{lines}    }}
+}}
+";
+        return sourceText;
+    }
 
 	private void CreateTreeRecursive(Node node)
 	{
@@ -114,6 +184,8 @@ public class EventLinkerTree : Tree
         listenerItem.SetEditable(MethodColumn, true);
         listenerItem.SetIcon(NodeColumn, this.GetIconRecursive(node));
         listenerItem.SetText(NodeColumn, node.Name);
+
+        EmitSignal(nameof(EventsChanged));
     }
 
     private void OnMethodSelected(MethodSelectPopup.MethodItemData methodItemData)
@@ -123,6 +195,8 @@ public class EventLinkerTree : Tree
 
         listenerData.MethodInfo = methodItemData.MethodInfo;
         listenerItem.SetText(MethodColumn, listenerData.MethodInfo != null ? listenerData.MethodInfo.Name : "-- Empty --");
+
+        EmitSignal(nameof(EventsChanged));
     }
 
     private void OnCustomPopupEdited(bool arrowClicked)

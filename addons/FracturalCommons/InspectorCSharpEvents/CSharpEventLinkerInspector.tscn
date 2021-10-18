@@ -104,3 +104,5 @@ script = ExtResource( 2 )
 
 [node name="DummTwo" type="Node" parent="Dummy"]
 script = ExtResource( 1 )
+
+[node name="Node" type="Node" parent="."]
