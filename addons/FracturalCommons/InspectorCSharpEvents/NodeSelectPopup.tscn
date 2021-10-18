@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/NodeSelectPopup.cs" type="Script" id=1]
+
+[node name="NodeSelectPopup" type="WindowDialog"]
+visible = true
+margin_right = 406.0
+margin_bottom = 258.0
+window_title = "Select a Node"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+nodeTreePath = NodePath("MarginContainer/Tree")
+tintPath = NodePath("Tint")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 5
+custom_constants/margin_top = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tree" type="Tree" parent="MarginContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 401.0
+margin_bottom = 253.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tint" type="ColorRect" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+color = Color( 0, 0, 0, 0.32549 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

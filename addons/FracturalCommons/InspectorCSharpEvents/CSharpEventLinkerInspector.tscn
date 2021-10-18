@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EditMethodPopup.cs" type="Script" id=1]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/DummyScript.cs" type="Script" id=2]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkerTree.cs" type="Script" id=3]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EditTargetNodePopup.cs" type="Script" id=4]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/NodeSelectPopup.tscn" type="PackedScene" id=5]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tree" type="Tree" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 500 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+testTreeRootPath = NodePath("../TestControl")
+editMethodPopupPath = NodePath("../EditMethodPopup")
+editTargetNodePopupPath = NodePath("../EditTargetNodePopup")
+
+[node name="EditMethodPopup" type="Popup" parent="."]
+margin_right = 181.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+methodOptionPath = NodePath("Option")
+
+[node name="Option" type="OptionButton" parent="EditMethodPopup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Methods"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EditTargetNodePopup" type="Control" parent="."]
+margin_right = 181.0
+margin_bottom = 40.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+testTreePath = NodePath("../TestControl")
+nodeSelectPopupPath = NodePath("NodeSelectPopup")
+
+[node name="NodeSelectPopup" parent="EditTargetNodePopup" instance=ExtResource( 5 )]
+visible = false
+
+[node name="TestControl" type="Node" parent="."]
+script = ExtResource( 2 )
+
+[node name="TestControl2" type="Node" parent="TestControl"]
+script = ExtResource( 2 )
+
+[node name="TestControl4" type="Node" parent="TestControl/TestControl2"]
+script = ExtResource( 2 )
+
+[node name="TestControl3" type="Node" parent="TestControl"]
+script = ExtResource( 2 )
