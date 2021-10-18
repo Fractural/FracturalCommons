@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EditMethodPopup.cs" type="Script" id=1]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/DummyScriptTwo.cs" type="Script" id=1]
 [ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/DummyScript.cs" type="Script" id=2]
 [ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkerTree.cs" type="Script" id=3]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/Assets/icon_search.svg" type="Texture" id=4]
 [ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/NodeSelectPopup.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/Assets/editor_theme.tres" type="Theme" id=6]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/MethodSelectPopup.cs" type="Script" id=7]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -22,43 +24,83 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-testTreeRootPath = NodePath("../TestControl")
-editMethodPopupPath = NodePath("../EditMethodPopup")
+testTreeRootPath = NodePath("../Dummy")
 editTargetNodePopupPath = NodePath("../TargetNodeSelectPopup")
+editTargetMethodPopupPath = NodePath("../TargetMethodSelectPopup")
 
 [node name="TargetNodeSelectPopup" parent="." instance=ExtResource( 5 )]
 
-[node name="EditMethodPopup" type="Popup" parent="."]
-margin_right = 181.0
-margin_bottom = 40.0
-script = ExtResource( 1 )
+[node name="TargetMethodSelectPopup" type="WindowDialog" parent="."]
+visible = true
+margin_right = 406.0
+margin_bottom = 258.0
+window_title = "Select a Method"
+resizable = true
+script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-methodOptionPath = NodePath("Option")
+searchBarPath = NodePath("MarginContainer/VBoxContainer/SearchBar")
+nodeItemListPath = NodePath("MarginContainer/VBoxContainer/ScrollContainer/ItemList")
+tintPath = NodePath("Tint")
 
-[node name="Option" type="OptionButton" parent="EditMethodPopup"]
+[node name="MarginContainer" type="MarginContainer" parent="TargetMethodSelectPopup"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Methods"
+custom_constants/margin_right = 5
+custom_constants/margin_top = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TestControl" type="Node" parent="."]
+[node name="VBoxContainer" type="VSplitContainer" parent="TargetMethodSelectPopup/MarginContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 401.0
+margin_bottom = 253.0
+
+[node name="SearchBar" type="LineEdit" parent="TargetMethodSelectPopup/MarginContainer/VBoxContainer"]
+margin_right = 396.0
+margin_bottom = 24.0
+right_icon = ExtResource( 4 )
+placeholder_text = "Filter methods"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TargetMethodSelectPopup/MarginContainer/VBoxContainer"]
+margin_top = 32.0
+margin_right = 396.0
+margin_bottom = 248.0
+scroll_horizontal_enabled = false
+
+[node name="ItemList" type="ItemList" parent="TargetMethodSelectPopup/MarginContainer/VBoxContainer/ScrollContainer"]
+margin_right = 396.0
+margin_bottom = 8.0
+size_flags_horizontal = 3
+auto_height = true
+
+[node name="Tint" type="ColorRect" parent="TargetMethodSelectPopup"]
+margin_right = 40.0
+margin_bottom = 40.0
+color = Color( 0, 0, 0, 0.32549 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Dummy" type="Node" parent="."]
 script = ExtResource( 2 )
 
-[node name="TestControl2" type="Node" parent="TestControl"]
+[node name="Dummy2" type="Node" parent="Dummy"]
 script = ExtResource( 2 )
 
-[node name="TestControl4" type="Node" parent="TestControl/TestControl2"]
+[node name="TestControl4" type="Node" parent="Dummy/Dummy2"]
 script = ExtResource( 2 )
 
-[node name="TestControl3" type="Node" parent="TestControl"]
+[node name="Dummy3" type="Node" parent="Dummy"]
 script = ExtResource( 2 )
 
-[node name="TestControl4" type="Node" parent="TestControl"]
+[node name="TestControl4" type="Node" parent="Dummy"]
 script = ExtResource( 2 )
 
-[node name="TestControl5" type="Node" parent="TestControl"]
-script = ExtResource( 2 )
+[node name="DummTwo" type="Node" parent="Dummy"]
+script = ExtResource( 1 )

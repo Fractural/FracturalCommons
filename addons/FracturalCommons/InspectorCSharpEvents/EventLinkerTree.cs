@@ -41,51 +41,52 @@ public class EventLinkerTree : Tree
 
 		public Node TargetNode { get; set; }
         public MethodInfo MethodInfo { get; set; }
-        public List<MethodInfo> Options { get; set; }
 	}
     
     public enum ButtonID
     {
         AddListener,
         RemoveListener,
+		GotoNode,
 	}
 
     public static int NodeColumn => 0;
     public static int MethodColumn => 1;
+
+    [Signal]
+    public delegate void GotoNode(Node node);
 
     public Node SceneRoot => GetNode(testTreeRootPath);
 
     [Export]
     private NodePath testTreeRootPath;
     [Export]
-    private NodePath editMethodPopupPath;
-    [Export]
     private NodePath editTargetNodePopupPath;
+    [Export]
+    private NodePath editTargetMethodPopupPath;
 
-    private EditMethodPopup editMethodPopup;
     private NodeSelectPopup editTargetNodePopup;
-    
+    private MethodSelectPopup editTargetMethodPopup;
+
     public override void _Ready()
     {
-        editMethodPopup = GetNode<EditMethodPopup>(editMethodPopupPath);
         editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
+        editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
 
         Connect("custom_popup_edited", this, nameof(OnCustomPopupEdited));
         Connect("button_pressed", this, nameof(OnButtonPressed));
-        Connect("item_edited", this, nameof(OnItemEdited));
         editTargetNodePopup.Connect(nameof(NodeSelectPopup.NodeSelected), this, nameof(OnTargetNodeSelected));
+        editTargetMethodPopup.Connect(nameof(MethodSelectPopup.MethodSelected), this, nameof(OnMethodSelected));
 
         this.HideRoot = true;
-        this.Columns = 3;
+        this.Columns = 2;
         this.SetColumnExpand(NodeColumn, true);
         this.SetColumnExpand(MethodColumn, true);
-        this.SetColumnExpand(2, false);
-        this.SetColumnMinWidth(2, 28);
 
         CreateTree(SceneRoot);
     }
 
-    public void CreateTree(Node node)
+	public void CreateTree(Node node)
     {
         Clear();
         TreeItem root = this.CreateItem();
@@ -106,45 +107,34 @@ public class EventLinkerTree : Tree
     private void OnTargetNodeSelected(Node node)
     {
         var listenerItem = GetEdited();
-        var eventData = (EventData)listenerItem.GetParent().GetMeta("eventData");
         var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
 
         listenerData.TargetNode = node;
-        listenerData.Options = GetCompatibleListeners(listenerData.TargetNode, eventData.EventInfo);
 
         listenerItem.SetEditable(MethodColumn, true);
         listenerItem.SetIcon(NodeColumn, this.GetIconRecursive(node));
         listenerItem.SetText(NodeColumn, node.Name);
+    }
 
-        var text = "-- Empty --";
-        foreach (MethodInfo info in listenerData.Options)
-            text += $",{info.ReturnType} {info.Name} ({string.Join(", ", info.GetParameters().Select(x => x.ParameterType.Name))})";
-        listenerItem.SetText(MethodColumn, text);
+    private void OnMethodSelected(MethodSelectPopup.MethodItemData methodItemData)
+    {
+        var listenerItem = GetEdited();
+        var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
+
+        listenerData.MethodInfo = methodItemData.MethodInfo;
+        listenerItem.SetText(MethodColumn, listenerData.MethodInfo != null ? listenerData.MethodInfo.Name : "-- Empty --");
     }
 
     private void OnCustomPopupEdited(bool arrowClicked)
 	{
-        var editedItem = GetEdited();
-        if (GetEditedColumn() == MethodColumn)
-            editMethodPopup.Popup(GetCustomPopupRect(), editedItem);
-        else if (GetEditedColumn() == NodeColumn)
+        if (GetEditedColumn() == NodeColumn)
             editTargetNodePopup.Popup(SceneRoot);
-    }
-
-    private void OnItemEdited()
-    {
-        var editedItem = GetEdited();
-        if (GetEditedColumn() == MethodColumn)
+        else if (GetEditedColumn() == MethodColumn)
         {
-            var listenerData = (ListenerData)editedItem.GetMeta("listenerData");
-            var selectedIndex = (int)editedItem.GetRange(MethodColumn);
-            listenerData.MethodInfo = selectedIndex == 0 ? null : listenerData.Options[selectedIndex - 1];
-		}
-	}
-
-    private void OnItemSelected()
-    {
-        editMethodPopup.Visible = false;
+            var listenerData = (ListenerData) GetEdited().GetMeta("listenerData");
+            var eventData = (EventData)GetEdited().GetParent().GetMeta("eventData");
+            editTargetMethodPopup.Popup(listenerData.TargetNode, eventData.EventInfo);
+        }
     }
 
 	private TreeItem CreateNodeItem(Node node)
@@ -155,6 +145,7 @@ public class EventLinkerTree : Tree
         TreeItem item = this.CreateItem();
         item.SetIcon(NodeColumn, this.GetIconRecursive(node));
         item.SetText(NodeColumn, node.Name);
+        item.AddButton(NodeColumn, GetIcon("ArrowRight", "EditorIcons"), (int)ButtonID.GotoNode);
         item.SetMeta("nodeData", new NodeData(node));
 
         foreach (EventInfo eventInfo in node.GetType().GetEvents())
@@ -168,7 +159,7 @@ public class EventLinkerTree : Tree
         TreeItem item = this.CreateItem(parent);
         item.SetIcon(NodeColumn, GetIcon("Signals", "EditorIcons"));
         item.SetText(NodeColumn, $"{eventInfo.Name} ({string.Join(", ", eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters().Select(x => x.ParameterType.Name))})");
-        item.AddButton(2, GetIcon("Add", "EditorIcons"), (int)ButtonID.AddListener);
+        item.AddButton(MethodColumn, GetIcon("Add", "EditorIcons"), (int)ButtonID.AddListener);
         item.SetMeta("eventData", new EventData(eventInfo));
         return item;
     }
@@ -179,10 +170,11 @@ public class EventLinkerTree : Tree
         item.SetCellMode(NodeColumn, TreeItem.TreeCellMode.Custom);
         item.SetEditable(NodeColumn, true);
         item.SetText(NodeColumn, "-- Empty --");
-        item.SetCellMode(MethodColumn, TreeItem.TreeCellMode.Range);
+        item.AddButton(NodeColumn, GetIcon("ArrowRight", "EditorIcons"), (int)ButtonID.GotoNode);
+        item.SetCellMode(MethodColumn, TreeItem.TreeCellMode.Custom);
         item.SetEditable(MethodColumn, false);
         item.SetText(MethodColumn, "-- Empty --");
-        item.AddButton(2, GetIcon("Remove", "EditorIcons"), (int)ButtonID.RemoveListener);
+        item.AddButton(MethodColumn, GetIcon("Remove", "EditorIcons"), (int)ButtonID.RemoveListener);
         item.SetMeta("listenerData", new ListenerData());
         return item;
 	}
@@ -197,27 +189,14 @@ public class EventLinkerTree : Tree
             case ButtonID.RemoveListener:
                 item.Free();
                 break;
+            case ButtonID.GotoNode:
+                Node node = null;
+                if (item.HasMeta("nodeData"))
+                    node = ((NodeData)item.GetMeta("nodeData")).Node;
+                else if (item.HasMeta("listenerData"))
+                    node = ((ListenerData)item.GetMeta("listenerData")).TargetNode;
+                EmitSignal(nameof(GotoNode), node);
+                break;
 		}
 	}
-
-    private List<MethodInfo> GetCompatibleListeners(Node node, EventInfo eventInfo)
-    {
-        List<MethodInfo> compatibleListeners = new List<MethodInfo>();
-        foreach (MethodInfo methodInfo in node.GetType().GetMethods())
-            if (IsSameParameterSignature(methodInfo.GetParameters(), eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters()))
-                compatibleListeners.Add(methodInfo);
-        return compatibleListeners;
-    }
-
-    private bool IsSameParameterSignature(ParameterInfo[] parametersOne, ParameterInfo[] parametersTwo)
-    {
-        if (parametersOne.Length != parametersTwo.Length)
-            return false;
-        for (int i = 0; i < parametersOne.Length; i++)
-        {
-            if (parametersOne[i].ParameterType != parametersTwo[i].ParameterType)
-                return false;
-        }
-        return true;
-    }
 }

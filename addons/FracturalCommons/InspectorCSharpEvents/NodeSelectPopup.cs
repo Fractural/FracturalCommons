@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-public class NodeSelectPopup : Popup
+public class NodeSelectPopup : WindowDialog
 {
 	[Signal]
 	public delegate void NodeSelected(Node node);
