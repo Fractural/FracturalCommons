@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-public class EditTargetNodePopup : Node
+public class EditTargetNodePopup : Control
 {
 	[Export]
 	private NodePath testTreePath;
@@ -30,6 +30,9 @@ public class EditTargetNodePopup : Node
 	
 	private void OnNodeSelected(Node node)
 	{
-		currentItem.SetMeta("targetNode", node);
+		((EventLinkerTree.ListenerData) currentItem.GetMeta("listenerData")).TargetNode = node;
+		currentItem.SetIcon(EventLinkerTree.NodeColumn, this.GetIconRecursive(node));
+		currentItem.SetText(EventLinkerTree.NodeColumn, node.Name);
+		currentItem.SetEditable(EventLinkerTree.MethodColumn, true);
 	}
 }

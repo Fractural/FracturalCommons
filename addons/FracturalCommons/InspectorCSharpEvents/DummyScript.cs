@@ -14,4 +14,23 @@ public class DummyScript : Node
     private event Action PrivateActionEvent;
     protected event Action ProtectedActionEvent;
 
+    public void EmptyMethod()
+    {
+        
+	}
+
+    public void IntegerMethod(int args)
+    {
+        
+	}
+
+    public void CustomEventListener(object sender, CustomEventArgs args)
+    {
+        
+	}
+
+    public void EventListener(object sender, EventArgs args)
+    {
+
+	}
 }

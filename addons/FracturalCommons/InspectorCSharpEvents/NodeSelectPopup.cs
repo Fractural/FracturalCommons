@@ -26,7 +26,7 @@ public class NodeSelectPopup : Popup
 		tint.Visible = false;
 		CallDeferred(nameof(DefferedReady));
 
-		nodeTree.Connect("item_double_clicked", this, nameof(OnItemDoubleClicked));
+		nodeTree.Connect("item_activated", this, nameof(OnItemActivated));
 		Connect("popup_hide", this, nameof(OnPopupHide));
 	}
 
@@ -62,6 +62,7 @@ public class NodeSelectPopup : Popup
 
 		var item = nodeTree.CreateItem(parent);
 		item.SetIcon(0, this.GetIconRecursive(node));
+		item.SetText(0, node.Name);
 		item.SetMeta("node", node);
 
 		foreach (Node child in node.GetChildren())
@@ -72,7 +73,7 @@ public class NodeSelectPopup : Popup
 		tint.Visible = false;
 	}
 
-	private void OnItemDoubleClicked()
+	private void OnItemActivated()
 	{
 		EmitSignal(nameof(NodeSelected), nodeTree.GetSelected().GetMeta("node"));
 		this.Visible = false;

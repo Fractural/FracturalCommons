@@ -6,6 +6,15 @@ using System.Reflection;
 
 public class EditMethodPopup : Popup
 {
+	private class MethodOptionData : Godot.Object
+	{
+		public MethodInfo MethodInfo { get; set; }
+
+		public MethodOptionData(MethodInfo methodInfo)
+		{
+			MethodInfo = methodInfo;
+		}
+	}
 	[Export]
 	private NodePath methodOptionPath;
 
@@ -21,32 +30,38 @@ public class EditMethodPopup : Popup
 
 	public void Popup(Rect2 rect, TreeItem item)
     {
-        var methodInfo = (MethodInfo) currentItem.GetMeta("methodInfo");
-		var targetNode = (Node) currentItem.GetMeta("targetNode");
-		var eventInfo = (EventInfo) currentItem.GetParent().GetMeta("eventInfo");
-		if (targetNode == null)
+		currentItem = item;
+		var eventData = (EventLinkerTree.EventData) currentItem.GetParent().GetMeta("eventData");
+		var listenerData = (EventLinkerTree.ListenerData)currentItem.GetMeta("listenerData");
+		
+		if (listenerData.TargetNode == null)
 		{
+			GD.PushWarning("Please set the target node of this event listener first!");
 			this.Visible = false;
 			return;
 		}
-
-		currentItem = item;
-		List<MethodInfo> compatibleListeners = GetCompatibleListeners(targetNode, eventInfo);
+		
+		List<MethodInfo> compatibleListeners = GetCompatibleListeners(listenerData.TargetNode, eventData.EventInfo);
 
 		methodOption.Clear();
-		foreach (MethodInfo listenerInfo in compatibleListeners)
+		methodOption.AddItem("-- Empty --");
+		methodOption.SetItemMetadata(methodOption.GetItemCount() - 1, new MethodOptionData(null));
+		foreach (MethodInfo listeningMethodInfo in compatibleListeners)
 		{
-			methodOption.AddItem($"{listenerInfo.ReturnType} {listenerInfo.Name} ({string.Join(", ", listenerInfo.GetParameters().Select(x => x.ParameterType.Name))})");
-			methodOption.SetItemMetadata(methodOption.GetItemCount() - 1, listenerInfo);
-		}
+			methodOption.AddItem($"{listeningMethodInfo.ReturnType} {listeningMethodInfo.Name} ({string.Join(", ", listeningMethodInfo.GetParameters().Select(x => x.ParameterType.Name))})");
+			methodOption.SetItemMetadata(methodOption.GetItemCount() - 1, new MethodOptionData(listeningMethodInfo));
 
+			if (listeningMethodInfo == listenerData.MethodInfo)
+				methodOption.Select(methodOption.GetItemCount() - 1);
+		}
+		
 		this.Popup_(rect);
 	}
 
 	private void OnItemSelected(int index)
 	{
 		currentItem.SetText(EventLinkerTree.MethodColumn, methodOption.GetItemText(index));
-		currentItem.SetMeta("methodInfo", methodOption.GetItemMetadata(index));
+		((EventLinkerTree.ListenerData) currentItem.GetMeta("listenerData")).MethodInfo = ((MethodOptionData) methodOption.GetItemMetadata(index)).MethodInfo;
 		this.Visible = false;
 	}
 
