@@ -12,13 +12,15 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-editTargetNodePopupPath = NodePath("TargetNodeSelectPopup")
-refreshButtonPath = NodePath("VBoxContainer/HBoxContainer/Refresh")
-eventSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/EventSearchBar")
-treeNodePath = NodePath("VBoxContainer/Tree")
-nodeSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/NodeSearchBar")
-followSelectionTogglePath = NodePath("VBoxContainer/HBoxContainer/FollowSelectionToggle")
 editTargetMethodPopupPath = NodePath("TargetMethodSelectPopup")
+createEventLinkerButtonPath = NodePath("VBoxContainer/Tree/CreateEventLinkerContainer/VBoxContainer/CreateEventLinkerButton")
+refreshButtonPath = NodePath("VBoxContainer/HBoxContainer/Refresh")
+followSelectionTogglePath = NodePath("VBoxContainer/HBoxContainer/FollowSelectionToggle")
+treeNodePath = NodePath("VBoxContainer/Tree")
+editTargetNodePopupPath = NodePath("TargetNodeSelectPopup")
+createEventLinkerContainerPath = NodePath("VBoxContainer/Tree/CreateEventLinkerContainer")
+nodeSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/NodeSearchBar")
+eventSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/EventSearchBar")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -75,7 +77,45 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="CreateEventLinkerContainer" type="MarginContainer" parent="VBoxContainer/Tree"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 20
+custom_constants/margin_top = 20
+custom_constants/margin_left = 20
+custom_constants/margin_bottom = 20
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Tree/CreateEventLinkerContainer"]
+margin_left = 20.0
+margin_top = 20.0
+margin_right = 1004.0
+margin_bottom = 524.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="VBoxContainer/Tree/CreateEventLinkerContainer/VBoxContainer"]
+margin_top = 233.0
+margin_right = 984.0
+margin_bottom = 247.0
+text = "No Event Linker not found."
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CreateEventLinkerButton" type="Button" parent="VBoxContainer/Tree/CreateEventLinkerContainer/VBoxContainer"]
+margin_top = 251.0
+margin_right = 984.0
+margin_bottom = 271.0
+text = "Create Event Linker"
+
 [node name="TargetNodeSelectPopup" parent="." instance=ExtResource( 5 )]
+visible = false
 margin_left = 125.0
 margin_top = 74.0
 margin_right = 899.0
@@ -90,9 +130,9 @@ script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-searchBarPath = NodePath("MarginContainer/VBoxContainer/SearchBar")
-tintPath = NodePath("Tint")
 nodeItemListPath = NodePath("MarginContainer/VBoxContainer/ScrollContainer/ItemList")
+tintPath = NodePath("Tint")
+searchBarPath = NodePath("MarginContainer/VBoxContainer/SearchBar")
 
 [node name="MarginContainer" type="MarginContainer" parent="TargetMethodSelectPopup"]
 anchor_right = 1.0

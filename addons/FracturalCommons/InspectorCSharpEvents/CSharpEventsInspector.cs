@@ -62,7 +62,26 @@ public class CSharpEventsInspector : Control
         }
     }
 
-	public enum ButtonID
+    // Hacky class used to detect whenever Godot builds C#
+    // When Godot builds a C# solution, all Godot.Objects
+    // are reserialized. This means they use the default
+    // constructor.
+    public class BuildCanary : Godot.Object
+    {
+        public static bool HasBuilt { get; set; } = false;
+
+        public BuildCanary()
+        {
+            HasBuilt = true;
+        }
+
+        public BuildCanary(int number)
+        {
+
+        }
+    }
+
+    public enum ButtonID
     {
         AddListener,
         RemoveListener,
@@ -74,46 +93,12 @@ public class CSharpEventsInspector : Control
 
     public string EventLinkerScriptsFolder => "res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkers/";
     public Node SceneRoot => plugin.GetTree().EditedSceneRoot;
-    public Node EventLinker
-    {
-        get
-        {
-            if (SceneRoot == null)
-            {
-                GD.PrintErr("Expected SceneRoot to not be null!");
-                return null;
-            }
+    public Node EventLinker => SceneRoot?.GetNodeOrNull("EventLinker");
 
-            Node eventLinker;
-            if (SceneRoot.HasNode("EventLinker"))
-                eventLinker = SceneRoot.GetNode("EventLinker");
-            else
-            {
-                eventLinker = new Node();
-                eventLinker.Name = "EventLinker";
-                SceneRoot.AddChild(eventLinker);
-                eventLinker.Owner = SceneRoot;
-            }
-            if (eventLinker.GetScript() == null)
-            {
-                File file = new File();
-                var nextFreeName = GetNextFreeScriptName();
-                file.Open(EventLinkerScriptsFolder + nextFreeName + ".cs", File.ModeFlags.Write);
-                file.StoreString($@"using Godot;
-using System;
-
-public class {nextFreeName} : CSharpEventLinker
-{{
-}}");
-                file.Close();
-                eventLinker.SetScript(ResourceLoader.Load<CSharpScript>(EventLinkerScriptsFolder + nextFreeName + ".cs"));
-			}
-            if (eventLinker.GetPositionInParent() != SceneRoot.GetChildCount() - 1)
-                SceneRoot.MoveChild(eventLinker, SceneRoot.GetChildCount() - 1);
-            return eventLinker;
-        }
-    }
-
+    [Export]
+    private NodePath createEventLinkerContainerPath;
+    [Export]
+    private NodePath createEventLinkerButtonPath;
     [Export]
     private NodePath eventSearchBarPath;
     [Export]
@@ -129,6 +114,8 @@ public class {nextFreeName} : CSharpEventLinker
     [Export]
     private NodePath editTargetMethodPopupPath;
 
+    private Control createEventLinkerContainer;
+    private Button createEventLinkerButton;
     private LineEdit eventSearchBar;
     private LineEdit nodeSearchBar;
     private Button refreshButton;
@@ -141,6 +128,8 @@ public class {nextFreeName} : CSharpEventLinker
     private EditorPlugin plugin;
     private IAssetsRegistry assetsRegistry;
 
+    private BuildCanary buildCanary = new BuildCanary(0);
+
     public override void _Ready()
     {
         if (NodeUtils.IsInEditorSceneTab(this))
@@ -151,6 +140,8 @@ public class {nextFreeName} : CSharpEventLinker
             return;
         }
 
+        createEventLinkerContainer = GetNode<Control>(createEventLinkerContainerPath);
+        createEventLinkerButton = GetNode<Button>(createEventLinkerButtonPath);
         eventSearchBar = GetNode<LineEdit>(eventSearchBarPath);
         nodeSearchBar = GetNode<LineEdit>(nodeSearchBarPath);
         refreshButton = GetNode<Button>(refreshButtonPath);
@@ -160,11 +151,13 @@ public class {nextFreeName} : CSharpEventLinker
         editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
         editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
 
+        createEventLinkerButton.Icon = GetIcon("ScriptCreate", "EditorIcons");
         eventSearchBar.RightIcon = GetIcon("Search", "EditorIcons");
         nodeSearchBar.RightIcon = GetIcon("Search", "EditorIcons");
         followSelectionToggle.Icon = GetIcon("ToolSelect", "EditorIcons");
         refreshButton.Icon = GetIcon("Reload", "EditorIcons");
 
+        createEventLinkerButton.Connect("pressed", this, nameof(CreateEventLinker));
         eventSearchBar.Connect("text_changed", this, nameof(OnSearchBarTextChanged));
         nodeSearchBar.Connect("text_changed", this, nameof(OnSearchBarTextChanged));
         refreshButton.Connect("pressed", this, nameof(OnRefreshButtonPressed));
@@ -184,32 +177,15 @@ public class {nextFreeName} : CSharpEventLinker
         tree.SetColumnExpand(NodeColumn, true);
         tree.SetColumnExpand(MethodColumn, true);
 
+        createEventLinkerContainer.AddConstantOverride("margin_top", (int) (createEventLinkerContainer.GetConstant("margin_top") * assetsRegistry.Scale));
+        createEventLinkerContainer.AddConstantOverride("margin_bottom", (int)(createEventLinkerContainer.GetConstant("margin_bottom") * assetsRegistry.Scale));
+        createEventLinkerContainer.AddConstantOverride("margin_left", (int)(createEventLinkerContainer.GetConstant("margin_left") * assetsRegistry.Scale));
+        createEventLinkerContainer.AddConstantOverride("margin_right", (int)(createEventLinkerContainer.GetConstant("margin_right") * assetsRegistry.Scale));
         editTargetNodePopup.RectSize *= assetsRegistry.Scale;
         editTargetMethodPopup.RectSize *= assetsRegistry.Scale;
 
-        UpdateVisuals();
+        TryUpdateVisuals();
     }
-
-    // Hacky class used to detect whenever Godot builds C#
-    // When Godot builds a C# solution, all Godot.Objects
-    // are reserialized. This means they use the default
-    // constructor.
-    public class BuildCanary : Godot.Object
-    {
-        public static bool HasBuilt { get; set; } = false;
-
-        public BuildCanary()
-        {
-            HasBuilt = true;
-		}
-
-		public BuildCanary(int number)
-		{
-            
-		}
-	}
-
-    public BuildCanary buildCanary = new BuildCanary(0);
 
 	public void Init(EditorPlugin editorPlugin, IAssetsRegistry assetsRegistry)
     {
@@ -223,26 +199,73 @@ public class {nextFreeName} : CSharpEventLinker
         {
             buildCanary = new BuildCanary(0);
             BuildCanary.HasBuilt = false;
-            UpdateVisuals();
+            TryUpdateVisuals();
         }
 	}
 
-	public void UpdateVisuals()
+    public void CreateEventLinker()
+    {
+        if (SceneRoot == null)
+        {
+            GD.PrintErr("Expected SceneRoot to not be null!");
+            return;
+        }
+        var eventLinker = EventLinker;
+        if (eventLinker != null && eventLinker.GetScript() != null)
+        {
+            GD.PrintErr("EventLinker already exists!");
+            return;
+        }
+        if (eventLinker == null)
+        {
+            eventLinker = new Node();
+            eventLinker.Name = "EventLinker";
+            SceneRoot.AddChild(eventLinker);
+            eventLinker.Owner = SceneRoot;
+        }
+        File file = new File();
+        var nextFreeName = GetNextFreeScriptName();
+        file.Open(EventLinkerScriptsFolder + nextFreeName + ".cs", File.ModeFlags.Write);
+        file.StoreString($@"using Godot;
+using System;
+
+public class {nextFreeName} : CSharpEventLinker
+{{
+}}");
+        file.Close();
+        eventLinker.SetScript(ResourceLoader.Load<CSharpScript>(EventLinkerScriptsFolder + nextFreeName + ".cs"));
+
+        if (eventLinker.GetPositionInParent() != SceneRoot.GetChildCount() - 1)
+            SceneRoot.MoveChild(eventLinker, SceneRoot.GetChildCount() - 1);
+        createEventLinkerContainer.Visible = false;
+
+        TryUpdateVisuals();
+    }
+
+	public void TryUpdateVisuals()
     {
         if (tree == null)
             return;
-        
+
         tree.Clear();
         TreeItem root = tree.CreateItem();
 
         if (SceneRoot == null)
             return;
+        
+        if (EventLinker == null)
+        {
+            createEventLinkerContainer.Visible = true;
+            return;
+        }
+        else
+            createEventLinkerContainer.Visible = false;
 
         if (followSelectionToggle.Pressed && selection.GetSelectedNodes().Count > 0)
             TryCreateNodeItem((Node) selection.GetSelectedNodes()[0]);
         else
             CreateTreeRecursive(SceneRoot);
-
+        
         LoadSavedListeners();
     }
 
@@ -297,8 +320,11 @@ public class {nextFreeName} : CSharpEventLinker
         listenerItem.SetText(MethodColumn, listenerData.TargetMethodName != "" ? listenerData.TargetMethodName : "-- Empty --");
     }
 
-    public void UpdateEventLinkerScript()
+    public void TryUpdateEventLinkerScript()
     {
+        if (EventLinker == null)
+            return;
+
         File file = new File();
         file.Open(((CSharpScript)EventLinker.GetScript()).ResourcePath, File.ModeFlags.Write);
         file.StoreString(
@@ -352,24 +378,24 @@ public class {eventLinkerScriptName} : CSharpEventLinker
 
     private void OnSearchBarTextChanged(string newText)
     {
-        UpdateVisuals();
+        TryUpdateVisuals();
     }
 
     private void OnFollowSelectionTogglePressed()
     {
-        UpdateVisuals();
+        TryUpdateVisuals();
     }
 
     private void OnSelectionChanged()
     {
         if (followSelectionToggle.Pressed)
-            UpdateVisuals();
+            TryUpdateVisuals();
     }
 
     private void OnRefreshButtonPressed()
     {
-        UpdateVisuals();
-        UpdateEventLinkerScript();
+        TryUpdateVisuals();
+        TryUpdateEventLinkerScript();
     }
 
     private void OnNodeAdded(Node node)
@@ -377,7 +403,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         if (!NodeUtils.IsInEditorSceneTab(node))
             return;
 
-        UpdateVisuals();
+        TryUpdateVisuals();
     }
 
     private void OnNodeRenamed(Node node)
@@ -385,12 +411,12 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         if (!NodeUtils.IsInEditorSceneTab(node))
             return;
 
-        UpdateVisuals();
+        TryUpdateVisuals();
     }
 
     private void OnEditorSceneChanged(Node newScene)
     {
-        UpdateVisuals();
+        TryUpdateVisuals();
     }
 
     private string GetNextFreeScriptName()
@@ -415,6 +441,12 @@ public class {eventLinkerScriptName} : CSharpEventLinker
 
     private void OnTargetNodeSelected(Node node)
     {
+        if (EventLinker == null)
+        {
+            TryUpdateVisuals();
+            return;
+		}
+        
         var listenerItem = tree.GetEdited();
         var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
 
@@ -427,6 +459,12 @@ public class {eventLinkerScriptName} : CSharpEventLinker
 
     private void OnMethodSelected(MethodSelectPopup.MethodItemData methodItemData)
     {
+        if (EventLinker == null)
+        {
+            TryUpdateVisuals();
+            return;
+        }
+
         var listenerItem = tree.GetEdited();
         var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
 
@@ -434,11 +472,17 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         listenerData.TargetMethodParameterTypes = methodItemData.MethodParamterTypes;
         listenerItem.SetText(MethodColumn, listenerData.TargetMethodName != "" ? listenerData.TargetMethodName : "-- Empty --");
 
-        UpdateEventLinkerScript();
+        TryUpdateEventLinkerScript();
     }
 
     private void OnCustomPopupEdited(bool arrowClicked)
 	{
+        if (EventLinker == null)
+        {
+            CallDeferred(nameof(TryUpdateVisuals));
+            return;
+        }
+
         if (tree.GetEditedColumn() == NodeColumn)
             editTargetNodePopup.Popup(SceneRoot);
         else if (tree.GetEditedColumn() == MethodColumn)
@@ -503,6 +547,12 @@ public class {eventLinkerScriptName} : CSharpEventLinker
     
     private void OnButtonPressed(TreeItem item, int column, int id)
     {
+        if (EventLinker == null)
+        {
+            TryUpdateVisuals();
+            return;
+        }
+
         switch ((ButtonID) id)
         {
             case ButtonID.AddListener:
@@ -510,7 +560,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
                 break;
             case ButtonID.RemoveListener:
                 item.Free();
-                UpdateEventLinkerScript();
+                TryUpdateEventLinkerScript();
                 break;
             case ButtonID.GotoNode:
                 Node node = null;
