@@ -10,40 +10,9 @@ using System.Text.RegularExpressions;
 [Tool]
 public class CSharpEventsInspector : Control
 {
-    public Dictionary<int, object> Lookup { get; set; }
-
-    public int NextFreeDataID()
+    public class NodeData : Godot.Reference
     {
-        int i = 0;
-        while (Lookup.ContainsKey(i))
-            i++;
-        return i;
-	}
-
-    public class DataReference : Godot.Reference
-    {
-        public int ID { get; set; }
-        
-        private CSharpEventsInspector eventsInspector;
-        
-        public DataReference() { }
-		public DataReference(CSharpEventsInspector eventsInspector, int iD)
-		{
-            this.eventsInspector = eventsInspector;
-
-            ID = iD;
-		}
-
-        public T GetData<T>() where T : class
-        {
-            object value;
-            eventsInspector.Lookup.TryGetValue(ID, out value);
-            return (T)value;
-        }
-	}
-    
-    public class NodeData
-    {
+        public NodeData() { }
         public NodeData(Node node)
         {
             Node = node;
@@ -52,22 +21,45 @@ public class CSharpEventsInspector : Control
         public Node Node { get; set; }
     }
 
-    public class EventData
+    public class EventData : Godot.Reference
     {
-        public EventData(EventInfo info)
+        public EventData() { }
+        public EventData(NodeData nodeData, string eventName)
         {
-            EventInfo = info;
+            NodeData = nodeData;
+            EventName = eventName;
         }
 
-        public EventInfo EventInfo { get; set; }
+        public NodeData NodeData { get; set; }
+        public string EventName { get; set; }
+        public EventInfo EventInfo
+        {
+            get => EditorUtils.GetRealType(NodeData.Node).GetEvent(EventName);
+            set => EventName = value.Name;
+        }
     }
 
-    public class ListenerData
+    public class ListenerData : Godot.Reference
     {
         public ListenerData() { }
+        public ListenerData(EventData eventData)
+        {
+            EventData = eventData;
+        }
 
-        public Node TargetNode { get; set; }
-        public MethodInfo MethodInfo { get; set; }
+        public EventData EventData { get; set; }
+		public Node TargetNode { get; set; }
+        public string TargetMethodName { get; set; }
+        public string[] TargetMethodParameterTypes { get; set; }
+        public MethodInfo MethodInfo
+        {
+            get => EditorUtils.GetRealType(TargetNode).GetMethod(TargetMethodName, TargetMethodParameterTypes.Select(typeString => Type.GetType(typeString)).ToArray());
+            set
+            {
+                TargetMethodName = value.Name;
+                TargetMethodParameterTypes = value.GetParameters().Select(x => x.ParameterType.Name).ToArray();
+			}
+        }
     }
 
 	public enum ButtonID
@@ -246,8 +238,6 @@ public class {nextFreeName} : CSharpEventLinker
         if (SceneRoot == null)
             return;
 
-        Lookup = new Dictionary<int, object>();
-
         if (followSelectionToggle.Pressed && selection.GetSelectedNodes().Count > 0)
             TryCreateNodeItem((Node) selection.GetSelectedNodes()[0]);
         else
@@ -285,26 +275,26 @@ public class {nextFreeName} : CSharpEventLinker
     public void CreateListenerItemFromSave(Node sourceNode, Node targetNode, EventInfo eventInfo, MethodInfo methodInfo)
     {
         TreeItem sourceNodeTreeItem = tree.GetRoot().GetChildren();
-        while (sourceNodeTreeItem != null && ((DataReference)sourceNodeTreeItem.GetMeta("nodeData")).GetData<NodeData>().Node != sourceNode)
+        while (sourceNodeTreeItem != null && ((NodeData)sourceNodeTreeItem.GetMeta("nodeData")).Node != sourceNode)
             sourceNodeTreeItem = sourceNodeTreeItem.GetNext();
         if (sourceNodeTreeItem == null)
             return;
 
         TreeItem eventTreeItem = sourceNodeTreeItem.GetChildren();
-        while (eventTreeItem != null && ((DataReference)eventTreeItem.GetMeta("eventData")).GetData<EventData>().EventInfo != eventInfo)
+        while (eventTreeItem != null && ((EventData)eventTreeItem.GetMeta("eventData")).EventInfo != eventInfo)
             eventTreeItem = eventTreeItem.GetNext();
         if (eventTreeItem == null)
             return;
 
         TreeItem listenerItem = CreateListenerItem(eventTreeItem);
-        var listenerData = ((DataReference) listenerItem.GetMeta("listenerData")).GetData<ListenerData>();
+        var listenerData = (ListenerData) listenerItem.GetMeta("listenerData");
         listenerData.MethodInfo = methodInfo;
         listenerData.TargetNode = targetNode;
 
         listenerItem.SetEditable(MethodColumn, true);
         listenerItem.SetIcon(NodeColumn, this.GetIconRecursive(targetNode));
         listenerItem.SetText(NodeColumn, targetNode.Name);
-        listenerItem.SetText(MethodColumn, listenerData.MethodInfo != null ? listenerData.MethodInfo.Name : "-- Empty --");
+        listenerItem.SetText(MethodColumn, listenerData.TargetMethodName != "" ? listenerData.TargetMethodName : "-- Empty --");
     }
 
     public void UpdateEventLinkerScript()
@@ -324,18 +314,18 @@ public class {nextFreeName} : CSharpEventLinker
         var nodeItem = tree.GetRoot().GetChildren();
         while (nodeItem != null)
         {
-            var nodeData = ((DataReference)nodeItem.GetMeta("nodeData")).GetData<NodeData>();
+            var nodeData = (NodeData)nodeItem.GetMeta("nodeData");
             var eventItem = nodeItem.GetChildren();
             while (eventItem != null)
             {
-                var eventData = ((DataReference)eventItem.GetMeta("eventData")).GetData<EventData>();
+                var eventData = (EventData)eventItem.GetMeta("eventData");
                 var listenerItem = eventItem.GetChildren();
                 while (listenerItem != null)
                 {
-                    var listenerData = ((DataReference)listenerItem.GetMeta("listenerData")).GetData<ListenerData>();
-                    if (listenerData.TargetNode != null && listenerData.MethodInfo != null)
+                    var listenerData = (ListenerData) listenerItem.GetMeta("listenerData");
+                    if (listenerData.TargetNode != null && listenerData.TargetMethodName != "")
                     {
-                        lines += $"\t\tGetNode<{EditorUtils.GetRealType(nodeData.Node).FullName}>(\"{eventLinker.GetPathTo(nodeData.Node)}\").{eventData.EventInfo.Name} += GetNode<{EditorUtils.GetRealType(listenerData.TargetNode).FullName}>(\"{eventLinker.GetPathTo(listenerData.TargetNode)}\").{listenerData.MethodInfo.Name};\n";
+                        lines += $"\t\tGetNode<{EditorUtils.GetRealType(nodeData.Node).FullName}>(\"{eventLinker.GetPathTo(nodeData.Node)}\").{eventData.EventInfo.Name} += GetNode<{EditorUtils.GetRealType(listenerData.TargetNode).FullName}>(\"{eventLinker.GetPathTo(listenerData.TargetNode)}\").{listenerData.TargetMethodName};\n";
                     }
                     listenerItem = listenerItem.GetNext();
 				}
@@ -426,7 +416,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
     private void OnTargetNodeSelected(Node node)
     {
         var listenerItem = tree.GetEdited();
-        var listenerData = ((DataReference)listenerItem.GetMeta("listenerData")).GetData<ListenerData>();
+        var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
 
         listenerData.TargetNode = node;
 
@@ -438,10 +428,11 @@ public class {eventLinkerScriptName} : CSharpEventLinker
     private void OnMethodSelected(MethodSelectPopup.MethodItemData methodItemData)
     {
         var listenerItem = tree.GetEdited();
-        var listenerData = ((DataReference)listenerItem.GetMeta("listenerData")).GetData<ListenerData>();
+        var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
 
-        listenerData.MethodInfo = methodItemData.MethodInfo;
-        listenerItem.SetText(MethodColumn, listenerData.MethodInfo != null ? listenerData.MethodInfo.Name : "-- Empty --");
+        listenerData.TargetMethodName = methodItemData.MethodName;
+        listenerData.TargetMethodParameterTypes = methodItemData.MethodParamterTypes;
+        listenerItem.SetText(MethodColumn, listenerData.TargetMethodName != "" ? listenerData.TargetMethodName : "-- Empty --");
 
         UpdateEventLinkerScript();
     }
@@ -452,8 +443,8 @@ public class {eventLinkerScriptName} : CSharpEventLinker
             editTargetNodePopup.Popup(SceneRoot);
         else if (tree.GetEditedColumn() == MethodColumn)
         {
-            var listenerData = ((DataReference) tree.GetEdited().GetMeta("listenerData")).GetData<ListenerData>();
-            var eventData = ((DataReference) tree.GetEdited().GetParent().GetMeta("eventData")).GetData<EventData>();
+            var listenerData = (ListenerData) tree.GetEdited().GetMeta("listenerData");
+            var eventData = (EventData) tree.GetEdited().GetParent().GetMeta("eventData");
 
             editTargetMethodPopup.Popup(listenerData.TargetNode, eventData.EventInfo);
         }
@@ -474,10 +465,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         item.SetIcon(NodeColumn, this.GetIconRecursive(node));
         item.SetText(NodeColumn, node.Name);
         item.AddButton(NodeColumn, GetIcon("ArrowRight", "EditorIcons"), (int)ButtonID.GotoNode);
-
-        int id = NextFreeDataID();
-        Lookup.Add(id, new NodeData(node));
-        item.SetMeta("nodeData", new DataReference(this, id));
+        item.SetMeta("nodeData", new NodeData(node));
 
         foreach (EventInfo eventInfo in events)
             CreateEventItem(item, eventInfo);
@@ -494,10 +482,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         item.SetIcon(NodeColumn, GetIcon("Signals", "EditorIcons"));
         item.SetText(NodeColumn, $"{eventInfo.Name}");
         item.AddButton(MethodColumn, GetIcon("Add", "EditorIcons"), (int)ButtonID.AddListener);
-
-        int id = NextFreeDataID();
-        Lookup.Add(id, new EventData(eventInfo));
-        item.SetMeta("eventData", new DataReference(this, id));
+        item.SetMeta("eventData", new EventData((NodeData)parent.GetMeta("nodeData"), eventInfo.Name));
         return item;
     }
 
@@ -512,10 +497,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         item.SetEditable(MethodColumn, false);
         item.SetText(MethodColumn, "-- Empty --");
         item.AddButton(MethodColumn, GetIcon("Remove", "EditorIcons"), (int)ButtonID.RemoveListener);
-
-        int id = NextFreeDataID();
-        Lookup.Add(id, new ListenerData());
-        item.SetMeta("listenerData", new DataReference(this, id));
+        item.SetMeta("listenerData", new ListenerData((EventData) parent.GetMeta("eventData")));
         return item;
 	}
     
@@ -533,9 +515,9 @@ public class {eventLinkerScriptName} : CSharpEventLinker
             case ButtonID.GotoNode:
                 Node node = null;
                 if (item.HasMeta("nodeData"))
-                    node = ((DataReference)item.GetMeta("nodeData")).GetData<NodeData>().Node;
+                    node = ((NodeData)item.GetMeta("nodeData")).Node;
                 else if (item.HasMeta("listenerData"))
-                    node = ((DataReference)item.GetMeta("listenerData")).GetData<ListenerData>().TargetNode;
+                    node = ((ListenerData)item.GetMeta("listenerData")).TargetNode;
                 var selection = plugin.GetEditorInterface().GetSelection();
                 plugin.GetEditorInterface().EditNode(node);
                 break;

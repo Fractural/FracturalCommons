@@ -8,15 +8,27 @@ using System.Reflection;
 [Tool]
 public class MethodSelectPopup : WindowDialog
 {
-	public class MethodItemData : Godot.Object
+	public class MethodItemData : Godot.Reference
 	{
 		public MethodItemData() { }
-		public MethodItemData(MethodInfo methodInfo)
+		public MethodItemData(Node node, MethodInfo methodInfo)
 		{
 			MethodInfo = methodInfo;
+			Node = node;
 		}
 
-		public MethodInfo MethodInfo { get; set; }
+		public Node Node { get; set; }
+		public string MethodName { get; set; }
+		public string[] MethodParamterTypes { get; set; }
+		public MethodInfo MethodInfo
+		{
+			get => EditorUtils.GetRealType(Node).GetMethod(MethodName, MethodParamterTypes.Select(typeString => Type.GetType(typeString)).ToArray());
+			set
+			{
+				MethodName = value.Name;
+				MethodParamterTypes = value.GetParameters().Select(x => x.ParameterType.Name).ToArray();
+			}
+		}
 	}
 
 	[Signal]
@@ -33,8 +45,9 @@ public class MethodSelectPopup : WindowDialog
 	private ItemList nodeItemList;
 	private Control tint;
 	private TreeItem currentItem;
+	private Node currentNode;
 
-	private List<MethodInfo> currentCompatibleListeners;
+	private List<MethodItemData> currentCompatibleListeners;
 
 	public override void _Ready()
 	{
@@ -74,6 +87,7 @@ public class MethodSelectPopup : WindowDialog
 
 	public void Popup(Node node, EventInfo eventInfo)
 	{
+		this.currentNode = node;
 		currentCompatibleListeners = GetCompatibleListeners(node, eventInfo);
 		UpdateMethodList();
 		this.PopupCentered();
@@ -83,12 +97,12 @@ public class MethodSelectPopup : WindowDialog
 	public void UpdateMethodList()
 	{
 		nodeItemList.Clear();
-		foreach (MethodInfo listener in currentCompatibleListeners)
+		foreach (MethodItemData listenerData in currentCompatibleListeners)
 		{
-			if (searchBar.Text != "" && listener.Name.ToLower().Find(searchBar.Text.ToLower()) < 0)
+			if (searchBar.Text != "" && listenerData.MethodName.ToLower().Find(searchBar.Text.ToLower()) < 0)
 				continue;
-			nodeItemList.AddItem(listener.Name);
-			nodeItemList.SetItemMetadata(nodeItemList.GetItemCount() - 1, new MethodItemData(listener));
+			nodeItemList.AddItem(listenerData.MethodName);
+			nodeItemList.SetItemMetadata(nodeItemList.GetItemCount() - 1, listenerData);
 		}
 	}
 
@@ -104,14 +118,14 @@ public class MethodSelectPopup : WindowDialog
 		this.Visible = false;
 	}
 
-	private List<MethodInfo> GetCompatibleListeners(Node godotObj, EventInfo eventInfo)
+	private List<MethodItemData> GetCompatibleListeners(Node godotObj, EventInfo eventInfo)
 	{
 		if (godotObj == null)
 			GD.Print("GetCompLis GodotObj null!");
 		if (eventInfo == null)
 			GD.Print("getcomplis eventinfo null!");
 		var methods = EditorUtils.GetRealType(godotObj).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where(m => !m.IsSpecialName).OrderBy(x => x.Name);
-		List<MethodInfo> compatibleListeners = new List<MethodInfo>();
+		List<MethodItemData> compatibleListeners = new List<MethodItemData>();
 		// GD.Print("----");
 		// GD.Print($"Event '{eventInfo.Name}': Return type: {eventInfo.EventHandlerType.GetMethod("Invoke").ReturnType.Name} Parameters: {string.Join(", ", eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters().Select(x => x.ParameterType.Name))}");
 		foreach (MethodInfo methodInfo in methods)
@@ -119,7 +133,7 @@ public class MethodSelectPopup : WindowDialog
 			// GD.Print($"Method '{methodInfo.Name}': Return type: {methodInfo.ReturnType.Name} Parameters: {string.Join(", ", methodInfo.GetParameters().Select(x => x.ParameterType.Name))}");
 			if (eventInfo.EventHandlerType.GetMethod("Invoke").ReturnType.Equals(methodInfo.ReturnType)
 				&& IsSameParameterSignature(methodInfo.GetParameters(), eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters()))
-				compatibleListeners.Add(methodInfo);
+				compatibleListeners.Add(new MethodItemData(godotObj, methodInfo));
 
 		}
 		return compatibleListeners;

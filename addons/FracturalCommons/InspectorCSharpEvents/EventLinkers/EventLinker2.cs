@@ -5,6 +5,6 @@ public class EventLinker2 : CSharpEventLinker
 {
     public override void _EnterTree()
     {
-		GetNode<DummyScript>("../Dummy").IntegerActionEvent += GetNode<DummyScriptTwo>("../DummyTwo").TwoIntegerMethod;
+		GetNode<DummyScript>("../Dummy").IntegerActionEvent += GetNode<DummyScriptTwo>("../DummyTwo3")._Notification;
     }
 }
