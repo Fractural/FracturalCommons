@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+[Tool]
 public class MethodSelectPopup : WindowDialog
 {
 	public class MethodItemData : Godot.Object
 	{
+		public MethodItemData() { }
 		public MethodItemData(MethodInfo methodInfo)
 		{
 			MethodInfo = methodInfo;
@@ -36,10 +38,14 @@ public class MethodSelectPopup : WindowDialog
 
 	public override void _Ready()
 	{
+		if (NodeUtils.IsInEditorSceneTab(this))
+			return;
+
 		searchBar = GetNode<LineEdit>(searchBarPath);
 		nodeItemList = GetNode<ItemList>(nodeItemListPath);
 		tint = GetNode<Control>(tintPath);
 
+		searchBar.RightIcon = GetIcon("Search", "EditorIcons");
 		searchBar.Connect("text_changed", this, nameof(OnSearchBarTextChanged));
 
 		tint.Visible = false;
@@ -66,9 +72,9 @@ public class MethodSelectPopup : WindowDialog
 			tint?.QueueFree();
 	}
 
-	public void Popup(Godot.Object godotObj, EventInfo eventInfo)
+	public void Popup(Node node, EventInfo eventInfo)
 	{
-		currentCompatibleListeners = GetCompatibleListeners(godotObj, eventInfo);
+		currentCompatibleListeners = GetCompatibleListeners(node, eventInfo);
 		UpdateMethodList();
 		this.PopupCentered();
 		tint.Visible = true;
@@ -88,6 +94,7 @@ public class MethodSelectPopup : WindowDialog
 
 	private void OnPopupHide()
 	{
+		nodeItemList.Clear();
 		tint.Visible = false;
 	}
 
@@ -97,13 +104,24 @@ public class MethodSelectPopup : WindowDialog
 		this.Visible = false;
 	}
 
-	private List<MethodInfo> GetCompatibleListeners(Godot.Object godotObj, EventInfo eventInfo)
+	private List<MethodInfo> GetCompatibleListeners(Node godotObj, EventInfo eventInfo)
 	{
-		var methods = godotObj.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public).Where(m => !m.IsSpecialName).OrderBy(x => x.Name);
+		if (godotObj == null)
+			GD.Print("GetCompLis GodotObj null!");
+		if (eventInfo == null)
+			GD.Print("getcomplis eventinfo null!");
+		var methods = EditorUtils.GetRealType(godotObj).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where(m => !m.IsSpecialName).OrderBy(x => x.Name);
 		List<MethodInfo> compatibleListeners = new List<MethodInfo>();
+		// GD.Print("----");
+		// GD.Print($"Event '{eventInfo.Name}': Return type: {eventInfo.EventHandlerType.GetMethod("Invoke").ReturnType.Name} Parameters: {string.Join(", ", eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters().Select(x => x.ParameterType.Name))}");
 		foreach (MethodInfo methodInfo in methods)
-			if (IsSameParameterSignature(methodInfo.GetParameters(), eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters()))
+		{
+			// GD.Print($"Method '{methodInfo.Name}': Return type: {methodInfo.ReturnType.Name} Parameters: {string.Join(", ", methodInfo.GetParameters().Select(x => x.ParameterType.Name))}");
+			if (eventInfo.EventHandlerType.GetMethod("Invoke").ReturnType.Equals(methodInfo.ReturnType)
+				&& IsSameParameterSignature(methodInfo.GetParameters(), eventInfo.EventHandlerType.GetMethod("Invoke").GetParameters()))
 				compatibleListeners.Add(methodInfo);
+
+		}
 		return compatibleListeners;
 	}
 

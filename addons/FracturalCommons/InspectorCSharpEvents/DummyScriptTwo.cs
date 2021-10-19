@@ -10,7 +10,7 @@ public class DummyScriptTwo : Node
 
     public void TwoIntegerMethod(int args)
     {
-        
+        GD.Print("TwoIntegerMethod received integer: " + args);
 	}
 
     public void TwoCustomEventListener(object sender, DummyScript.CustomEventArgs args)

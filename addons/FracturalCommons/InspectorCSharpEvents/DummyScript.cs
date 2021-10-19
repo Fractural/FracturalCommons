@@ -14,7 +14,12 @@ public class DummyScript : Node
     private event Action PrivateActionEvent;
     protected event Action ProtectedActionEvent;
 
-    public void EmptyMethod()
+	public override void _Ready()
+	{
+        IntegerActionEvent?.Invoke(50);
+	}
+
+	public void EmptyMethod()
     {
         
 	}

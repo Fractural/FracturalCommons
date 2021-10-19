@@ -39,14 +39,14 @@ Cache_Tests=true
 [application]
 
 config/name="FracturalCommons"
-run/main_scene="res://tests/Manual/Testing.tscn"
+run/main_scene="res://tests/Manual/InspectorCSharpEvents/Testing.tscn"
 boot_splash/image="res://bootsplash.png"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/WAT/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/WAT/plugin.cfg" )
 
 [physics]
 

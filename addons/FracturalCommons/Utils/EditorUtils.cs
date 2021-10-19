@@ -21,5 +21,17 @@ namespace Fractural.Utils
 				godotBaseType = godotBaseType.BaseType;
 			return controlNode.GetIcon(godotBaseType.Name, "EditorIcons");
 		}
+
+		public static Type GetRealType(Node node)
+		{
+			var attachedCSharpScript = ((CSharpScript)node.GetScript());
+			if (attachedCSharpScript != null)
+			{
+				var type = Type.GetType(attachedCSharpScript.ResourcePath.GetFileName());
+				if (type != null)
+					return type;
+			}
+			return node.GetType();
+		}
 	}
 }
