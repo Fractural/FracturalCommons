@@ -53,7 +53,7 @@ namespace Fractural.Utils
 			string[] directoryBlacklist = null)
 		{
 			var fileExtensionsHashSet = fileExtensions == null ? null : new HashSet<string>(fileExtensions);
-			var directoryBlacklistHashset = fileExtensions == null ? null : new HashSet<string>(directoryBlacklist);
+			var directoryBlacklistHashset = directoryBlacklist == null ? null : new HashSet<string>(directoryBlacklist);
 			return GetDirContents(rootPath, searchSubDirectories, fileExtensionsHashSet, directoryBlacklistHashset);
 		}
 
