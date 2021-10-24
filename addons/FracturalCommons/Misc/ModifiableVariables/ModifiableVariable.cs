@@ -1,13 +1,16 @@
 using Fractural.FastEvent;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MonoCustomResourceRegistry;
 
 namespace Fractural
 {
-    public class ModifiableVariable<T>
+    [RegisteredType("ModifiableVariable", "res://addons/FracturalCommons/Misc/ModifiableVariables/icon_edit_key.svg")]
+    public class ModifiableVariable<T> : Node
     {
         public class ChangeEventArgs<T>
         {
@@ -35,9 +38,9 @@ namespace Fractural
             public bool Override { get; set; }
         }
 
-        public FastEvent<ValidateEventArgs<T>> OnValidate { get; set; } = new FastEvent<ValidateEventArgs<T>>();
+        public Action<ValidateEventArgs<T>> OnValidate;
 
-        public FastEvent<ChangeEventArgs<T>> OnChange { get; set; } = new FastEvent<ChangeEventArgs<T>>();
+        public Action<ChangeEventArgs<T>> OnChange;
 
         public T Value
         {
@@ -63,6 +66,7 @@ namespace Fractural
             }
         }
 
+        [Export]
         private T valueField;
     }
 }
