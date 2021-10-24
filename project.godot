@@ -24,6 +24,12 @@ _global_script_class_icons={
 "WATTest": ""
 }
 
+[MonoCustomResourceRegistry]
+
+ClassPrefix=""
+SearchType=0
+ResourceScriptDirectories=[ "res://" ]
+
 [WAT]
 
 Test_Directory="res://"
@@ -46,7 +52,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/WAT/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/MonoCustomResourceRegistry/plugin.cfg", "res://addons/WAT/plugin.cfg" )
 
 [physics]
 
