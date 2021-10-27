@@ -57,7 +57,8 @@ public class NodeSelectPopup : WindowDialog
 	public override void _Notification(int what)
 	{
 		if (what == NotificationPredelete)
-			tint?.QueueFree();
+			if (IsInstanceValid(tint))
+				tint.QueueFree();
 	}
 
 	public void Popup(Node node)
