@@ -148,8 +148,8 @@ public class CSharpEventsInspector : Control
         followSelectionToggle = GetNode<Button>(followSelectionTogglePath);
         tree = GetNode<Tree>(treeNodePath);
         selection = plugin.GetEditorInterface().GetSelection();
-        editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
-        editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
+        //editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
+        //editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
 
         createEventLinkerButton.Icon = GetIcon("ScriptCreate", "EditorIcons");
         eventSearchBar.RightIcon = GetIcon("Search", "EditorIcons");
@@ -169,8 +169,8 @@ public class CSharpEventsInspector : Control
         //GetTree().Connect("node_renamed", this, nameof(OnNodeRenamed));
         tree.Connect("custom_popup_edited", this, nameof(OnCustomPopupEdited));
         tree.Connect("button_pressed", this, nameof(OnButtonPressed));
-        editTargetNodePopup.Connect(nameof(NodeSelectPopup.NodeSelected), this, nameof(OnTargetNodeSelected));
-        editTargetMethodPopup.Connect(nameof(MethodSelectPopup.MethodSelected), this, nameof(OnMethodSelected));
+        //editTargetNodePopup.Connect(nameof(NodeSelectPopup.NodeSelected), this, nameof(OnTargetNodeSelected));
+        //editTargetMethodPopup.Connect(nameof(MethodSelectPopup.MethodSelected), this, nameof(OnMethodSelected));
 
         tree.HideRoot = true;
         tree.Columns = 2;
@@ -181,8 +181,8 @@ public class CSharpEventsInspector : Control
         createEventLinkerContainer.AddConstantOverride("margin_bottom", (int)(createEventLinkerContainer.GetConstant("margin_bottom") * assetsRegistry.Scale));
         createEventLinkerContainer.AddConstantOverride("margin_left", (int)(createEventLinkerContainer.GetConstant("margin_left") * assetsRegistry.Scale));
         createEventLinkerContainer.AddConstantOverride("margin_right", (int)(createEventLinkerContainer.GetConstant("margin_right") * assetsRegistry.Scale));
-        editTargetNodePopup.RectSize *= assetsRegistry.Scale;
-        editTargetMethodPopup.RectSize *= assetsRegistry.Scale;
+        //editTargetNodePopup.RectSize *= assetsRegistry.Scale;
+        //editTargetMethodPopup.RectSize *= assetsRegistry.Scale;
 
         TryUpdateVisuals();
     }
@@ -483,15 +483,15 @@ public class {eventLinkerScriptName} : CSharpEventLinker
             return;
         }
 
-        if (tree.GetEditedColumn() == NodeColumn)
-            editTargetNodePopup.Popup(SceneRoot);
-        else if (tree.GetEditedColumn() == MethodColumn)
-        {
-            var listenerData = (ListenerData) tree.GetEdited().GetMeta("listenerData");
-            var eventData = (EventData) tree.GetEdited().GetParent().GetMeta("eventData");
+        //if (tree.GetEditedColumn() == NodeColumn)
+        //    editTargetNodePopup.Popup(SceneRoot);
+        //else if (tree.GetEditedColumn() == MethodColumn)
+        //{
+        //    var listenerData = (ListenerData) tree.GetEdited().GetMeta("listenerData");
+        //    var eventData = (EventData) tree.GetEdited().GetParent().GetMeta("eventData");
 
-            editTargetMethodPopup.Popup(listenerData.TargetNode, eventData.EventInfo);
-        }
+        //    editTargetMethodPopup.Popup(listenerData.TargetNode, eventData.EventInfo);
+        //}
     }
 
 	private TreeItem TryCreateNodeItem(Node node)
