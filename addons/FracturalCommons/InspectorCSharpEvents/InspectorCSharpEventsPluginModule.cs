@@ -27,7 +27,7 @@ namespace Fractural.InspectorCSharpEvents
 		public override void Unload()
 		{
 			Plugin.RemoveControlFromDocks(EventsInspector);
-			EventsInspector.Free();
+			EventsInspector.QueueFree();
 		}
 
 		private void OnGotoNode(Node node)

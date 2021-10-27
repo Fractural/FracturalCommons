@@ -25,4 +25,7 @@
 		<DefineConstants>$(DefineConstants);GODOT_3</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_3_2</DefineConstants>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Folder Include="addons\FracturalCommons\Misc\NewFolder\" />
+	</ItemGroup>
 </Project>

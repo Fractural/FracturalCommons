@@ -13,14 +13,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 editTargetMethodPopupPath = NodePath("TargetMethodSelectPopup")
-createEventLinkerButtonPath = NodePath("VBoxContainer/Tree/CreateEventLinkerContainer/VBoxContainer/CreateEventLinkerButton")
-refreshButtonPath = NodePath("VBoxContainer/HBoxContainer/Refresh")
-followSelectionTogglePath = NodePath("VBoxContainer/HBoxContainer/FollowSelectionToggle")
 treeNodePath = NodePath("VBoxContainer/Tree")
-editTargetNodePopupPath = NodePath("TargetNodeSelectPopup")
-createEventLinkerContainerPath = NodePath("VBoxContainer/Tree/CreateEventLinkerContainer")
-nodeSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/NodeSearchBar")
 eventSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/EventSearchBar")
+nodeSearchBarPath = NodePath("VBoxContainer/HBoxContainer2/NodeSearchBar")
+refreshButtonPath = NodePath("VBoxContainer/HBoxContainer/Refresh")
+createEventLinkerButtonPath = NodePath("VBoxContainer/Tree/CreateEventLinkerContainer/VBoxContainer/CreateEventLinkerButton")
+followSelectionTogglePath = NodePath("VBoxContainer/HBoxContainer/FollowSelectionToggle")
+createEventLinkerContainerPath = NodePath("VBoxContainer/Tree/CreateEventLinkerContainer")
+editTargetNodePopupPath = NodePath("TargetNodeSelectPopup")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -130,9 +130,9 @@ script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-nodeItemListPath = NodePath("MarginContainer/VBoxContainer/ScrollContainer/ItemList")
 tintPath = NodePath("Tint")
 searchBarPath = NodePath("MarginContainer/VBoxContainer/SearchBar")
+nodeItemListPath = NodePath("MarginContainer/VBoxContainer/ScrollContainer/ItemList")
 
 [node name="MarginContainer" type="MarginContainer" parent="TargetMethodSelectPopup"]
 anchor_right = 1.0

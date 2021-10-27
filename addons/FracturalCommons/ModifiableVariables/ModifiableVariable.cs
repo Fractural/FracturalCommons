@@ -1,4 +1,3 @@
-using Fractural.FastEvent;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -9,10 +8,10 @@ using MonoCustomResourceRegistry;
 
 namespace Fractural
 {
-    [RegisteredType("ModifiableVariable", "res://addons/FracturalCommons/Misc/ModifiableVariables/icon_edit_key.svg")]
+    [RegisteredType("ModifiableVariable", "res://addons/FracturalCommons/ModifiableVariables/icon_edit_key.svg")]
     public class ModifiableVariable<T> : Node
     {
-        public class ChangeEventArgs<T>
+        public class ChangeEventArgs
         {
             public ChangeEventArgs(T newValue, T originalValue)
             {
@@ -25,7 +24,7 @@ namespace Fractural
             public T OriginalValue { get; set; }
         }
 
-        public class ValidateEventArgs<T>
+        public class ValidateEventArgs
         {
             public ValidateEventArgs(T newValue, bool @override)
             {
@@ -38,9 +37,9 @@ namespace Fractural
             public bool Override { get; set; }
         }
 
-        public Action<ValidateEventArgs<T>> OnValidate;
+        public Action<ValidateEventArgs> OnValidate;
 
-        public Action<ChangeEventArgs<T>> OnChange;
+        public Action<ChangeEventArgs> OnChange;
 
         public T Value
         {
@@ -51,7 +50,7 @@ namespace Fractural
 
             set
             {
-                ValidateEventArgs<T> validateEventArgs = new ValidateEventArgs<T>(valueField, false);
+                ValidateEventArgs validateEventArgs = new ValidateEventArgs(valueField, false);
 
                 OnValidate.Invoke(validateEventArgs);
 
@@ -61,12 +60,21 @@ namespace Fractural
                     
                     valueField = value;
 
-                    OnChange.Invoke(new ChangeEventArgs<T>(valueField, oldValue));
+                    OnChange.Invoke(new ChangeEventArgs(valueField, oldValue));
                 }
             }
         }
 
         [Export]
         private T valueField;
+
+        /// <summary>
+        /// Initializes a modifiable variable with a value.
+        /// </summary>
+        /// <param name="value"></param>
+        public void Init(T value)
+        {
+            valueField = value;
+		}
     }
 }

@@ -7,7 +7,7 @@ using Fractural.Utils;
 #if TOOLS
 namespace Fractural.Plugin
 {
-	public abstract class PluginModule : Godot.Reference
+	public abstract class PluginModule
 	{
 		public EditorPlugin Plugin { get; set; }
 		public IAssetsRegistry AssetsRegistry { get; set; }

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon_edit_key.svg-c2c96f4c39534f4e2bac3eba9aedb817.stex"
+path="res://.import/icon_edit_key.svg-0057db3a6e511872d86e6f3b5b518b98.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/FracturalCommons/Misc/ModifiableVariables/icon_edit_key.svg"
-dest_files=[ "res://.import/icon_edit_key.svg-c2c96f4c39534f4e2bac3eba9aedb817.stex" ]
+source_file="res://addons/FracturalCommons/ModifiableVariables/icon_edit_key.svg"
+dest_files=[ "res://.import/icon_edit_key.svg-0057db3a6e511872d86e6f3b5b518b98.stex" ]
 
 [params]
 

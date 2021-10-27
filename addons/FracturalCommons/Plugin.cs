@@ -15,6 +15,7 @@ namespace Fractural.Commons
 		
 		public override void _EnterTree()
 		{
+			EngineUtils.UpdateVersionPreprocessorDefines();
 			LoadPluginModules();
 		}
 
