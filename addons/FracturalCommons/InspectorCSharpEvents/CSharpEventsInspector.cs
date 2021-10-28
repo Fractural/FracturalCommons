@@ -48,7 +48,7 @@ public class CSharpEventsInspector : Control
         }
 
         public EventData EventData { get; set; }
-        public Node TargetNode { get; set; }
+		public Node TargetNode { get; set; }
         public string TargetMethodName { get; set; }
         public string[] TargetMethodParameterTypes { get; set; }
         public MethodInfo MethodInfo
@@ -58,7 +58,7 @@ public class CSharpEventsInspector : Control
             {
                 TargetMethodName = value.Name;
                 TargetMethodParameterTypes = value.GetParameters().Select(x => x.ParameterType.Name).ToArray();
-            }
+			}
         }
     }
 
@@ -148,10 +148,10 @@ public class CSharpEventsInspector : Control
         followSelectionToggle = GetNode<Button>(followSelectionTogglePath);
         tree = GetNode<Tree>(treeNodePath);
         selection = plugin.GetEditorInterface().GetSelection();
-        editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
-        editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
+		editTargetNodePopup = GetNode<NodeSelectPopup>(editTargetNodePopupPath);
+		editTargetMethodPopup = GetNode<MethodSelectPopup>(editTargetMethodPopupPath);
 
-        createEventLinkerButton.Icon = GetIcon("ScriptCreate", "EditorIcons");
+		createEventLinkerButton.Icon = GetIcon("ScriptCreate", "EditorIcons");
         eventSearchBar.RightIcon = GetIcon("Search", "EditorIcons");
         nodeSearchBar.RightIcon = GetIcon("Search", "EditorIcons");
         followSelectionToggle.Icon = GetIcon("ToolSelect", "EditorIcons");
@@ -169,39 +169,39 @@ public class CSharpEventsInspector : Control
         //GetTree().Connect("node_renamed", this, nameof(OnNodeRenamed));
         tree.Connect("custom_popup_edited", this, nameof(OnCustomPopupEdited));
         tree.Connect("button_pressed", this, nameof(OnButtonPressed));
-        editTargetNodePopup.Connect(nameof(NodeSelectPopup.NodeSelected), this, nameof(OnTargetNodeSelected));
-        editTargetMethodPopup.Connect(nameof(MethodSelectPopup.MethodSelected), this, nameof(OnMethodSelected));
+		editTargetNodePopup.Connect(nameof(NodeSelectPopup.NodeSelected), this, nameof(OnTargetNodeSelected));
+		editTargetMethodPopup.Connect(nameof(MethodSelectPopup.MethodSelected), this, nameof(OnMethodSelected));
 
-        tree.HideRoot = true;
+		tree.HideRoot = true;
         tree.Columns = 2;
         tree.SetColumnExpand(NodeColumn, true);
         tree.SetColumnExpand(MethodColumn, true);
 
-        createEventLinkerContainer.AddConstantOverride("margin_top", (int)(createEventLinkerContainer.GetConstant("margin_top") * assetsRegistry.Scale));
+        createEventLinkerContainer.AddConstantOverride("margin_top", (int) (createEventLinkerContainer.GetConstant("margin_top") * assetsRegistry.Scale));
         createEventLinkerContainer.AddConstantOverride("margin_bottom", (int)(createEventLinkerContainer.GetConstant("margin_bottom") * assetsRegistry.Scale));
         createEventLinkerContainer.AddConstantOverride("margin_left", (int)(createEventLinkerContainer.GetConstant("margin_left") * assetsRegistry.Scale));
         createEventLinkerContainer.AddConstantOverride("margin_right", (int)(createEventLinkerContainer.GetConstant("margin_right") * assetsRegistry.Scale));
-        editTargetNodePopup.RectSize *= assetsRegistry.Scale;
-        editTargetMethodPopup.RectSize *= assetsRegistry.Scale;
+		editTargetNodePopup.RectSize *= assetsRegistry.Scale;
+		editTargetMethodPopup.RectSize *= assetsRegistry.Scale;
 
-        TryUpdateVisuals();
+		TryUpdateVisuals();
     }
 
-    public void Init(EditorPlugin editorPlugin, IAssetsRegistry assetsRegistry)
+	public void Init(EditorPlugin editorPlugin, IAssetsRegistry assetsRegistry)
     {
         this.assetsRegistry = assetsRegistry;
         this.plugin = editorPlugin;
     }
 
-    public override void _Process(float delta)
-    {
+	public override void _Process(float delta)
+	{
         if (BuildCanary.HasBuilt)
         {
             buildCanary = new BuildCanary(0);
             BuildCanary.HasBuilt = false;
             TryUpdateVisuals();
         }
-    }
+	}
 
     public void CreateEventLinker()
     {
@@ -242,7 +242,7 @@ public class {nextFreeName} : CSharpEventLinker
         TryUpdateVisuals();
     }
 
-    public void TryUpdateVisuals()
+	public void TryUpdateVisuals()
     {
         if (tree == null)
             return;
@@ -252,7 +252,7 @@ public class {nextFreeName} : CSharpEventLinker
 
         if (SceneRoot == null)
             return;
-
+        
         if (EventLinker == null)
         {
             createEventLinkerContainer.Visible = true;
@@ -262,10 +262,10 @@ public class {nextFreeName} : CSharpEventLinker
             createEventLinkerContainer.Visible = false;
 
         if (followSelectionToggle.Pressed && selection.GetSelectedNodes().Count > 0)
-            TryCreateNodeItem((Node)selection.GetSelectedNodes()[0]);
+            TryCreateNodeItem((Node) selection.GetSelectedNodes()[0]);
         else
             CreateTreeRecursive(SceneRoot);
-
+        
         LoadSavedListeners();
     }
 
@@ -310,7 +310,7 @@ public class {nextFreeName} : CSharpEventLinker
             return;
 
         TreeItem listenerItem = CreateListenerItem(eventTreeItem);
-        var listenerData = (ListenerData)listenerItem.GetMeta("listenerData");
+        var listenerData = (ListenerData) listenerItem.GetMeta("listenerData");
         listenerData.MethodInfo = methodInfo;
         listenerData.TargetNode = targetNode;
 
@@ -328,10 +328,10 @@ public class {nextFreeName} : CSharpEventLinker
         File file = new File();
         file.Open(((CSharpScript)EventLinker.GetScript()).ResourcePath, File.ModeFlags.Write);
         file.StoreString(
-            GenerateEventLinkerSourceText(EventLinker, ((CSharpScript)EventLinker.GetScript()).ResourcePath.GetFileName())
+            GenerateEventLinkerSourceText(EventLinker, ((CSharpScript) EventLinker.GetScript()).ResourcePath.GetFileName())
         );
         file.Close();
-    }
+	}
 
     public string GenerateEventLinkerSourceText(Node eventLinker, string eventLinkerScriptName)
     {
@@ -348,13 +348,13 @@ public class {nextFreeName} : CSharpEventLinker
                 var listenerItem = eventItem.GetChildren();
                 while (listenerItem != null)
                 {
-                    var listenerData = (ListenerData)listenerItem.GetMeta("listenerData");
+                    var listenerData = (ListenerData) listenerItem.GetMeta("listenerData");
                     if (listenerData.TargetNode != null && listenerData.TargetMethodName != "")
                     {
                         lines += $"\t\tGetNode<{EditorUtils.GetRealType(nodeData.Node).FullName}>(\"{eventLinker.GetPathTo(nodeData.Node)}\").{eventData.EventInfo.Name} += GetNode<{EditorUtils.GetRealType(listenerData.TargetNode).FullName}>(\"{eventLinker.GetPathTo(listenerData.TargetNode)}\").{listenerData.TargetMethodName};\n";
                     }
                     listenerItem = listenerItem.GetNext();
-                }
+				}
 
                 eventItem = eventItem.GetNext();
             }
@@ -362,7 +362,7 @@ public class {nextFreeName} : CSharpEventLinker
             nodeItem = nodeItem.GetNext();
         }
 
-        string sourceText =
+        string sourceText = 
 $@"using Godot;
 using System;
 
@@ -429,15 +429,15 @@ public class {eventLinkerScriptName} : CSharpEventLinker
     }
 
     private void CreateTreeRecursive(Node node)
-    {
+	{
         if (node == null)
             return;
-
+        
         TryCreateNodeItem(node);
-
+        
         foreach (Node child in node.GetChildren())
             CreateTreeRecursive(child);
-    }
+	}
 
     private void OnTargetNodeSelected(Node node)
     {
@@ -445,8 +445,8 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         {
             TryUpdateVisuals();
             return;
-        }
-
+		}
+        
         var listenerItem = tree.GetEdited();
         var listenerData = ((ListenerData)listenerItem.GetMeta("listenerData"));
 
@@ -476,25 +476,25 @@ public class {eventLinkerScriptName} : CSharpEventLinker
     }
 
     private void OnCustomPopupEdited(bool arrowClicked)
-    {
+	{
         if (EventLinker == null)
         {
             CallDeferred(nameof(TryUpdateVisuals));
             return;
         }
 
-        if (tree.GetEditedColumn() == NodeColumn)
-            editTargetNodePopup.Popup(SceneRoot);
-        else if (tree.GetEditedColumn() == MethodColumn)
-        {
-            var listenerData = (ListenerData)tree.GetEdited().GetMeta("listenerData");
-            var eventData = (EventData)tree.GetEdited().GetParent().GetMeta("eventData");
+		if (tree.GetEditedColumn() == NodeColumn)
+			editTargetNodePopup.Popup(SceneRoot);
+		else if (tree.GetEditedColumn() == MethodColumn)
+		{
+			var listenerData = (ListenerData)tree.GetEdited().GetMeta("listenerData");
+			var eventData = (EventData)tree.GetEdited().GetParent().GetMeta("eventData");
 
-            editTargetMethodPopup.Popup(listenerData.TargetNode, eventData.EventInfo);
-        }
-    }
+			editTargetMethodPopup.Popup(listenerData.TargetNode, eventData.EventInfo);
+		}
+	}
 
-    private TreeItem TryCreateNodeItem(Node node)
+	private TreeItem TryCreateNodeItem(Node node)
     {
         // Recursively traverse up inheritance chain until we
         // get the original Godot base type.
@@ -541,10 +541,10 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         item.SetEditable(MethodColumn, false);
         item.SetText(MethodColumn, "-- Empty --");
         item.AddButton(MethodColumn, GetIcon("Remove", "EditorIcons"), (int)ButtonID.RemoveListener);
-        item.SetMeta("listenerData", new ListenerData((EventData)parent.GetMeta("eventData")));
+        item.SetMeta("listenerData", new ListenerData((EventData) parent.GetMeta("eventData")));
         return item;
-    }
-
+	}
+    
     private void OnButtonPressed(TreeItem item, int column, int id)
     {
         if (EventLinker == null)
@@ -553,7 +553,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
             return;
         }
 
-        switch ((ButtonID)id)
+        switch ((ButtonID) id)
         {
             case ButtonID.AddListener:
                 CreateListenerItem(item);
@@ -571,6 +571,6 @@ public class {eventLinkerScriptName} : CSharpEventLinker
                 var selection = plugin.GetEditorInterface().GetSelection();
                 plugin.GetEditorInterface().EditNode(node);
                 break;
-        }
-    }
+		}
+	}
 }

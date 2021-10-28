@@ -14,25 +14,17 @@ namespace Fractural.InspectorCSharpEvents
 		public EditorPlugin.DockSlot DockSlot = EditorPlugin.DockSlot.RightBr;
 		public CSharpEventsInspector EventsInspector { get; set; }
 
-		public InspectorCSharpEventsPluginModule(EditorPlugin plugin) : base(plugin) { }
-
 		public override void Load()
 		{
 			var inspectorWindowPrefab = ResourceLoader.Load<PackedScene>("res://addons/FracturalCommons/InspectorCSharpEvents/CSharpEventLinkerInspector.tscn");
 			EventsInspector = inspectorWindowPrefab.Instance<CSharpEventsInspector>();
 			EventsInspector.Init(Plugin, AssetsRegistry);
-			Plugin.AddControlToDock(DockSlot, EventsInspector);
+			Plugin.AddManagedControlToDock(this, DockSlot, EventsInspector);
 		}
 
 		public override void Unload()
 		{
-			Plugin.RemoveControlFromDocks(EventsInspector);
-			EventsInspector.QueueFree();
-		}
-
-		private void OnGotoNode(Node node)
-		{
-			
+			Plugin.DestroyManagedControl(EventsInspector);
 		}
 	}
 }

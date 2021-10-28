@@ -14,10 +14,9 @@ namespace Fractural.Utils
 
 		static CSharpUtils()
 		{
-			// Get all CS scripts, excluding the mono folder
 			List<string> scripts = FileUtils.GetDirFiles("res://", true, new string[] { "cs" }, new string[] { ".mono" });
 			foreach (string path in scripts)
-				if (CSharpScriptsDict.ContainsKey(path.GetFileName()))
+				if (!CSharpScriptsDict.ContainsKey(path.GetFileName()))
 					CSharpScriptsDict.Add(path.GetFileName(), path);
 		}
 
@@ -30,6 +29,8 @@ namespace Fractural.Utils
 
 		public static T InstantiateCSharpNode<T>() where T : Node
 		{
+			GD.Print("Csharps Dict size: " + CSharpScriptsDict.Count);
+			GD.Print("Csharps Dict keys: " + String.Join(", ", CSharpScriptsDict.Keys));
 			if (CSharpScriptsDict.TryGetValue(typeof(T).Name, out string filepath))
 				return (T)ResourceLoader.Load<CSharpScript>(filepath).New();
 			return null;

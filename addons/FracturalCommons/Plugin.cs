@@ -1,4 +1,5 @@
 using Godot;
+using Array = Godot.Collections.Array;
 using System;
 using Fractural.Plugin;
 using Fractural.Utils;
@@ -9,30 +10,16 @@ using Fractural.InspectorCSharpEvents;
 namespace Fractural.Commons
 {
 	[Tool]
-    public class Plugin : EditorPlugin
-    {
-		public List<PluginModule> PluginModules { get; set; } = new List<PluginModule>();
-		
-		public override void _EnterTree()
-		{
-			EngineUtils.UpdateVersionPreprocessorDefines();
-			LoadPluginModules();
-		}
+	public class Plugin : ModularPlugin
+	{
+		public override Array PluginModules { get; set; } = new Array();
+		public override List<Control> ManagedControls { get; set; } = new List<Control>();
+		public override List<ManagedControlType> ManagedControlsType { get; set; } = new List<ManagedControlType>();
+		public override List<object> ManagedControlsData { get; set; } = new List<object>();
 
-		public override void _ExitTree()
+		public override void LoadPluginModules()
 		{
-			UnloadPluginModules();
-		}
-
-		public void LoadPluginModules()
-		{
-			PluginModules.Add(new InspectorCSharpEventsPluginModule(this));
-		}
-
-		public void UnloadPluginModules()
-		{
-			foreach (PluginModule module in PluginModules)
-				module.Unload();
+			LoadModule(new InspectorCSharpEventsPluginModule());
 		}
 	}
 }

@@ -44,7 +44,8 @@ namespace Fractural.Utils
 		public static Node Reparent(this Node node, Node newParent)
 		{
 			Node originalParent = node.GetParent();
-			node.GetParent().RemoveChild(node);
+			if (originalParent != null)
+				node.GetParent().RemoveChild(node);
 			newParent.AddChild(node);
 			return originalParent;
 		}
