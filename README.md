@@ -38,7 +38,12 @@ This module based system even enables you to add new behavior by making your own
 
 ## Installation
 
-1. Go to the releases tab on the github page
+1. Go to the [releases tab](https://github.com/Fractural/FracturalCommons/releases/) on the Github repository and find the release you want
+2. Download the `FracturalCommonsRelease.zip` file and extract it.
+3. After extraction, move both the `FracturalCommons` folder and the `MonoCustomResourceRegistry` folder into the `res://addons` folder of your project.
+4. Rebuild the solution to your project and first enable `MonoCustomResourceRegistry`, then enable  `FracturalCommons`.
+
+Note that `MonoCustomResourceRegistry` is only required for custom C# nodes to appear in the `Create Node` menu. This plugin is a workaround for a Godot editor bug. The original repo for this plugin can be found [here](https://github.com/Atlinx/Godot-Mono-CustomResourceRegistry).
 
 # Modules
 
