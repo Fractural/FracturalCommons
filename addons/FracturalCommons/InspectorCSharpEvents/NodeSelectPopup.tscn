@@ -1,10 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/NodeSelectPopup.cs" type="Script" id=1]
-[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/Assets/icon_search.svg" type="Texture" id=2]
 
 [node name="NodeSelectPopup" type="WindowDialog"]
-visible = true
 margin_right = 406.0
 margin_bottom = 258.0
 window_title = "Select a Node"
@@ -13,9 +11,9 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-tintPath = NodePath("Tint")
 nodeTreePath = NodePath("MarginContainer/VBoxContainer/Tree")
 searchBarPath = NodePath("MarginContainer/VBoxContainer/SearchBar")
+tintPath = NodePath("Tint")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
@@ -38,7 +36,6 @@ dragger_visibility = 1
 [node name="SearchBar" type="LineEdit" parent="MarginContainer/VBoxContainer"]
 margin_right = 396.0
 margin_bottom = 26.0
-right_icon = ExtResource( 2 )
 placeholder_text = "Filter nodes"
 caret_blink = true
 

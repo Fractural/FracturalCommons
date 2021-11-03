@@ -8,6 +8,8 @@ public interface IComponentUser
 	ComponentContainer Components { get; }
 }
 
+// Emulates the component system of Unity.
+// Keeps track of all components for a node
 public class ComponentContainer : Node
 {
     [Export]
