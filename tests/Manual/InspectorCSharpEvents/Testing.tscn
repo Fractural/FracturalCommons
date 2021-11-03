@@ -2,7 +2,7 @@
 
 [ext_resource path="res://tests/Manual/InspectorCSharpEvents/DummyScriptTwo.cs" type="Script" id=1]
 [ext_resource path="res://tests/Manual/InspectorCSharpEvents/DummyScript.cs" type="Script" id=2]
-[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkers/EventLinker2.cs" type="Script" id=3]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkers/EventLinker3.cs" type="Script" id=3]
 
 [node name="Node" type="Node"]
 
