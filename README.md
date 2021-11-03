@@ -36,6 +36,10 @@ The different parts of this general purpose plugin are called "Plugin Modules". 
 
 This module based system even enables you to add new behavior by making your own `PluginModuls`.
 
+## Installation
+
+1. Go to the releases tab on the github page
+
 # Modules
 
 ## C# Events Inspector
