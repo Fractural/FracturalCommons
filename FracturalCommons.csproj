@@ -26,6 +26,7 @@
 		<DefineConstants>$(DefineConstants);GODOT_3_3_2</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Folder Include="addons\FracturalCommons\InspectorCSharpEvents\EventLinkers\" />
 	  <Folder Include="addons\FracturalCommons\Misc\NewFolder\" />
 	</ItemGroup>
 </Project>

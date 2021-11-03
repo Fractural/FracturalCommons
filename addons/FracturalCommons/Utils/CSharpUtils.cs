@@ -29,8 +29,6 @@ namespace Fractural.Utils
 
 		public static T InstantiateCSharpNode<T>() where T : Node
 		{
-			GD.Print("Csharps Dict size: " + CSharpScriptsDict.Count);
-			GD.Print("Csharps Dict keys: " + String.Join(", ", CSharpScriptsDict.Keys));
 			if (CSharpScriptsDict.TryGetValue(typeof(T).Name, out string filepath))
 				return (T)ResourceLoader.Load<CSharpScript>(filepath).New();
 			return null;

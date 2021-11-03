@@ -62,24 +62,12 @@ public class CSharpEventsInspector : Control
         }
     }
 
-    // Hacky class used to detect whenever Godot builds C#
-    // When Godot builds a C# solution, all Godot.Objects
-    // are reserialized. This means they use the default
-    // constructor.
-    public class BuildCanary : Godot.Object
-    {
-        public static bool HasBuilt { get; set; } = false;
-
-        public BuildCanary()
-        {
-            HasBuilt = true;
-        }
-
-        public BuildCanary(int number)
-        {
-
-        }
-    }
+    // Hacky property used to detect whenever Godot builds C#
+    // When Godot builds a C# solution, all static variables
+    // are reset. This means Rebuild will be reset to true.
+    //
+    // This trick is sourced from https://github.com/godotengine/godot/issues/36351
+    private static bool Rebuild = true;
 
     public enum ButtonID
     {
@@ -127,8 +115,6 @@ public class CSharpEventsInspector : Control
     private EditorSelection selection;
     private EditorPlugin plugin;
     private IAssetsRegistry assetsRegistry;
-
-    private BuildCanary buildCanary = new BuildCanary(0);
 
     public override void _Ready()
     {
@@ -195,10 +181,9 @@ public class CSharpEventsInspector : Control
 
 	public override void _Process(float delta)
 	{
-        if (BuildCanary.HasBuilt)
+        if (Rebuild)
         {
-            buildCanary = new BuildCanary(0);
-            BuildCanary.HasBuilt = false;
+            Rebuild = false;
             TryUpdateVisuals();
         }
 	}
@@ -499,7 +484,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
         // Recursively traverse up inheritance chain until we
         // get the original Godot base type.
         var events = EditorUtils.GetRealType(node).GetEvents();
-
+        
         if (events.Length == 0)
             return null;
         if (nodeSearchBar.Text != "" && node.Name.ToLower().Find(nodeSearchBar.Text.ToLower()) < 0)
@@ -513,7 +498,7 @@ public class {eventLinkerScriptName} : CSharpEventLinker
 
         foreach (EventInfo eventInfo in events)
             CreateEventItem(item, eventInfo);
-
+            
         return item;
     }
 

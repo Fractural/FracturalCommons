@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Fractural.Utils
 {
@@ -27,9 +28,20 @@ namespace Fractural.Utils
 			var attachedCSharpScript = ((CSharpScript)node.GetScript());
 			if (attachedCSharpScript != null)
 			{
-				var type = Type.GetType(attachedCSharpScript.ResourcePath.GetFileName());
-				if (type != null)
-					return type;
+				File file = new File();
+				if (file.Open(attachedCSharpScript.ResourcePath, File.ModeFlags.Read) == Error.Ok)
+				{
+					Regex regex = new Regex(@"namespace ([\w.]+)");
+					var match = regex.Match(file.GetAsText());
+					file.Close();
+					if (match.Success && match.Groups.Count > 1)
+					{
+						// First matching group is the namespace of this class
+						var type = Type.GetType(match.Groups[1].Value + "." + attachedCSharpScript.ResourcePath.GetFileName());
+						if (type != null)
+							return type;
+					}
+				}
 			}
 			return node.GetType();
 		}

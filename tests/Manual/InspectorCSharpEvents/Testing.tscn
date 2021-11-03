@@ -1,34 +1,31 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/DummyScript.cs" type="Script" id=1]
-[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/DummyScriptTwo.cs" type="Script" id=2]
-[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkers/EventLinker0.cs" type="Script" id=3]
+[ext_resource path="res://tests/Manual/InspectorCSharpEvents/DummyScriptTwo.cs" type="Script" id=1]
+[ext_resource path="res://tests/Manual/InspectorCSharpEvents/DummyScript.cs" type="Script" id=2]
+[ext_resource path="res://addons/FracturalCommons/InspectorCSharpEvents/EventLinkers/EventLinker2.cs" type="Script" id=3]
 
 [node name="Node" type="Node"]
 
 [node name="Dummy" type="Node2D" parent="."]
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 
 [node name="DummyTwo" type="Node2D" parent="."]
-script = ExtResource( 2 )
+script = ExtResource( 1 )
 
 [node name="DummyTwo3" type="Node2D" parent="."]
+script = ExtResource( 1 )
+
+[node name="DummyChild" type="Node2D" parent="DummyTwo3"]
 script = ExtResource( 2 )
 
-[node name="Dummy2Oof" type="Node2D" parent="DummyTwo3"]
-script = ExtResource( 1 )
-
 [node name="Dummy3" type="Node2D" parent="."]
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 
-[node name="Dummy4Oof" type="Node2D" parent="Dummy3"]
-script = ExtResource( 1 )
+[node name="EmptyChild" type="Node2D" parent="Dummy3"]
 
-[node name="Dummy4" type="Node2D" parent="."]
-script = ExtResource( 1 )
+[node name="Empty" type="Node2D" parent="."]
 
-[node name="Dummy4Oof" type="Node2D" parent="Dummy4"]
-script = ExtResource( 1 )
+[node name="EmptyChild" type="Node2D" parent="Empty"]
 
 [node name="EventLinker" type="Node" parent="."]
 script = ExtResource( 3 )
