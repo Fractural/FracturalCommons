@@ -8,12 +8,11 @@ namespace Fractural.Commons
 	[Tool]
 	public class Plugin : ExtendedPlugin
 	{
-		public override void _EnterTree()
-		{
-			base._EnterTree();
+		public override string PluginName => "FracturalCommons";
 
+		protected override void Load()
+		{
 			EngineUtils.UpdateVersionPreprocessorDefines();
-			GD.PushWarning("Loaded FracturalCommons");
 		}
 	}
 }
