@@ -32,6 +32,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 	<!-- GODOT VERSION DEFINES (KEEP THIS COMMENT) -->
 	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);GODOT_3_3_3_OR_NEWER</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_0_0_OR_NEWER</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_0_1_OR_NEWER</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_0_2_OR_NEWER</DefineConstants>
@@ -49,8 +50,8 @@
 		<DefineConstants>$(DefineConstants);GODOT_3_3_0_OR_NEWER</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_3_1_OR_NEWER</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_3_2_OR_NEWER</DefineConstants>
-		<DefineConstants>$(DefineConstants);GODOT_3_3</DefineConstants>
+		<DefineConstants>$(DefineConstants);GODOT_3_4</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3</DefineConstants>
-		<DefineConstants>$(DefineConstants);GODOT_3_3_2</DefineConstants>
+		<DefineConstants>$(DefineConstants);GODOT_3_4_3</DefineConstants>
 	</PropertyGroup>
 </Project>
