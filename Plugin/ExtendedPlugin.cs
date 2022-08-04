@@ -1,5 +1,6 @@
 ﻿using Fractural.Plugin.AssetsRegistry;
 using Godot;
+using Godot.Collections;
 using System.Collections.Generic;
 
 #if TOOLS
@@ -22,15 +23,29 @@ namespace Fractural.Plugin
 
 		public IAssetsRegistry AssetsRegistry { get; private set; } = new DefaultAssetsRegistry();
 
+		public abstract string PluginName { get; }
+
 		public override void _EnterTree()
 		{
-
+			Load();
+			GD.PushWarning($"Loaded {PluginName}");
 		}
 
 		public override void _ExitTree()
 		{
+			Unload();
 			for (int i = ManagedControls.Count - 1; i >= 0; i--)
 				DestroyManagedControl(i);
+		}
+
+		protected virtual void Load()
+		{
+
+		}
+
+		protected virtual void Unload()
+		{
+
 		}
 
 		public void AddManagedControl(Control control)
@@ -101,6 +116,28 @@ namespace Fractural.Plugin
 			ManagedControlsType.RemoveAt(index);
 			ManagedControlsData.RemoveAt(index);
 		}
+
+		protected object GetSetting(string title)
+		{
+			return ProjectSettings.GetSetting($"{PluginName}/{title}");
+		}
+
+		protected void AddSetting(string title, Variant.Type type, object value, PropertyHint hint = PropertyHint.None, string hintString = "")
+		{
+			title = SettingPath(title);
+			if (!ProjectSettings.HasSetting(title))
+				ProjectSettings.SetSetting(title, value);
+			var info = new Dictionary
+			{
+				["name"] = title,
+				["type"] = type,
+				["hint"] = hint,
+				["hint_string"] = hintString,
+			};
+			ProjectSettings.AddPropertyInfo(info);
+		}
+
+		private string SettingPath(string title) => $"{PluginName}/{title}";
 	}
 }
 #endif
