@@ -32,9 +32,9 @@ ResourceScriptDirectories=[ "res://" ]
 
 [WAT]
 
-Test_Directory="res://"
-Results_Directory="res://"
-Test_Metadata_Directory="res://"
+Test_Directory="res://tests"
+Results_Directory="res://tests"
+Test_Metadata_Directory="res://tests"
 Tags=PoolStringArray(  )
 Window_Size=Vector2( 1280, 720 )
 Minimize_Window_When_Running_Tests=false
@@ -45,7 +45,6 @@ Cache_Tests=true
 [application]
 
 config/name="FracturalCommons"
-run/main_scene="res://tests/Manual/InspectorCSharpEvents/Testing.tscn"
 boot_splash/image="res://bootsplash.png"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
