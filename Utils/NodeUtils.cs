@@ -1,7 +1,4 @@
 using Godot;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 /// <summary>
 /// Utilities used by Fractural Studios.
@@ -16,7 +13,7 @@ namespace Fractural.Utils
 		/// <summary>
 		/// Checks if a given node is currently in the
 		/// editor scene tab.
-		/// This has only been tested in Godot v3.3.2.
+		/// Tested in Godot v3.4.
 		/// </summary>
 		/// <param name="node">Node being checked</param>
 		/// <returns>True if the Node has the editor's scene tab as one of its parents.</returns>
@@ -27,8 +24,7 @@ namespace Fractural.Utils
 				while (node.GetParent() != null)
 				{
 					node = node.GetParent();
-					// Only tested to work on Godot 3.3
-					if (node.Name == "@@5903")
+					if (node is Viewport && node.GetParent() is ViewportContainer && node.GetParent()?.GetParent() is Control)
 						return true;
 				}
 			}
