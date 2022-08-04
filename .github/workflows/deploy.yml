@@ -1,0 +1,24 @@
+name: Deploy Release Branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy release branch
+    runs-on: ubuntu-latest    
+    steps:
+
+    # Any prerequisite steps
+    - uses: actions/checkout@master
+
+    # Deploy to local repo
+    - name: Deploy
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: gh-pages
+        FOLDER: addons/FracturalCommons
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
