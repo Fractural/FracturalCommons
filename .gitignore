@@ -13,4 +13,6 @@ data_*/
 # Visual studio
 .vs/
 
-FracturalCommonsRelease.zip
+# Tests
+tests/results.xml
+tests/metadata.json
