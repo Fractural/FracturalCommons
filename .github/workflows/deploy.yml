@@ -28,9 +28,18 @@ jobs:
         run: |
           mkdir release
           mv addons/FracturalCommons release
+          pushd release
+          zip -r ../Release.zip *
+          popd
 
       - name: Upload Release
         uses: actions/upload-artifact@v2
         with:
           name: Release
           path: release
+
+      - name: Tagged Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: Release.zip
