@@ -10,12 +10,37 @@ namespace Fractural.Utils
 	public static class EditorHackUtils
 	{
 		public delegate bool PrintTreeCondition(Node node);
-		public static void SearchTree(Node parent, PrintTreeCondition condition)
+		public delegate void WalkTreeCallback(Node node);
+
+		public static void WalkFromTop(Node node, WalkTreeCallback callback)
 		{
-			if (condition(parent))
-				GD.Print(String.Format("Found Node at: \"{0}\"", parent.GetPath()));
-			foreach (Node child in parent.GetChildren())
-				SearchTree(child, condition);
+			// Get root node
+			while (node.GetParent() != null)
+			{
+				node = node.GetParent();
+			}
+			WalkTree(node, callback);
+		}
+
+		public static void WalkTree(Node node, WalkTreeCallback callback)
+		{
+			callback(node);
+			foreach (Node child in node.GetChildren())
+				WalkTree(child, callback);
+		}
+
+		public static void PrintTree(Node node)
+		{
+			PrintTree(node, (currNode) => true);
+		}
+
+		public static void PrintTree(Node node, PrintTreeCondition condition)
+		{
+			WalkTree(node, (currNode) =>
+			{
+				if (condition(currNode))
+					GD.Print(String.Format("Found Node at: \"{0}\"", currNode.GetPath()));
+			});
 		}
 	}
 }

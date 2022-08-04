@@ -1,9 +1,6 @@
 ﻿using Godot;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
 namespace Fractural.Utils
@@ -34,13 +31,15 @@ namespace Fractural.Utils
 					Regex regex = new Regex(@"namespace ([\w.]+)");
 					var match = regex.Match(file.GetAsText());
 					file.Close();
+					var namespacePrefix = "";
 					if (match.Success && match.Groups.Count > 1)
 					{
 						// First matching group is the namespace of this class
-						var type = Type.GetType(match.Groups[1].Value + "." + attachedCSharpScript.ResourcePath.GetFileName());
-						if (type != null)
-							return type;
+						namespacePrefix = match.Groups[1].Value + ".";
 					}
+					var type = Type.GetType(namespacePrefix + attachedCSharpScript.ResourcePath.GetFileName());
+					if (type != null)
+						return type;
 				}
 			}
 			return node.GetType();
