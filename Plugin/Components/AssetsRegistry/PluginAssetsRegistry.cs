@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 using System;
 using Godot;
-using Fractural.Utils;
-using Fractural.Information;
 using System.Collections.Generic;
 
 namespace Fractural.Plugin.AssetsRegistry
 {
-	public interface IAssetsRegistry 
+	public interface IAssetsRegistry
 	{
 		float Scale { get; }
 
@@ -66,7 +64,7 @@ namespace Fractural.Plugin.AssetsRegistry
 		{
 			return processors.Remove(processor);
 		}
-		
+
 		public ReadOnlyCollection<AssetProcessor> GetAssetProcessors()
 		{
 			return new ReadOnlyCollection<AssetProcessor>(processors);
@@ -80,12 +78,12 @@ namespace Fractural.Plugin.AssetsRegistry
 		public T LoadAsset<T>(T asset) where T : class
 		{
 			if (LoadedAssets.ContainsKey(asset))
-				return (T) LoadedAssets[asset];
+				return (T)LoadedAssets[asset];
 			foreach (AssetProcessor processor in processors)
 			{
 				if (processor.CanProcess(asset))
 				{
-					T result = (T) processor.Process(asset);
+					T result = (T)processor.Process(asset);
 					LoadedAssets.Add(asset, result);
 					return result;
 				}
@@ -95,7 +93,7 @@ namespace Fractural.Plugin.AssetsRegistry
 		}
 	}
 
-	#if TOOLS
+#if TOOLS
 	/// <summary>
 	/// Used in the editor, where the scale is retreived
 	/// from the editor's settings.
@@ -103,7 +101,7 @@ namespace Fractural.Plugin.AssetsRegistry
 	public class EditorAssetsRegistry : IAssetsRegistry
 	{
 		const string PluginAbsolutePathPrefix = "res://addons/FracturalVNE";
-		
+
 		private EditorPlugin plugin;
 
 		private float cachedEditorScale = -1;
@@ -111,22 +109,22 @@ namespace Fractural.Plugin.AssetsRegistry
 		{
 			get
 			{
-		#if GODOT_3_3_0_OR_NEWER
+#if GODOT_3_3_0_OR_NEWER
 				return plugin.GetEditorInterface().GetEditorScale();
-		#else
+#else
 				if (cachedEditorScale == -1)
 				{
-			#if GODOT_3_0_0_OR_NEWER
+#if GODOT_3_0_0_OR_NEWER
 					return CalculateCurrentEditorScale_3_0();
-			#elif GODOT_3_1_0_OR_NEWER
+#elif GODOT_3_1_0_OR_NEWER
 					return CalculateCurrentEditorScale_3_1(); 
-			#else
+#else
 					GD.PushError($"Could not fetch editor scale for the current Godot version. ({EngineUtils.CurrentVersionInfo})");
 					return 1;
-			#endif
+#endif
 				} else
 					return cachedEditorScale; 
-		#endif
+#endif
 			}
 		}
 
@@ -149,13 +147,14 @@ namespace Fractural.Plugin.AssetsRegistry
 			return assetsRegistry.LoadAsset<T>(asset);
 		}
 
-		#if GODOT_3_0_0_OR_NEWER
+#if GODOT_3_0_0_OR_NEWER
+		[Obsolete]
 		private float CalculateCurrentEditorScale_3_0()
 		{
 			EditorSettings editorSettings = plugin.GetEditorInterface().GetEditorSettings();
-			
-			int displayScale = (int) editorSettings.GetSetting("interface/editor/display_scale");
-			float customDisplayScale = (int) editorSettings.GetSetting("interface/editor/custom_display_scale");
+
+			int displayScale = (int)editorSettings.GetSetting("interface/editor/display_scale");
+			float customDisplayScale = (int)editorSettings.GetSetting("interface/editor/custom_display_scale");
 
 			switch (displayScale)
 			{
@@ -169,7 +168,7 @@ namespace Fractural.Plugin.AssetsRegistry
 							return 2.0f;
 						else
 							return 1.0f;
-					} 
+					}
 				case 1:
 					return 0.75f;
 				case 2:
@@ -186,14 +185,15 @@ namespace Fractural.Plugin.AssetsRegistry
 					return customDisplayScale;
 			}
 		}
-		#endif
+#endif
 
-		#if GODOT_3_1_0_OR_NEWER
+#if GODOT_3_1_0_OR_NEWER
+		[Obsolete]
 		private float CalculateCurrentEditorScale_3_1()
 		{
 			EditorSettings editorSettings = plugin.GetEditorInterface().GetEditorSettings();
 
-			int dpiMode = (int) editorSettings.GetSetting("interface/editor/hidpi_mode");
+			int dpiMode = (int)editorSettings.GetSetting("interface/editor/hidpi_mode");
 
 			switch (dpiMode)
 			{
@@ -215,7 +215,7 @@ namespace Fractural.Plugin.AssetsRegistry
 					return 1;
 			}
 		}
-		#endif	
+#endif
 	}
-	#endif
+#endif
 }

@@ -79,5 +79,13 @@ namespace Fractural
 		{
 			return "(" + X + "," + Y + ")";
 		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = 1861411795;
+			hashCode = hashCode * -1521134295 + X.GetHashCode();
+			hashCode = hashCode * -1521134295 + Y.GetHashCode();
+			return hashCode;
+		}
 	}
 }
