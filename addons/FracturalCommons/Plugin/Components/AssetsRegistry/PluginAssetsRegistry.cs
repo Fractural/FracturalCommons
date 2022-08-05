@@ -119,7 +119,7 @@ namespace Fractural.Plugin.AssetsRegistry
 #elif GODOT_3_1_0_OR_NEWER
 					return CalculateCurrentEditorScale_3_1(); 
 #else
-					GD.PushError($"Could not fetch editor scale for the current Godot version. ({EngineUtils.CurrentVersionInfo})");
+					GD.PushError($"Could not fetch editor scale for the current Godot version. ({Fractural.Utils.EngineUtils.CurrentVersionInfo})");
 					return 1;
 #endif
 				} else
