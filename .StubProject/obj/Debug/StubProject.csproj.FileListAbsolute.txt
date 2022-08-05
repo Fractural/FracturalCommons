@@ -1,6 +1,0 @@
-C:\Users\Alan\Documents\Godot\Projects\FracturalCommons\.StubProject\bin\Debug\StubProj.dll
-C:\Users\Alan\Documents\Godot\Projects\FracturalCommons\.StubProject\bin\Debug\StubProj.pdb
-C:\Users\Alan\Documents\Godot\Projects\FracturalCommons\.StubProject\obj\Debug\StubProject.csproj.AssemblyReference.cache
-C:\Users\Alan\Documents\Godot\Projects\FracturalCommons\.StubProject\obj\Debug\StubProject.csproj.CoreCompileInputs.cache
-C:\Users\Alan\Documents\Godot\Projects\FracturalCommons\.StubProject\obj\Debug\StubProj.dll
-C:\Users\Alan\Documents\Godot\Projects\FracturalCommons\.StubProject\obj\Debug\StubProj.pdb
