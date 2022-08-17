@@ -110,5 +110,35 @@ namespace Fractural.Utils
 			if (tree.Root.HasNode(name))
 				tree.Root.GetNode(name).QueueFree();
 		}
+		
+		
+		/// <summary>
+		/// Gets all descendants of a type. By default, it includes the root node in the search.
+		/// </summary>
+		/// <typeparam name="T">Specified type to search for</typeparam>
+		/// <param name="node">Root node</param>
+		/// <param name="includeRoot">Should the root node be included in the search</param>
+		/// <returns>List of descendants of type T</returns>
+		public static List<T> GetDescendants<T>(this Node node, bool includeRoot = true)
+		{
+		    List<T> results = new List<T>();
+		    Queue<Node> nodes = new Queue<Node>();
+		    if (includeRoot)
+			nodes.Enqueue(node);
+		    else
+		    {
+			foreach (Node child in node.GetChildren())
+			    nodes.Enqueue(child);
+		    }
+
+		    do
+		    {
+			var currNode = nodes.Dequeue();
+			if (currNode is T castedResult) results.Add(castedResult);
+			foreach (Node child in currNode.GetChildren())
+			    nodes.Enqueue(child);
+		    } while (nodes.Count > 0);
+		    return results;
+		}
 	}
 }
