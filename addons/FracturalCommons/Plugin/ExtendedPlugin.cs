@@ -24,6 +24,11 @@ namespace Fractural.Plugin
 		public IAssetsRegistry AssetsRegistry { get; private set; } = new DefaultAssetsRegistry();
 
 		public abstract string PluginName { get; }
+		public List<EditorInspectorPlugin> ManagedInspectorPlugins { get; } = new List<EditorInspectorPlugin>();
+		public List<EditorImportPlugin> ManagedImportPlugins { get; } = new List<EditorImportPlugin>();
+		public List<EditorExportPlugin> ManagedExportPlugins { get; } = new List<EditorExportPlugin>();
+		public List<EditorSceneImporter> ManagedSceneImportPlugins { get; } = new List<EditorSceneImporter>();
+		public List<EditorSpatialGizmoPlugin> ManagedSpatialGizmoPlugins { get; } = new List<EditorSpatialGizmoPlugin>();
 
 		public override void _EnterTree()
 		{
@@ -34,8 +39,17 @@ namespace Fractural.Plugin
 		public override void _ExitTree()
 		{
 			Unload();
-			for (int i = ManagedControls.Count - 1; i >= 0; i--)
-				DestroyManagedControl(i);
+			for (int i = ManagedControls.Count - 1; i >= 0; i--) DestroyManagedControl(i);
+			foreach (var plugin in ManagedInspectorPlugins) RemoveInspectorPlugin(plugin);
+			foreach (var plugin in ManagedImportPlugins) RemoveImportPlugin(plugin);
+			foreach (var plugin in ManagedExportPlugins) RemoveExportPlugin(plugin);
+			foreach (var plugin in ManagedSceneImportPlugins) RemoveSceneImportPlugin(plugin);
+			foreach (var plugin in ManagedSpatialGizmoPlugins) RemoveSpatialGizmoPlugin(plugin);
+			ManagedInspectorPlugins.Clear();
+			ManagedImportPlugins.Clear();
+			ManagedExportPlugins.Clear();
+			ManagedSceneImportPlugins.Clear();
+			ManagedSpatialGizmoPlugins.Clear();
 		}
 
 		protected virtual void Load()
@@ -46,6 +60,36 @@ namespace Fractural.Plugin
 		protected virtual void Unload()
 		{
 
+		}
+
+		public void AddManagedInspectorPlugin(EditorInspectorPlugin plugin)
+		{
+			ManagedInspectorPlugins.Add(plugin);
+			AddInspectorPlugin(plugin);
+		}
+
+		public void AddManagedImportPlugin(EditorImportPlugin plugin)
+		{
+			ManagedImportPlugins.Add(plugin);
+			AddImportPlugin(plugin);
+		}
+
+		public void AddManagedExportPlugin(EditorExportPlugin plugin)
+		{
+			ManagedExportPlugins.Add(plugin);
+			AddExportPlugin(plugin);
+		}
+
+		public void AddManagedSceneImportPlugin(EditorSceneImporter importer)
+		{
+			ManagedSceneImportPlugins.Add(importer);
+			AddSceneImportPlugin(importer);
+		}
+
+		public void AddManagedSpatialGizmoPlugin(EditorSpatialGizmoPlugin plugin)
+		{
+			ManagedSpatialGizmoPlugins.Add(plugin);
+			AddSpatialGizmoPlugin(plugin);
 		}
 
 		public void AddManagedControl(Control control)
