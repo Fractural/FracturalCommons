@@ -1,7 +1,8 @@
 using Godot;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using GDDictionary = Godot.Collections.Dictionary;
 
 /// <summary>
 /// Utilities used by Fractural Studios.
@@ -81,7 +82,7 @@ namespace Fractural.Utils
 			}
 			return true;
 		}
-		
+
 		/// <summary>
 		/// Getse a property from a Godot Object that is
 		/// casted to a certain type.
@@ -92,7 +93,7 @@ namespace Fractural.Utils
 		/// <returns>The value of the property casted to "T"</returns>
 		public static T Get<T>(this Godot.Object obj, string property)
 		{
-			return (T) obj.Get(property);
+			return (T)obj.Get(property);
 		}
 
 		/// <summary>
@@ -117,7 +118,69 @@ namespace Fractural.Utils
 		/// <returns>The result of the method call, casted to "T"</returns>
 		public static T Call<T>(this Godot.Object obj, string method, params object[] args)
 		{
-			return (T) obj.Call(method, args);
+			return (T)obj.Call(method, args);
+		}
+
+		public static T AsWrapper<T>(this Godot.Object source) where T : GDScriptWrapper
+		{
+			return (T)Activator.CreateInstance(typeof(T), new object[] { source });
+		}
+
+		public static T GetNodeAsWrapper<T>(this Node node, NodePath path) where T : GDScriptWrapper
+		{
+			return node.GetNode(path).AsWrapper<T>();
+		}
+
+		public static T Get<T>(this GDDictionary dictionary, object key, T defaultReturn = default)
+		{
+			if (dictionary.Contains(key))
+				return (T)dictionary[key];
+			return defaultReturn;
+		}
+
+		public static T Get<T>(this GDDictionary dictionary, string key, T defaultReturn = default)
+		{
+			var keys = key.Split(".");
+			for (int i = 0; i < keys.Length; i++)
+			{
+				if (i == keys.Length - 1)
+				{
+					if (dictionary.Contains(key))
+						return (T)dictionary[key];
+					return defaultReturn;
+				}
+				dictionary = dictionary.Get<GDDictionary>(keys[i]);
+				if (dictionary == null)
+					return defaultReturn;
+			}
+			return defaultReturn;
+		}
+
+		public static GDDictionary ToGDDict(this object obj)
+		{
+			GDDictionary dict = new GDDictionary();
+			foreach (var prop in obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+			{
+				dict[prop.Name] = prop.GetValue(obj, null);
+			}
+			return dict;
+		}
+
+		public static Vector2 Lerp(this Vector2 start, Vector2 end, float weight)
+		{
+			return new Vector2(
+				Mathf.Lerp(start.x, end.x, weight),
+				Mathf.Lerp(start.y, end.y, weight)
+			);
+		}
+
+		public static Vector3 Lerp(this Vector3 start, Vector3 end, float weight)
+		{
+			return new Vector3(
+				Mathf.Lerp(start.x, end.x, weight),
+				Mathf.Lerp(start.y, end.y, weight),
+				Mathf.Lerp(start.z, end.z, weight)
+			);
 		}
 	}
 }
