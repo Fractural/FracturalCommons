@@ -2,7 +2,7 @@ using Godot;
 
 namespace Fractural.Plugin.AssetsRegistry
 {
-	public abstract class AssetProcessor
+	public abstract class AssetProcessor : Godot.Reference
 	{
 		public IAssetsRegistry AssetsRegistry { get; set; }
 
@@ -19,6 +19,7 @@ namespace Fractural.Plugin.AssetsRegistry
 
 	public class DynamicFontProcessor : AssetProcessor
 	{
+		public DynamicFontProcessor() { }
 		public DynamicFontProcessor(IAssetsRegistry assetsRegistry) : base(assetsRegistry) { }
 
 		public override bool CanProcess(object asset)
@@ -37,6 +38,7 @@ namespace Fractural.Plugin.AssetsRegistry
 
 	public class TextureProcessor : AssetProcessor
 	{
+		public TextureProcessor() { }
 		public TextureProcessor(IAssetsRegistry assetsRegistry) : base(assetsRegistry) { }
 
 		public override bool CanProcess(object asset)

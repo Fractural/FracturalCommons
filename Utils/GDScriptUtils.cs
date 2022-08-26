@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using GDDictionary = Godot.Collections.Dictionary;
+using GDC = Godot.Collections;
 
 /// <summary>
 /// Utilities used by Fractural Studios.
@@ -181,6 +182,34 @@ namespace Fractural.Utils
 				Mathf.Lerp(start.y, end.y, weight),
 				Mathf.Lerp(start.z, end.z, weight)
 			);
+		}
+
+		public static int FindIndex<T>(this GDC.Array<T> array, System.Predicate<T> predicate)
+		{
+			for (int i = 0; i < array.Count; i++)
+				if (predicate(array[i]))
+					return i;
+			return -1;
+		}
+
+		public static void ForEach<T>(this GDC.Array<T> array, Action<T> action)
+		{
+			foreach (var element in array)
+				action(element);
+		}
+
+		public static void AddRange<T>(this GDC.Array<T> array, IEnumerable<T> enumerable)
+		{
+			foreach (var element in enumerable)
+				array.Add(element);
+		}
+
+		public static T[] ToArray<T>(this GDC.Array<T> array)
+		{
+			var csharpArray = new T[array.Count];
+			for (int i = 0; i < array.Count; i++)
+				csharpArray[i] = array[i];
+			return csharpArray;
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace Fractural.Plugin.AssetsRegistry
 		/// <param name="path"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		T LoadAsset<T>(string path) where T : class;
+		T LoadAsset<T>(string path) where T : Godot.Object;
 
 		/// <summary>
 		/// Loads the scaled version of an existing asset.
@@ -24,17 +24,17 @@ namespace Fractural.Plugin.AssetsRegistry
 		/// <param name="asset"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		T LoadAsset<T>(T asset) where T : class;
+		T LoadAsset<T>(T asset) where T : Godot.Object;
 	}
 
 	/// <summary>
 	/// Used for stanalone builds, where the scale is set
 	/// by the developer.
 	/// </summary>
-	public class DefaultAssetsRegistry : IAssetsRegistry
+	public class DefaultAssetsRegistry : Godot.Reference, IAssetsRegistry
 	{
 		public float Scale { get; set; } = 1;
-		public Dictionary<object, object> LoadedAssets { get; private set; } = new Dictionary<object, object>();
+		public Dictionary<Godot.Object, Godot.Object> LoadedAssets { get; private set; } = new Dictionary<Godot.Object, Godot.Object>();
 		private List<AssetProcessor> processors;
 
 		public DefaultAssetsRegistry()
@@ -70,12 +70,12 @@ namespace Fractural.Plugin.AssetsRegistry
 			return new ReadOnlyCollection<AssetProcessor>(processors);
 		}
 
-		public T LoadAsset<T>(string path) where T : class
+		public T LoadAsset<T>(string path) where T : Godot.Object
 		{
 			return LoadAsset<T>(ResourceLoader.Load<T>(path));
 		}
 
-		public T LoadAsset<T>(T asset) where T : class
+		public T LoadAsset<T>(T asset) where T : Godot.Object
 		{
 			if (LoadedAssets.ContainsKey(asset))
 				return (T)LoadedAssets[asset];
@@ -98,7 +98,7 @@ namespace Fractural.Plugin.AssetsRegistry
 	/// Used in the editor, where the scale is retreived
 	/// from the editor's settings.
 	/// </summary>
-	public class EditorAssetsRegistry : IAssetsRegistry
+	public class EditorAssetsRegistry : Godot.Reference, IAssetsRegistry
 	{
 		const string PluginAbsolutePathPrefix = "res://addons/FracturalVNE";
 
@@ -135,13 +135,13 @@ namespace Fractural.Plugin.AssetsRegistry
 			this.plugin = plugin;
 		}
 
-		public T LoadAsset<T>(string path) where T : class
+		public T LoadAsset<T>(string path) where T : Godot.Object
 		{
 			assetsRegistry.Scale = Scale;
 			return assetsRegistry.LoadAsset<T>(path);
 		}
 
-		public T LoadAsset<T>(T asset) where T : class
+		public T LoadAsset<T>(T asset) where T : Godot.Object
 		{
 			assetsRegistry.Scale = Scale;
 			return assetsRegistry.LoadAsset<T>(asset);
