@@ -6,6 +6,14 @@ namespace Fractural.Plugin
 {
     public abstract class SubPlugin
     {
+        public EditorPlugin Plugin { get; private set; }
+        public virtual string PluginName => "";
+
+        public void Init(EditorPlugin plugin)
+        {
+            Plugin = plugin;
+        }
+
         public virtual void ApplyChanges() { }
         public virtual bool Build() => true;
         public virtual void Clear() { }
@@ -19,7 +27,6 @@ namespace Fractural.Plugin
         public virtual void ForwardSpatialForceDrawOverViewport(Control overlay) { }
         public virtual bool ForwardSpatialGuiInput(Camera camera, InputEvent @event) => false;
         public virtual string[] GetBreakpoints() => null;
-        public virtual string GetPluginName() => "";
         public virtual Dictionary GetState() => null;
         public virtual void SetState(Dictionary state) { }
         public virtual void GetWindowLayout(ConfigFile layout) { }
