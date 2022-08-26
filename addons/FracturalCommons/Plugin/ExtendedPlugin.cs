@@ -11,6 +11,10 @@ namespace Fractural.Plugin
     {
         public IAssetsRegistry AssetsRegistry { get; private set; } = new DefaultAssetsRegistry();
         public abstract string PluginName { get; }
+        public virtual Texture PluginIcon { get; }
+
+        public override string GetPluginName() => PluginName;
+        public override Texture GetPluginIcon() => PluginIcon;
 
         public override void _EnterTree()
         {
@@ -193,6 +197,7 @@ namespace Fractural.Plugin
         public void AddSubPlugin(SubPlugin subPlugin)
         {
             SubPlugins.Add(subPlugin);
+            subPlugin.Init(this);
             subPlugin.Load();
         }
 
@@ -250,7 +255,7 @@ namespace Fractural.Plugin
             {
                 var pluginState = plugin.GetState();
                 if (pluginState != null && pluginState.Keys.Count > 0)
-                    state[plugin.GetPluginName()] = pluginState;
+                    state[plugin.PluginName] = pluginState;
             }
             if (state.Keys.Count > 0)
                 return state;
@@ -259,8 +264,8 @@ namespace Fractural.Plugin
         public override void SetState(Dictionary state)
         {
             foreach (var plugin in SubPlugins)
-                if (state.Contains(plugin.GetPluginName()))
-                    plugin.SetState((Dictionary)state[plugin.GetPluginName()]);
+                if (state.Contains(plugin.PluginName))
+                    plugin.SetState((Dictionary)state[plugin.PluginName]);
         }
         public override void GetWindowLayout(ConfigFile layout) => SubPlugins.ForEach(x => x.GetWindowLayout(layout));
         public override void SetWindowLayout(ConfigFile layout) => SubPlugins.ForEach(x => x.SetWindowLayout(layout));
