@@ -2,7 +2,7 @@
 
 namespace Fractural
 {
-    public struct PropertyListItem
+    public class PropertyListItem
     {
         public string name;
         public Variant.Type type;
@@ -19,14 +19,15 @@ namespace Fractural
             this.usage = usage;
         }
 
-        public static implicit operator Godot.Collections.Dictionary(PropertyListItem item)
+        public Godot.Collections.Dictionary ToGDDict()
         {
-            var dict = new Godot.Collections.Dictionary();
-            dict["name"] = item.name;
-            dict["type"] = item.type;
-            dict["hint_string"] = item.hintString;
-            dict["usage"] = item.usage;
-            return dict;
+            return new Godot.Collections.Dictionary
+            {
+                ["name"] = name,
+                ["type"] = type,
+                ["hint_string"] = hintString,
+                ["usage"] = usage
+            };
         }
     };
 }
