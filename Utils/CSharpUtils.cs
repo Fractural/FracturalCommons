@@ -143,5 +143,39 @@ namespace Fractural.Utils
 			}
 			return reversed;
 		}
+
+		public static T TryGet<T>(this T[] array, int index, T defaultReturn = default(T))
+		{
+			TryGet<T>(array, index, out T result, defaultReturn);
+			return result;
+		}
+
+		public static bool TryGet<T>(this T[] array, int index, out T result, T defaultReturn = default(T))
+		{
+			if (array.Length > index)
+			{
+				result = array[index];
+				return true;
+			}
+			result = defaultReturn;
+			return false;
+		}
+
+		public static T TryGet<T>(this List<T> list, int index, T defaultReturn = default(T))
+		{
+			TryGet<T>(list, index, out T result, defaultReturn);
+			return result;
+		}
+
+		public static bool TryGet<T>(this List<T> list, int index, out T result, T defaultReturn = default(T))
+		{
+			if (list.Count > index)
+			{
+				result = list[index];
+				return true;
+			}
+			result = defaultReturn;
+			return false;
+		}
 	}
 }
