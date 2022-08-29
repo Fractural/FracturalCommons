@@ -6,10 +6,10 @@ namespace Fractural.Plugin
 {
 	public abstract class SubPlugin : Godot.Reference
 	{
-		public EditorPlugin Plugin { get; private set; }
+		public ExtendedPlugin Plugin { get; private set; }
 		public virtual string PluginName => "";
 
-		public void Init(EditorPlugin plugin)
+		public void Init(ExtendedPlugin plugin)
 		{
 			Plugin = plugin;
 		}
