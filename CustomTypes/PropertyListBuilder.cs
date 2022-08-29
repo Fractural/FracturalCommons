@@ -12,7 +12,7 @@ namespace Fractural
 		public PropertyListBuilder() : this(new GDC.Array()) { }
 		public PropertyListBuilder(GDC.Array propertyArray)
 		{
-			PropertyArray = propertyArray;
+			PropertyArray = propertyArray != null ? propertyArray : new GDC.Array();
 		}
 
 		public void AddItem(PropertyListItem item)
