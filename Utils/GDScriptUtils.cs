@@ -211,5 +211,16 @@ namespace Fractural.Utils
 				csharpArray[i] = array[i];
 			return csharpArray;
 		}
+
+		public static Theme GetThemeFromParents(this Node node)
+		{
+			if (node is Control control)
+			{
+				if (control.Theme != null)
+					return control.Theme;
+				return GetThemeFromParents(control.GetParent());
+			}
+			return null;
+		}
 	}
 }
