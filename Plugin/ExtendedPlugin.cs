@@ -216,6 +216,8 @@ namespace Fractural.Plugin
 				subPlugin.Unload();
 		}
 
+		public override void _Process(float delta) => SubPlugins.ForEach(x => x._Process(delta));
+		public override void _PhysicsProcess(float delta) => SubPlugins.ForEach(x => x._PhysicsProcess(delta));
 		public override void ApplyChanges() => SubPlugins.ForEach(x => x.ApplyChanges());
 		public override bool Build()
 		{
