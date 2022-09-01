@@ -14,6 +14,8 @@ namespace Fractural.Plugin
 			Plugin = plugin;
 		}
 
+		public virtual void _Process(float delta) { }
+		public virtual void _PhysicsProcess(float delta) { }
 		public virtual void ApplyChanges() { }
 		public virtual bool Build() => true;
 		public virtual void Clear() { }
