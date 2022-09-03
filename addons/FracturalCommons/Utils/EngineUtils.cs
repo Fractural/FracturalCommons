@@ -1,8 +1,5 @@
-using System.Diagnostics;
 using System.Linq;
 using Godot;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Fractural.Information;
 using System.Text.RegularExpressions;
@@ -22,33 +19,44 @@ namespace Fractural.Utils
 			get
 			{
 				return new VersionInfo(
-					(int) Engine.GetVersionInfo()["major"],
-					(int) Engine.GetVersionInfo()["minor"],
-					(int) Engine.GetVersionInfo()["patch"]
+					(int)Engine.GetVersionInfo()["major"],
+					(int)Engine.GetVersionInfo()["minor"],
+					(int)Engine.GetVersionInfo()["patch"]
 				);
 			}
 		}
 
-#region Version Preprocessor Defines
+		#region Version Preprocessor Defines
 
 		public static VersionInfo[] AllGodotVersions => new VersionInfo[]
 		{
 			"4.0",
 
+			"3.6",
+
+			"3.5",
+
+			"3.4.5",
+			"3.4.4",
+			"3.4.3",
+			"3.4.2",
+			"3.4.1",
+			"3.4.0",
+
 			"3.3.3",
 			"3.3.2",
 			"3.3.1",
 			"3.3.0",
-			
+
 			"3.2.3",
 			"3.2.2",
 			"3.2.1",
 			"3.2.0",
-			
+
 			"3.1.2",
 			"3.1.1",
 			"3.1.0",
-			
+
 			"3.0.6",
 			"3.0.5",
 			"3.0.4",
@@ -81,9 +89,9 @@ namespace Fractural.Utils
 					//		and a major minor version define.
 					if (TryWriteCurrVersion(ref text) | TryWriteCurrVersionMajor(ref text) | TryWriteCurrVersionMajorMinor(ref text))
 						projectFileChanged = true;
-					
+
 					foreach (VersionInfo info in AllGodotVersions)
-					{	
+					{
 						if (CurrentVersionInfo >= info)
 						{
 							if (TryWriteVersionOrNewer(ref text, info))
@@ -104,7 +112,7 @@ namespace Fractural.Utils
 					if (projectFileChanged)
 						atleastOneProjectFilesChanged = true;
 				}
-			
+
 			if (atleastOneProjectFilesChanged)
 			{
 				GD.PushWarning("The Godot version saved in a .csproj is different from the current Godot version so it was overwritten. Please rebuild the solution for the updated .csproj file(s) to take effect.");
@@ -131,7 +139,7 @@ namespace Fractural.Utils
 			}
 
 			if (updatedText != "")
-			{	
+			{
 				text = updatedText;
 				return true;
 			}
@@ -158,7 +166,7 @@ namespace Fractural.Utils
 			}
 
 			if (updatedText != "")
-			{	
+			{
 				text = updatedText;
 				return true;
 			}
@@ -185,7 +193,7 @@ namespace Fractural.Utils
 			}
 
 			if (updatedText != "")
-			{	
+			{
 				text = updatedText;
 				return true;
 			}
@@ -195,7 +203,7 @@ namespace Fractural.Utils
 		private static bool TryWriteVersionOrNewer(ref string text, VersionInfo versionInfo)
 		{
 			Regex regex = new Regex($@"\n\t\t<DefineConstants>\$\(DefineConstants\);GODOT_{versionInfo.Major}_{versionInfo.Minor}_{versionInfo.Patch}_OR_NEWER<\/DefineConstants>", RegexOptions.Compiled);
-			
+
 			var match = regex.Match(text);
 			string updatedText = "";
 			if (match.Success)
@@ -222,7 +230,7 @@ namespace Fractural.Utils
 		private static bool TryRemoveVersionOrNewer(ref string text, VersionInfo versionInfo)
 		{
 			Regex regex = new Regex($@"\n\t\t<DefineConstants>\$\(DefineConstants\);GODOT_{versionInfo.Major}_{versionInfo.Minor}_{versionInfo.Patch}_OR_NEWER<\/DefineConstants>", RegexOptions.Compiled);
-			
+
 			var match = regex.Match(text);
 			string updatedText = "";
 			if (match.Success)
@@ -232,7 +240,7 @@ namespace Fractural.Utils
 			}
 
 			if (updatedText != "")
-			{	
+			{
 				text = updatedText;
 				return true;
 			}
@@ -241,7 +249,7 @@ namespace Fractural.Utils
 
 		private static string AddVersionInfoDefine(string text, string versionInfoDefineString)
 		{
-			string header = "\t<!-- GODOT VERSION DEFINES (KEEP THIS COMMENT) -->\n\t<PropertyGroup>"; 
+			string header = "\t<!-- GODOT VERSION DEFINES (KEEP THIS COMMENT) -->\n\t<PropertyGroup>";
 			// We use this header to group all the versions together. We can't add
 			// names to PropertyGroups so this is the best I could do to reduce
 			// clutter when adding multiple version defines.
@@ -251,7 +259,7 @@ namespace Fractural.Utils
 				return text.Replace("</Project>", header + "\n\t\t" + versionInfoDefineString + "\n\t</PropertyGroup>\n</Project>");
 		}
 
-#endregion
-	
+		#endregion
+
 	}
 }
