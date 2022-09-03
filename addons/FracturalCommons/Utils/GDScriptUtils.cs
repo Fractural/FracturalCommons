@@ -270,18 +270,5 @@ namespace Fractural.Utils
 				previousPoint = point;
 			}
 		}
-
-		/// <summary>
-		/// Draws a filled polygon with one color.
-		/// </summary>
-		/// <param name="item">The drawer</param>
-		/// <param name="points">Points that make up the polygon</param>
-		/// <param name="color">Fill color</param>
-		public static void DrawPolygon(this CanvasItem item, Vector2[] points, Color color)
-		{
-			var polygonColors = new Color[points.Length];
-			polygonColors.Populate(color);
-			item.DrawPolygon(points, polygonColors);
-		}
 	}
 }
