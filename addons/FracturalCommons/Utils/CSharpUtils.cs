@@ -1,3 +1,4 @@
+using System.Text;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -195,6 +196,20 @@ namespace Fractural.Utils
 				type = type.BaseType;
 			}
 			return false;
+		}
+
+		public static string ToElementsString(this Array array)
+		{
+			var result = new StringBuilder();
+			result.Append("[");
+			for (int i = 0; i < array.Length; i++)
+			{
+				result.Append(array.GetValue(i).ToString());
+				if (i < array.Length - 1)
+					result.Append(", ");
+			}
+			result.Append("]");
+			return result.ToString();
 		}
 	}
 }
