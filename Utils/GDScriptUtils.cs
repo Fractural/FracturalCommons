@@ -1,9 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using GDDictionary = Godot.Collections.Dictionary;
-using GDC = Godot.Collections;
 
 /// <summary>
 /// Utilities used by Fractural Studios.
@@ -157,16 +155,6 @@ namespace Fractural.Utils
 			return defaultReturn;
 		}
 
-		public static GDDictionary ToGDDict(this object obj)
-		{
-			GDDictionary dict = new GDDictionary();
-			foreach (var prop in obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-			{
-				dict[prop.Name] = prop.GetValue(obj, null);
-			}
-			return dict;
-		}
-
 		public static Vector2 Lerp(this Vector2 start, Vector2 end, float weight)
 		{
 			return new Vector2(
@@ -184,91 +172,15 @@ namespace Fractural.Utils
 			);
 		}
 
-		public static int FindIndex<T>(this GDC.Array<T> array, System.Predicate<T> predicate)
-		{
-			for (int i = 0; i < array.Count; i++)
-				if (predicate(array[i]))
-					return i;
-			return -1;
-		}
-
-		public static void ForEach<T>(this GDC.Array<T> array, Action<T> action)
-		{
-			foreach (var element in array)
-				action(element);
-		}
-
-		public static void AddRange<T>(this GDC.Array<T> array, IEnumerable<T> enumerable)
-		{
-			foreach (var element in enumerable)
-				array.Add(element);
-		}
-
-		public static T[] ToArray<T>(this GDC.Array<T> array)
-		{
-			var csharpArray = new T[array.Count];
-			for (int i = 0; i < array.Count; i++)
-				csharpArray[i] = array[i];
-			return csharpArray;
-		}
-
-		public static Theme GetThemeFromParents(this Node node)
+		public static Theme GetThemeFromAncestor(this Node node)
 		{
 			if (node is Control control)
 			{
 				if (control.Theme != null)
 					return control.Theme;
-				return GetThemeFromParents(control.GetParent());
+				return GetThemeFromAncestor(control.GetParent());
 			}
 			return null;
-		}
-
-		/// <summary>
-		/// Draws lines that connects one point to the next, with the last point connecting back to the first point. 
-		/// This is workaround for <see cref="CanvasItem.DrawPolyline"/> not handling corners correct (It distorts them in a weird way).
-		/// </summary>
-		/// <param name="item">The drawer</param>
-		/// <param name="points">Points to connect</param>
-		/// <param name="color">Color of the segments</param>
-		/// <param name="width">Width of the segments</param>
-		/// <param name="antialiased">Antialias toggle</param>
-		public static void DrawSegmentedPolyline(this CanvasItem item, Vector2[] points, Color color, float width = 1, bool antialiased = false)
-		{
-			if (points == null || points.Length == 0) return;
-
-			var previousPoint = points[points.Length - 1];
-			foreach (var point in points)
-			{
-				item.DrawLine(previousPoint, point, color, width, antialiased);
-				previousPoint = point;
-			}
-		}
-
-		/// <summary>
-		/// Draws lines that connects one point to the next, with the last point connecting back to the first point. 
-		/// This is workaround for <see cref="CanvasItem.DrawPolyline"/> not handling corners correct (It distorts them in a weird way).
-		/// </summary>
-		/// <param name="item">The drawer</param>
-		/// <param name="points">Points to connect</param>
-		/// <param name="color">Colors of each segment</param>
-		/// <param name="width">Width of all segments</param>
-		/// <param name="antialiased">Antialias toggle</param>
-		public static void DrawSegmentedPolyline(this CanvasItem item, Vector2[] points, Color[] color, float width = 1, bool antialiased = false)
-		{
-			if (points == null || points.Length == 0) return;
-			if (color.Length != points.Length)
-			{
-				GD.PrintErr("DrawSegmentedPolyline: Expected color array to have the same length as the points array!");
-				return;
-			}
-
-			var previousPoint = points[points.Length - 1];
-			int i = 0;
-			foreach (var point in points)
-			{
-				item.DrawLine(previousPoint, point, color[i++], width, antialiased);
-				previousPoint = point;
-			}
 		}
 	}
 }
