@@ -69,7 +69,7 @@ namespace Fractural.Utils
 			// does not exist for versions below 3.0.0.
 		};
 
-		public static void UpdateVersionPreprocessorDefines()
+		public static void GenerateVersionPreprocessorDefines()
 		{
 			var dir = new Directory();
 			List<string> projectFiles = FileUtils.GetDirFiles("res://", true, new[] { "csproj" });

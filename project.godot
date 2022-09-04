@@ -24,6 +24,11 @@ _global_script_class_icons={
 "WATTest": ""
 }
 
+[FracturalCommons]
+
+"Generate CSharp Scripts Table"=true
+"Generate Version Preprocessor Defines"=true
+
 [MonoCustomResourceRegistry]
 
 ClassPrefix=""

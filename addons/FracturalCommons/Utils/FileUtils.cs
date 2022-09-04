@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -15,10 +14,10 @@ namespace Fractural.Utils
 		/// <param name="fileExtensions"></param>
 		/// <returns></returns>
 		public static List<string> GetDirFiles(
-			string rootPath, 
-			bool searchSubDirectories = true, 
-			string[] fileExtensions = null,
-			string[] directoryBlacklist = null)
+			string rootPath,
+			bool searchSubDirectories = true,
+			IEnumerable<string> fileExtensions = null,
+			IEnumerable<string> directoryBlacklist = null)
 		{
 			return GetDirContents(rootPath, searchSubDirectories, fileExtensions, directoryBlacklist).files;
 		}
@@ -31,10 +30,10 @@ namespace Fractural.Utils
 		/// <param name="fileExtensions"></param>
 		/// <returns></returns>
 		public static List<string> GetDirDirectories(
-			string rootPath, 
-			bool searchSubDirectories = true, 
-			string[] fileExtensions = null,
-			string[] directoryBlacklist = null)
+			string rootPath,
+			bool searchSubDirectories = true,
+			IEnumerable<string> fileExtensions = null,
+			IEnumerable<string> directoryBlacklist = null)
 		{
 			return GetDirContents(rootPath, searchSubDirectories, fileExtensions, directoryBlacklist).directories;
 		}
@@ -47,26 +46,19 @@ namespace Fractural.Utils
 		/// <param name="fileExtensions"></param>
 		/// <returns></returns>
 		public static (List<string> files, List<string> directories) GetDirContents(
-			string rootPath, 
+			string rootPath,
 			bool searchSubDirectories = true,
-			string[] fileExtensions = null,
-			string[] directoryBlacklist = null)
+			IEnumerable<string> fileExtensions = null,
+			IEnumerable<string> directoryBlacklist = null)
 		{
 			var fileExtensionsHashSet = fileExtensions == null ? null : new HashSet<string>(fileExtensions);
 			var directoryBlacklistHashset = directoryBlacklist == null ? null : new HashSet<string>(directoryBlacklist);
-			return GetDirContents(rootPath, searchSubDirectories, fileExtensionsHashSet, directoryBlacklistHashset);
+			return GetDirContentsHelper(rootPath, searchSubDirectories, fileExtensionsHashSet, directoryBlacklistHashset);
 		}
 
-		/// <summary>
-		/// Gets all the contents in a directory. This works in standalone builds of the game, as it checks .import files.
-		/// </summary>
-		/// <param name="rootPath"></param>
-		/// <param name="searchSubDirectories"></param>
-		/// <param name="fileExtensions"></param>
-		/// <returns></returns>
-		public static (List<string> files, List<string> directories) GetDirContents(
-			string rootPath, 
-			bool searchSubDirectories = true, 
+		private static (List<string> files, List<string> directories) GetDirContentsHelper(
+			string rootPath,
+			bool searchSubDirectories = true,
 			HashSet<string> fileExtensions = null,
 			HashSet<string> directoryBlacklist = null)
 		{
@@ -86,14 +78,14 @@ namespace Fractural.Utils
 			{
 				GD.PushWarning($"GetDirContents(): An error occured when trying to access the path. Error code: \"{error}\" ");
 			}
-			
+
 			return (files, directories);
 		}
 
 		private static void AddDirContents(
-			Directory directory, 
-			List<string> files, 
-			List<string> directories, 
+			Directory directory,
+			List<string> files,
+			List<string> directories,
 			bool searchSubDirectories = true,
 			HashSet<string> fileExtensions = null,
 			HashSet<string> directoryBlacklist = null)
@@ -109,7 +101,7 @@ namespace Fractural.Utils
 					subDir.Open(path);
 					subDir.ListDirBegin(true, false);
 					directories.Add(path);
-					
+
 					if (searchSubDirectories && (directoryBlacklist == null || (directoryBlacklist != null && !directoryBlacklist.Contains(fileName))))
 					{
 						AddDirContents(subDir, files, directories, searchSubDirectories, fileExtensions);
@@ -125,7 +117,7 @@ namespace Fractural.Utils
 							path = path.TrimSuffix(".import");
 						if (fileExtensions.Contains(path.GetExtension()))
 							files.Add(path);
-					}	
+					}
 				}
 
 				fileName = directory.GetNext();
