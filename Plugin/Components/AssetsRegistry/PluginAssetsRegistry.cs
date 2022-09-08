@@ -100,8 +100,6 @@ namespace Fractural.Plugin.AssetsRegistry
 	/// </summary>
 	public class EditorAssetsRegistry : Godot.Reference, IAssetsRegistry
 	{
-		const string PluginAbsolutePathPrefix = "res://addons/FracturalVNE";
-
 		private EditorPlugin plugin;
 
 		private float cachedEditorScale = -1;
