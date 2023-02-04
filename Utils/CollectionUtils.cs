@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -106,6 +107,34 @@ namespace Fractural.Utils
 			var csharpArray = new T[array.Count];
 			for (int i = 0; i < array.Count; i++)
 				csharpArray[i] = array[i];
+			return csharpArray;
+		}
+
+		public static int FindIndex(this GDC.Array array, System.Predicate<object> predicate)
+		{
+			for (int i = 0; i < array.Count; i++)
+				if (predicate(array[i]))
+					return i;
+			return -1;
+		}
+
+		public static void ForEach(this GDC.Array array, Action<object> action)
+		{
+			foreach (var element in array)
+				action(element);
+		}
+
+		public static void AddRange(this GDC.Array array, IEnumerable enumerable)
+		{
+			foreach (var element in enumerable)
+				array.Add(element);
+		}
+
+		public static T[] ToArray<T>(this GDC.Array array)
+		{
+			var csharpArray = new T[array.Count];
+			for (int i = 0; i < array.Count; i++)
+				csharpArray[i] = (T)array[i];
 			return csharpArray;
 		}
 

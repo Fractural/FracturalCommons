@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 
 /// <summary>
@@ -11,6 +12,24 @@ namespace Fractural.Utils
 	/// </summary>
 	public static class NodeUtils
 	{
+		/// <summary>
+		/// Change all the children of node to be owned by the node.
+		/// </summary>
+		/// <param name="node"></param>
+		public static void OwnSubtree(this Node node)
+		{
+			Queue<Node> nodes = new Queue<Node>();
+			nodes.Enqueue(node);
+			while (nodes.Count > 0)
+			{
+				var queuedNode = nodes.Dequeue();
+				if (queuedNode != node && queuedNode.Owner != node)
+					queuedNode.Owner = node;
+				foreach (Node child in queuedNode.GetChildren())
+					nodes.Enqueue(child);
+			}
+		}
+
 		/// <summary>
 		/// Checks if a given node is currently in the
 		/// editor scene tab.
@@ -183,6 +202,43 @@ namespace Fractural.Utils
 				foreach (Node child in currNode.GetChildren())
 					nodes.Enqueue(child);
 			} while (nodes.Count > 0);
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the first instance of <paramref name="targetNode"/> of type <typeparamref name="T"/> that is a sibiling of <paramref name="targetNode"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of node that is being queried for.</typeparam>
+		/// <param name="targetNode">Target node to query.</param>
+		/// <param name="includeTargetNode">Option to include the <paramref name="targetNode"/> in the checks. This is true by default.</param>
+		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="targetNode"/> or a sibling of <paramref name="targetNode"/></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static T GetSibiling<T>(this Node targetNode, bool includeTargetNode = true) where T : Node
+		{
+			if (targetNode == null)
+				throw new ArgumentNullException(nameof(targetNode));
+			return targetNode.GetParent().GetImmediateChild<T>(includeTargetNode);
+		}
+
+		/// <summary>
+		/// Gets the first instance of <paramref name="node"/> of type <typeparamref name="T"/> that is an immediate child of <paramref name="node"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of node that is being queried for.</typeparam>
+		/// <param name="node">Target node to query.</param>
+		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
+		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or an immediate child of <paramref name="node"/></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static T GetImmediateChild<T>(this Node node, bool includeRoot = false) where T : Node
+		{
+			List<T> results = new List<T>();
+			Queue<Node> nodes = new Queue<Node>();
+			if (includeRoot)
+				nodes.Enqueue(node);
+			else
+			{
+				foreach (Node child in node.GetChildren())
+					if (child is T) return (T)child;
+			}
 			return null;
 		}
 	}
