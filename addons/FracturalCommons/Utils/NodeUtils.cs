@@ -57,12 +57,28 @@ namespace Fractural.Utils
 		/// <param name="node">Node being reparented</param>
 		/// <param name="newParent">New parent for "node"</param>
 		/// <returns>Original parent of "node"</returns>
-		public static Node Reparent(this Node node, Node newParent)
+		public static Node Reparent(this Node node, Node newParent, bool keepGlobalTransform = true)
 		{
 			Node originalParent = node.GetParent();
+			Transform2D globalTransform2D = default;
+			Transform globalTransform = default;
+			if (keepGlobalTransform)
+			{
+				if (node is Node2D node2D)
+					globalTransform2D = node2D.GlobalTransform;
+				else if (node is Spatial spatial)
+					globalTransform = spatial.GlobalTransform;
+			}
 			if (originalParent != null)
 				node.GetParent().RemoveChild(node);
 			newParent.AddChild(node);
+			if (keepGlobalTransform)
+			{
+				if (node is Node2D node2D)
+					node2D.GlobalTransform = globalTransform2D;
+				else if (node is Spatial spatial)
+					spatial.GlobalTransform = globalTransform;
+			}
 			return originalParent;
 		}
 
