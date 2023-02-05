@@ -131,6 +131,83 @@ namespace Fractural.Utils
 				tree.Root.GetNode(name).QueueFree();
 		}
 
+		/// <summary>
+		/// Gets the first ancestor of type <typeparamref name="T"/>
+		/// </summary>
+		/// <typeparam name="T">Specified type to search for</typeparam>
+		/// <param name="node">Root node</param>
+		/// <param name="includeRoot">Should the root be included in the search</param>
+		/// <returns>Ancestor is found. Null otherwise.</returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static T GetAncestor<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (includeRoot && node is T rootCasted)
+				return rootCasted;
+			node = node.GetParent();
+			while (node != null)
+			{
+				if (node is T casted)
+					return casted;
+				node = node.GetParent();
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets all ancestors of type <typeparamref name="T"/>
+		/// </summary>
+		/// <typeparam name="T">Specified type to search for</typeparam>
+		/// <param name="node">Root node</param>
+		/// <param name="includeRoot">Should the root be included in the search</param>
+		/// <returns>Ancestor is found. Null otherwise.</returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static List<T> GetAncestors<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			List<T> results = new List<T>();
+			if (includeRoot && node is T rootCasted)
+				results.Add(rootCasted);
+			node = node.GetParent();
+			while (node != null)
+			{
+				if (node is T casted)
+					results.Add(casted);
+				node = node.GetParent();
+			}
+			return results;
+		}
+
+		/// <summary>
+		/// Gets the first descendant of type <typeparamref name="T"/> using a breadth first search.
+		/// </summary>
+		/// <typeparam name="T">Specified type to search for</typeparam>
+		/// <param name="node">Root node</param>
+		/// <param name="includeRoot">Should the root be included in the search</param>
+		/// <returns>Ancestor is found. Null otherwise.</returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static T GetDescendant<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			Queue<Node> nodes = new Queue<Node>();
+			if (includeRoot)
+				nodes.Enqueue(node);
+			else
+			{
+				foreach (Node child in node.GetChildren())
+					nodes.Enqueue(child);
+			}
+
+			do
+			{
+				var currNode = nodes.Dequeue();
+				if (currNode is T castedResult) return castedResult;
+				foreach (Node child in currNode.GetChildren())
+					nodes.Enqueue(child);
+			} while (nodes.Count > 0);
+			return null;
+		}
+
 
 		/// <summary>
 		/// Gets all descendants of a type. By default, it includes the root node in the search.
@@ -139,8 +216,10 @@ namespace Fractural.Utils
 		/// <param name="node">Root node</param>
 		/// <param name="includeRoot">Should the root node be included in the search</param>
 		/// <returns>List of descendants of type T</returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static List<T> GetDescendants<T>(this Node node, bool includeRoot = true)
 		{
+			if (node == null) throw new ArgumentNullException(nameof(node));
 			List<T> results = new List<T>();
 			Queue<Node> nodes = new Queue<Node>();
 			if (includeRoot)
@@ -162,66 +241,50 @@ namespace Fractural.Utils
 		}
 
 		/// <summary>
-		/// Gets the first ancestor of type <typeparamref name="T"/>
-		/// </summary>
-		/// <typeparam name="T">Specified type to search for</typeparam>
-		/// <param name="node">Root node</param>
-		/// <param name="includeRoot">Should the root be included in the search</param>
-		/// <returns>Ancestor is found. Null otherwise.</returns>
-		public static T GetAncestor<T>(this Node node, bool includeRoot = true) where T : Node
-		{
-			if (includeRoot && node is T casted)
-				return casted;
-			if (node.GetParent() == null)
-				return null;
-			return GetAncestor<T>(node.GetParent(), true);
-		}
-
-		/// <summary>
-		/// Gets the first descendant of type <typeparamref name="T"/> using a breadth first search.
-		/// </summary>
-		/// <typeparam name="T">Specified type to search for</typeparam>
-		/// <param name="node">Root node</param>
-		/// <param name="includeRoot">Should the root be included in the search</param>
-		/// <returns>Ancestor is found. Null otherwise.</returns>
-		public static T GetDescendant<T>(this Node node, bool includeRoot = true) where T : Node
-		{
-			Queue<Node> nodes = new Queue<Node>();
-			if (includeRoot)
-				nodes.Enqueue(node);
-			else
-			{
-				foreach (Node child in node.GetChildren())
-					nodes.Enqueue(child);
-			}
-
-			do
-			{
-				var currNode = nodes.Dequeue();
-				if (currNode is T castedResult) return castedResult;
-				foreach (Node child in currNode.GetChildren())
-					nodes.Enqueue(child);
-			} while (nodes.Count > 0);
-			return null;
-		}
-
-		/// <summary>
-		/// Gets the first instance of <paramref name="targetNode"/> of type <typeparamref name="T"/> that is a sibiling of <paramref name="targetNode"/>.
+		/// Gets the first instance of type <typeparamref name="T"/> that is a sibiling of <paramref name="node"/>.
 		/// </summary>
 		/// <typeparam name="T">Type of node that is being queried for.</typeparam>
-		/// <param name="targetNode">Target node to query.</param>
-		/// <param name="includeTargetNode">Option to include the <paramref name="targetNode"/> in the checks. This is true by default.</param>
-		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="targetNode"/> or a sibling of <paramref name="targetNode"/></returns>
+		/// <param name="node">Target node to query.</param>
+		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
+		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or a sibling of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T GetSibiling<T>(this Node targetNode, bool includeTargetNode = true) where T : Node
+		/// <exception cref="ArgumentException"></exception>
+		public static T GetSibiling<T>(this Node node, bool includeRoot = true) where T : Node
 		{
-			if (targetNode == null)
-				throw new ArgumentNullException(nameof(targetNode));
-			return targetNode.GetParent().GetImmediateChild<T>(includeTargetNode);
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (node.GetParent() == null) throw new ArgumentException("Expected node to have parent.");
+			if (includeRoot && node is T)
+				return (T)node;
+			else
+			{
+				foreach (Node child in node.GetParent().GetChildren())
+					if (child is T) return (T)child;
+			}
+			return null;
+		}
+		/// <summary>
+		/// Gets all instances of type <typeparamref name="T"/> that is a sibiling of <paramref name="node"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of node that is being queried for.</typeparam>
+		/// <param name="node">Target node to query.</param>
+		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
+		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or a sibling of <paramref name="node"/></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
+		public static List<T> GetSiblings<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (node.GetParent() == null) throw new ArgumentException("Expected node to have parent.");
+			List<T> results = new List<T>();
+			if (includeRoot && node is T)
+				results.Add((T)node);
+			foreach (Node child in node.GetParent().GetChildren())
+				if (child is T) results.Add((T)child);
+			return results;
 		}
 
 		/// <summary>
-		/// Gets the first instance of <paramref name="node"/> of type <typeparamref name="T"/> that is an immediate child of <paramref name="node"/>.
+		/// Gets the first instance of type <typeparamref name="T"/> that is a child of <paramref name="node"/>.
 		/// </summary>
 		/// <typeparam name="T">Type of node that is being queried for.</typeparam>
 		/// <param name="node">Target node to query.</param>
@@ -230,16 +293,35 @@ namespace Fractural.Utils
 		/// <exception cref="ArgumentNullException"></exception>
 		public static T GetImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
 		{
-			List<T> results = new List<T>();
-			Queue<Node> nodes = new Queue<Node>();
-			if (includeRoot)
-				nodes.Enqueue(node);
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (includeRoot && node is T)
+				return (T)node;
 			else
 			{
 				foreach (Node child in node.GetChildren())
 					if (child is T) return (T)child;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Gets all instances of type <typeparamref name="T"/> that are children of <paramref name="node"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of node that is being queried for.</typeparam>
+		/// <param name="node">Target node to query.</param>
+		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
+		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or an immediate child of <paramref name="node"/></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static List<T> GetImmediateChildren<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			List<T> results = new List<T>();
+			Queue<Node> nodes = new Queue<Node>();
+			if (includeRoot && node is T)
+				results.Add((T)node);
+			foreach (Node child in node.GetChildren())
+				if (child is T) results.Add((T)child);
+			return results;
 		}
 
 		public static bool HasImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
