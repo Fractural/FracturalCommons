@@ -139,7 +139,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Should the root be included in the search</param>
 		/// <returns>Ancestor is found. Null otherwise.</returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T GetAncestor<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T GetAncestor<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			if (includeRoot && node is T rootCasted)
@@ -151,7 +151,7 @@ namespace Fractural.Utils
 					return casted;
 				node = node.GetParent();
 			}
-			return null;
+			return default(T);
 		}
 
 		/// <summary>
@@ -162,7 +162,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Should the root be included in the search</param>
 		/// <returns>Ancestor is found. Null otherwise.</returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T[] GetAncestors<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T[] GetAncestors<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			List<T> results = new List<T>();
@@ -186,7 +186,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Should the root be included in the search</param>
 		/// <returns>Ancestor is found. Null otherwise.</returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T GetDescendant<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T GetDescendant<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			Queue<Node> nodes = new Queue<Node>();
@@ -205,7 +205,7 @@ namespace Fractural.Utils
 				foreach (Node child in currNode.GetChildren())
 					nodes.Enqueue(child);
 			} while (nodes.Count > 0);
-			return null;
+			return default(T);
 		}
 
 		/// <summary>
@@ -248,18 +248,18 @@ namespace Fractural.Utils
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or a sibling of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="ArgumentException"></exception>
-		public static T GetSibiling<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T GetSibiling<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			if (node.GetParent() == null) throw new ArgumentException("Expected node to have parent.");
-			if (includeRoot && node is T)
-				return (T)node;
+			if (includeRoot && node is T castedRoot)
+				return castedRoot;
 			else
 			{
 				foreach (Node child in node.GetParent().GetChildren())
-					if (child is T) return (T)child;
+					if (child is T castedChild) return castedChild;
 			}
-			return null;
+			return default(T);
 		}
 
 		/// <summary>
@@ -271,15 +271,15 @@ namespace Fractural.Utils
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or a sibling of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="ArgumentException"></exception>
-		public static T[] GetSiblings<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T[] GetSiblings<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			if (node.GetParent() == null) throw new ArgumentException("Expected node to have parent.");
 			List<T> results = new List<T>();
-			if (includeRoot && node is T)
-				results.Add((T)node);
+			if (includeRoot && node is T castedRoot)
+				results.Add(castedRoot);
 			foreach (Node child in node.GetParent().GetChildren())
-				if (child is T) results.Add((T)child);
+				if (child is T castedChild) results.Add(castedChild);
 			return results.ToArray();
 		}
 
@@ -291,17 +291,17 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or an immediate child of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T GetImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T GetImmediateChild<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
-			if (includeRoot && node is T)
-				return (T)node;
+			if (includeRoot && node is T castedRoot)
+				return castedRoot;
 			else
 			{
 				foreach (Node child in node.GetChildren())
-					if (child is T) return (T)child;
+					if (child is T castedChild) return castedChild;
 			}
-			return null;
+			return default(T);
 		}
 
 		/// <summary>
@@ -312,57 +312,57 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or an immediate child of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T[] GetImmediateChildren<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T[] GetImmediateChildren<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			List<T> results = new List<T>();
 			Queue<Node> nodes = new Queue<Node>();
-			if (includeRoot && node is T)
-				results.Add((T)node);
+			if (includeRoot && node is T castedRoot)
+				results.Add(castedRoot);
 			foreach (Node child in node.GetChildren())
-				if (child is T) results.Add((T)child);
+				if (child is T castedChild) results.Add(castedChild);
 			return results.ToArray();
 		}
 
-		public static bool HasImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
+		public static bool HasImmediateChild<T>(this Node node, bool includeRoot = true)
 		{
 			return GetImmediateChild<T>(node, includeRoot) != null;
 		}
 
-		public static bool HasSibiling<T>(this Node node, bool includeRoot = true) where T : Node
+		public static bool HasSibiling<T>(this Node node, bool includeRoot = true)
 		{
 			return GetSibiling<T>(node, includeRoot) != null;
 		}
 
-		public static bool HasDescendant<T>(this Node node, bool includeRoot = true) where T : Node
+		public static bool HasDescendant<T>(this Node node, bool includeRoot = true)
 		{
 			return GetDescendant<T>(node, includeRoot) != null;
 		}
 
-		public static bool HasAncestor<T>(this Node node, bool includeRoot = true) where T : Node
+		public static bool HasAncestor<T>(this Node node, bool includeRoot = true)
 		{
 			return GetAncestor<T>(node, includeRoot) != null;
 		}
 
-		public static bool TryGetImmediateChild<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		public static bool TryGetImmediateChild<T>(this Node node, out T result, bool includeRoot = true)
 		{
 			result = GetImmediateChild<T>(node, includeRoot);
 			return result != null;
 		}
 
-		public static bool TryGetSibling<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		public static bool TryGetSibling<T>(this Node node, out T result, bool includeRoot = true)
 		{
 			result = GetSibiling<T>(node, includeRoot);
 			return result != null;
 		}
 
-		public static bool TryGetDescendant<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		public static bool TryGetDescendant<T>(this Node node, out T result, bool includeRoot = true)
 		{
 			result = GetDescendant<T>(node, includeRoot);
 			return result != null;
 		}
 
-		public static bool TryGetAncestor<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		public static bool TryGetAncestor<T>(this Node node, out T result, bool includeRoot = true)
 		{
 			result = GetAncestor<T>(node, includeRoot);
 			return result != null;
