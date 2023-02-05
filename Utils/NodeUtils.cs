@@ -162,7 +162,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Should the root be included in the search</param>
 		/// <returns>Ancestor is found. Null otherwise.</returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static List<T> GetAncestors<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T[] GetAncestors<T>(this Node node, bool includeRoot = true) where T : Node
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			List<T> results = new List<T>();
@@ -175,7 +175,7 @@ namespace Fractural.Utils
 					results.Add(casted);
 				node = node.GetParent();
 			}
-			return results;
+			return results.ToArray();
 		}
 
 		/// <summary>
@@ -216,7 +216,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Should the root node be included in the search</param>
 		/// <returns>List of descendants of type T</returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static List<T> GetDescendants<T>(this Node node, bool includeRoot = true)
+		public static T[] GetDescendants<T>(this Node node, bool includeRoot = true)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			List<T> results = new List<T>();
@@ -236,7 +236,7 @@ namespace Fractural.Utils
 				foreach (Node child in currNode.GetChildren())
 					nodes.Enqueue(child);
 			} while (nodes.Count > 0);
-			return results;
+			return results.ToArray();
 		}
 
 		/// <summary>
@@ -271,7 +271,7 @@ namespace Fractural.Utils
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or a sibling of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="ArgumentException"></exception>
-		public static List<T> GetSiblings<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T[] GetSiblings<T>(this Node node, bool includeRoot = true) where T : Node
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			if (node.GetParent() == null) throw new ArgumentException("Expected node to have parent.");
@@ -280,7 +280,7 @@ namespace Fractural.Utils
 				results.Add((T)node);
 			foreach (Node child in node.GetParent().GetChildren())
 				if (child is T) results.Add((T)child);
-			return results;
+			return results.ToArray();
 		}
 
 		/// <summary>
@@ -312,7 +312,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or an immediate child of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static List<T> GetImmediateChildren<T>(this Node node, bool includeRoot = true) where T : Node
+		public static T[] GetImmediateChildren<T>(this Node node, bool includeRoot = true) where T : Node
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));
 			List<T> results = new List<T>();
@@ -321,7 +321,7 @@ namespace Fractural.Utils
 				results.Add((T)node);
 			foreach (Node child in node.GetChildren())
 				if (child is T) results.Add((T)child);
-			return results;
+			return results.ToArray();
 		}
 
 		public static bool HasImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
