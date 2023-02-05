@@ -208,7 +208,6 @@ namespace Fractural.Utils
 			return null;
 		}
 
-
 		/// <summary>
 		/// Gets all descendants of a type. By default, it includes the root node in the search.
 		/// </summary>
@@ -262,6 +261,7 @@ namespace Fractural.Utils
 			}
 			return null;
 		}
+
 		/// <summary>
 		/// Gets all instances of type <typeparamref name="T"/> that is a sibiling of <paramref name="node"/>.
 		/// </summary>
