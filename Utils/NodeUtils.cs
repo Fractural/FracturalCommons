@@ -228,7 +228,7 @@ namespace Fractural.Utils
 		/// <param name="includeRoot">Option to include the <paramref name="node"/> in the checks. This is true by default.</param>
 		/// <returns>Node of type <typeparamref name="T"/> that is <paramref name="node"/> or an immediate child of <paramref name="node"/></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static T GetImmediateChild<T>(this Node node, bool includeRoot = false) where T : Node
+		public static T GetImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
 		{
 			List<T> results = new List<T>();
 			Queue<Node> nodes = new Queue<Node>();
@@ -240,6 +240,50 @@ namespace Fractural.Utils
 					if (child is T) return (T)child;
 			}
 			return null;
+		}
+
+		public static bool HasImmediateChild<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			return GetImmediateChild<T>(node, includeRoot) != null;
+		}
+
+		public static bool HasSibiling<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			return GetSibiling<T>(node, includeRoot) != null;
+		}
+
+		public static bool HasDescendant<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			return GetDescendant<T>(node, includeRoot) != null;
+		}
+
+		public static bool HasAncestor<T>(this Node node, bool includeRoot = true) where T : Node
+		{
+			return GetAncestor<T>(node, includeRoot) != null;
+		}
+
+		public static bool TryGetImmediateChild<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		{
+			result = GetImmediateChild<T>(node, includeRoot);
+			return result != null;
+		}
+
+		public static bool TryGetSibling<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		{
+			result = GetSibiling<T>(node, includeRoot);
+			return result != null;
+		}
+
+		public static bool TryGetDescendant<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		{
+			result = GetDescendant<T>(node, includeRoot);
+			return result != null;
+		}
+
+		public static bool TryGetAncestor<T>(this Node node, out T result, bool includeRoot = true) where T : Node
+		{
+			result = GetAncestor<T>(node, includeRoot);
+			return result != null;
 		}
 	}
 }
