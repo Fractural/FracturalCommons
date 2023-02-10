@@ -383,5 +383,20 @@ namespace Fractural.Utils
 			result = GetAncestor<T>(node, includeRoot);
 			return result != null;
 		}
+
+		public static T AddImmediateChild<T>(this Node node) where T : Node, new()
+		{
+			T child = new T();
+			node.AddChild(child);
+			return child;
+		}
+
+		public static T GetOrAddImmediateChild<T>(this Node node) where T : Node, new()
+		{
+			T child = GetImmediateChild<T>(node);
+			if (child == null)
+				child = AddImmediateChild<T>(node);
+			return child;
+		}
 	}
 }
