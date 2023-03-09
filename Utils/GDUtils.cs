@@ -158,6 +158,8 @@ namespace Fractural.Utils
             return null;
         }
 
+        public static string ToGDJSON(this object obj) => JSON.Print(obj);
+
         public static object FromGDJSON(this string json)
         {
             var result = JSON.Parse(json);
