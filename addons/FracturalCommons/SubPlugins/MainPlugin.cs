@@ -27,7 +27,7 @@ namespace Fractural.Commons
 
         public override string PluginName => "Main";
 
-        public override void EnablePlugin()
+        public override void Load()
         {
             Settings.Init(this);
 

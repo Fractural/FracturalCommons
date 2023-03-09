@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using Fractural.Commons;
+using Fractural.Utils;
+using GDC = Godot.Collections;
 
 namespace Tests.Manual
 {
@@ -11,5 +13,11 @@ namespace Tests.Manual
         public int Number { get; set; }
         [Export]
         private string text;
+
+        public GDC.Array Oof()
+        {
+            GD.Print("hello");
+            return GDUtils.GDParams();
+        }
     }
 }

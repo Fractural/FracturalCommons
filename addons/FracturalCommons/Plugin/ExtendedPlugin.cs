@@ -2,13 +2,22 @@
 using Fractural.Utils;
 using Godot;
 using Godot.Collections;
+using System;
+using System.Collections.Generic;
 using GDC = Godot.Collections;
 
 #if TOOLS
 namespace Fractural.Plugin
 {
+    public enum PrintMode
+    {
+        Text,
+        Warning,
+        Error,
+    }
+
     [Tool]
-    public abstract class ExtendedPlugin : EditorPlugin
+    public abstract class ExtendedPlugin : EditorPlugin, ISerializationListener
     {
         public IAssetsRegistry AssetsRegistry { get; protected set; } = new DefaultAssetsRegistry();
         public abstract string PluginName { get; }
@@ -19,15 +28,30 @@ namespace Fractural.Plugin
 
         public override void _EnterTree()
         {
-            Load();
-            GD.PushWarning($"Loaded {PluginName}");
+            try
+            {
+                Load();
+                Print("Loaded succesfully");
+            }
+            catch (Exception e)
+            {
+                Print("Error loading " + e);
+            }
         }
 
         public override void _ExitTree()
         {
-            Unload();
-            UnloadManagedObjects();
-            UnloadSubPlugins();
+            try
+            {
+                Unload();
+                UnloadManagedObjects();
+                UnloadSubPlugins();
+                Print("Unloaded succesfully\n");
+            }
+            catch (Exception e)
+            {
+                Print("Error unloading " + e);
+            }
         }
 
         protected virtual void Load() { }
@@ -49,6 +73,7 @@ namespace Fractural.Plugin
             public ManagedControlType type;
             public Godot.Collections.Dictionary data;
 
+            public ManagedControl() { }
             public ManagedControl(Control control, ManagedControlType type, Dictionary data = null)
             {
                 this.control = control;
@@ -160,7 +185,7 @@ namespace Fractural.Plugin
                     break;
                 case ManagedControlType.Container:
                     RemoveControlFromContainer(
-                        managedControl.Get<CustomControlContainer>("custom_control_container"),
+                        managedControl.data.Get<CustomControlContainer>("custom_control_container"),
                         managedControl.control
                     );
                     break;
@@ -170,7 +195,7 @@ namespace Fractural.Plugin
                 case ManagedControlType.Control:
                     break;
             }
-            managedControl.Free();
+            managedControl.control.QueueFree();
 
             ManagedControls.RemoveAt(index);
         }
@@ -203,10 +228,27 @@ namespace Fractural.Plugin
         }
 
         private string SettingPath(string title) => $"{PluginName}/{title}";
+
+        public void Print(string text, PrintMode mode = PrintMode.Text)
+        {
+            text = $"{PluginName}: {text}";
+            switch (mode)
+            {
+                case PrintMode.Text:
+                    GD.Print(text);
+                    break;
+                case PrintMode.Warning:
+                    GD.PushWarning(text);
+                    break;
+                case PrintMode.Error:
+                    GD.PushError(text);
+                    break;
+            }
+        }
         #endregion
 
         #region SubPlugins
-        public GDC.Array<SubPlugin> SubPlugins { get; } = new GDC.Array<SubPlugin>();
+        public GDC.Array<SubPlugin> SubPlugins { get; set; } = new GDC.Array<SubPlugin>();
 
         public void AddSubPlugin(SubPlugin subPlugin)
         {
@@ -219,6 +261,8 @@ namespace Fractural.Plugin
         {
             foreach (var subPlugin in SubPlugins)
                 subPlugin.Unload();
+            SubPlugins.Clear();
+            SubPlugins = new Array<SubPlugin>();
         }
 
         public override void _Process(float delta) => SubPlugins.ForEach(x => x._Process(delta));
@@ -234,7 +278,7 @@ namespace Fractural.Plugin
         public override void Clear() => SubPlugins.ForEach(x => x.Clear());
         public override void EnablePlugin() => SubPlugins.ForEach(x => x.EnablePlugin());
         public override void DisablePlugin() => SubPlugins.ForEach(x => x.DisablePlugin());
-        public override void Edit(Object @object) => SubPlugins.ForEach(x => x.Edit(@object));
+        public override void Edit(Godot.Object @object) => SubPlugins.ForEach(x => x.Edit(@object));
         public override void ForwardCanvasDrawOverViewport(Control overlay) => SubPlugins.ForEach(x => x.ForwardCanvasDrawOverViewport(overlay));
         public override void ForwardCanvasForceDrawOverViewport(Control overlay) => SubPlugins.ForEach(x => x.ForwardCanvasForceDrawOverViewport(overlay));
         public override bool ForwardCanvasGuiInput(InputEvent @event)
@@ -285,7 +329,7 @@ namespace Fractural.Plugin
         }
         public override void GetWindowLayout(ConfigFile layout) => SubPlugins.ForEach(x => x.GetWindowLayout(layout));
         public override void SetWindowLayout(ConfigFile layout) => SubPlugins.ForEach(x => x.SetWindowLayout(layout));
-        public override bool Handles(Object @object)
+        public override bool Handles(Godot.Object @object)
         {
             foreach (var plugin in SubPlugins)
                 if (plugin.Handles(@object))
@@ -294,6 +338,16 @@ namespace Fractural.Plugin
         }
         public override void MakeVisible(bool visible) => SubPlugins.ForEach(x => x.MakeVisible(visible));
         public override void SaveExternalData() => SubPlugins.ForEach(x => x.SaveExternalData());
+
+        public void OnBeforeSerialize()
+        {
+            _ExitTree();
+        }
+
+        public void OnAfterDeserialize()
+        {
+            _EnterTree();
+        }
         #endregion
     }
 }
