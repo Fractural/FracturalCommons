@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using GDDictionary = Godot.Collections.Dictionary;
+using GDC = Godot.Collections;
 
 /// <summary>
 /// Utilities used by Fractural Studios.
@@ -11,7 +11,7 @@ namespace Fractural.Utils
     /// <summary>
     /// Utilities for Godot Nodes.
     /// </summary>
-    public static class GDScriptUtils
+    public static class GDUtils
     {
         // Bridges the custom GDScipt typing system
         // into the C# world.
@@ -130,31 +130,6 @@ namespace Fractural.Utils
             return node.GetNode(path).AsWrapper<T>();
         }
 
-        public static T Get<T>(this GDDictionary dictionary, object key, T defaultReturn = default)
-        {
-            if (dictionary.Contains(key))
-                return (T)dictionary[key];
-            return defaultReturn;
-        }
-
-        public static T Get<T>(this GDDictionary dictionary, string key, T defaultReturn = default)
-        {
-            var keys = key.Split(".");
-            for (int i = 0; i < keys.Length; i++)
-            {
-                if (i == keys.Length - 1)
-                {
-                    if (dictionary.Contains(key))
-                        return (T)dictionary[key];
-                    return defaultReturn;
-                }
-                dictionary = dictionary.Get<GDDictionary>(keys[i]);
-                if (dictionary == null)
-                    return defaultReturn;
-            }
-            return defaultReturn;
-        }
-
         public static Vector2 Lerp(this Vector2 start, Vector2 end, float weight)
         {
             return new Vector2(
@@ -191,9 +166,14 @@ namespace Fractural.Utils
             return result.Result;
         }
 
-        public static string ToGDJSON(this object obj)
+        public static GDC.Array GDParams(params object[] array)
         {
-            return JSON.Print(obj);
+            var gdArray = new GDC.Array();
+            foreach (var eleme in array)
+                gdArray.Add(eleme);
+            return gdArray;
         }
+
+        public static object[] Params(params object[] array) => array;
     }
 }

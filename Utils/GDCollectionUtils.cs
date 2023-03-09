@@ -75,7 +75,7 @@ namespace Fractural.Utils
         /// <param name="key"></param>
         /// <param name="defaultReturn"></param>
         /// <returns></returns>
-        public static T GetValue<T>(this GDC.Dictionary dictionary, string key, T defaultReturn = default)
+        public static T Get<T>(this GDC.Dictionary dictionary, string key, T defaultReturn = default)
         {
             var keys = key.Split(".");
             for (int i = 0; i < keys.Length; i++)
@@ -86,7 +86,7 @@ namespace Fractural.Utils
                         return (T)dictionary[keys[i]];
                     return defaultReturn;
                 }
-                dictionary = dictionary.GetValue<GDC.Dictionary>(keys[i]);
+                dictionary = dictionary.Get<GDC.Dictionary>(keys[i]);
                 if (dictionary == null)
                     return defaultReturn;
             }
