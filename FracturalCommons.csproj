@@ -31,7 +31,7 @@
 		<DefineConstants>$(DefineConstants);GODOT_3_3_2_OR_NEWER</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3_5</DefineConstants>
 		<DefineConstants>$(DefineConstants);GODOT_3</DefineConstants>
-		<DefineConstants>$(DefineConstants);GODOT_3_5_0</DefineConstants>
+		<DefineConstants>$(DefineConstants);GODOT_3_5_1</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="addons\FracturalCommons\InspectorCSharpEvents\**" />

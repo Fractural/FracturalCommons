@@ -26,14 +26,13 @@ _global_script_class_icons={
 
 [FracturalCommons]
 
-"Generate CSharp Scripts Table"=true
-"Generate Version Preprocessor Defines"=true
-
-[MonoCustomResourceRegistry]
-
-ClassPrefix=""
-SearchType=0
-ResourceScriptDirectories=[ "res://" ]
+Main/GenerateCSharpScriptsTable=false
+Main/GenerateVersionPreprocessorDefines=false
+"C# Resource Registry/ClassPrefix"=""
+"C# Resource Registry/SearchType"=0
+"C# Resource Registry/ResourceScriptDirectories"=[ "res://" ]
+/GenerateCSharpScriptsTable=false
+/GenerateVersionPreprocessorDefines=false
 
 [WAT]
 
@@ -57,6 +56,10 @@ config/icon="res://icon.png"
 [editor_plugins]
 
 enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/WAT/plugin.cfg" )
+
+[mono]
+
+project/assembly_name="FracturalCommons"
 
 [physics]
 
