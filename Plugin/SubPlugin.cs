@@ -12,6 +12,13 @@ namespace Fractural.Plugin
         public void Init(ExtendedPlugin plugin)
         {
             Plugin = plugin;
+            Print($"Loaded successfully");
+        }
+
+        public void Print(string text, PrintMode mode = PrintMode.Text)
+        {
+            text = $"{PluginName}: {text}";
+            Plugin.Print(text, mode);
         }
 
         public virtual void _Process(float delta) { }

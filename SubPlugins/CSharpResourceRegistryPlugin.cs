@@ -59,30 +59,34 @@ namespace Fractural.Commons
         private readonly List<string> customTypes = new List<string>();
         private Button refreshButton;
 
-        public override void EnablePlugin()
+        public override void Load()
         {
             Settings.Init(this);
 
             refreshButton = new Button();
             refreshButton.Text = "CSRG";
 
-            Plugin.AddControlToContainer(CustomControlContainer.Toolbar, refreshButton);
+            Plugin.AddManagedControlToContainer(CustomControlContainer.Toolbar, refreshButton);
             refreshButton.Icon = refreshButton.GetIcon("Reload", "EditorIcons");
             refreshButton.Connect("pressed", this, nameof(OnRefreshPressed));
 
             RefreshCustomClasses();
         }
 
-        public override void DisablePlugin()
+        public override void Unload()
         {
             UnregisterCustomClasses();
-            Plugin.RemoveControlFromContainer(CustomControlContainer.Toolbar, refreshButton);
-            refreshButton.QueueFree();
+            if (refreshButton != null)
+            {
+                Plugin.DestroyManagedControl(refreshButton);
+                refreshButton.QueueFree();
+                refreshButton = null;
+            }
         }
 
         public void RefreshCustomClasses()
         {
-            GD.Print("\nRefreshing Registered Resources...");
+            Print("Refreshing Registered Resources...");
             UnregisterCustomClasses();
             RegisterCustomClasses();
         }
@@ -154,7 +158,7 @@ namespace Fractural.Commons
 
             Plugin.AddCustomType($"{Settings.ClassPrefix}{type.Name}", baseTypeName, script, icon);
             customTypes.Add($"{Settings.ClassPrefix}{type.Name}");
-            GD.Print($"Registered custom type: {type.Name} -> {path}");
+            Print($"Registered custom type: {type.Name} -> {path}");
         }
 
         private static string FindClassPath(Type type)
@@ -240,7 +244,7 @@ namespace Fractural.Commons
             foreach (var script in customTypes)
             {
                 Plugin.RemoveCustomType(script);
-                GD.Print($"Unregister custom resource: {script}");
+                Print($"Unregister custom resource: {script}");
             }
 
             customTypes.Clear();

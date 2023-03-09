@@ -56,7 +56,19 @@ namespace Fractural.Utils
 
         public static string ToElementsString(this IEnumerable enumerable)
         {
-            return "[" + string.Join(", ", enumerable) + "]";
+            StringBuilder builder = new StringBuilder();
+            int count = enumerable.Count();
+            int index = 0;
+            builder.Append("[");
+            foreach (var elem in enumerable)
+            {
+                builder.Append(elem.ToString());
+                if (index < count - 1)
+                    builder.Append(", ");
+                index++;
+            }
+            builder.Append("]");
+            return builder.ToString();
         }
     }
 }
