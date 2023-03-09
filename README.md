@@ -9,3 +9,4 @@ Current features:
 - Custom types
   - Vector2Int
 - Utility classes
+- Registering custom C# nodes and resources to show up in the Create Node and Create Resource menus 
