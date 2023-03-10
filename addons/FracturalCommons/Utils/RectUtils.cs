@@ -27,5 +27,15 @@ namespace Fractural.Utils
 				size
 			);
 		}
+
+		public static Rect2 AddPadding(this Rect2 rect, float padding)
+			=> AddPadding(rect, Vector2.One * padding);
+
+		public static Rect2 AddPadding(this Rect2 rect, Vector2 padding)
+		{
+			rect.Position -= padding;
+			rect.Size += padding * 2f;
+			return rect;
+		}
 	}
 }
