@@ -15,7 +15,7 @@ namespace Fractural.Utils
 			float t = Mathf.Max(0, Mathf.Min(1, (point - lineStart).Dot(lineEnd - lineStart) / l2));
 			Vector2 projection = lineStart + t * (lineEnd - lineStart);
 
-			return projection.DistanceSquaredTo(projection);
+			return point.DistanceSquaredTo(projection);
 		}
 	}
 }
