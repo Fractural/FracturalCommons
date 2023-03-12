@@ -71,6 +71,14 @@ namespace Fractural.Utils
             return builder.ToString();
         }
 
+        public static int IndexOf<T>(this IReadOnlyList<T> list, T element)
+        {
+            for (int i = 0; i < list.Count; i++)
+                if (EqualityComparer<T>.Default.Equals(list[i], element))
+                    return i;
+            return -1;
+        }
+
         #region List Queue Utils
         public static T PeekFront<T>(this IList<T> list, int indexFromFront = 0)
         {
