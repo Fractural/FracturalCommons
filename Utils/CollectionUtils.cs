@@ -70,5 +70,45 @@ namespace Fractural.Utils
             builder.Append("]");
             return builder.ToString();
         }
+
+        #region List Queue Utils
+        public static T PeekFront<T>(this IList<T> list, int indexFromFront = 0)
+        {
+            if (list.Count < (indexFromFront + 1)) return default;
+            return list[indexFromFront];
+        }
+
+        public static T PeekBack<T>(this IList<T> list, int indexFromBack = 0)
+        {
+            if (list.Count < (indexFromBack + 1)) return default;
+            return list[list.Count - indexFromBack];
+        }
+
+        public static void PushBack<T>(this IList<T> list, T element)
+        {
+            list.Add(element);
+        }
+
+        public static void PushFront<T>(this IList<T> list, T element)
+        {
+            list.Insert(0, element);
+        }
+
+        public static T PopBack<T>(this IList<T> list)
+        {
+            if (list.Count == 0) return default;
+            T elem = list[list.Count - 1];
+            list.RemoveAt(list.Count - 1);
+            return elem;
+        }
+
+        public static T PopFront<T>(this IList<T> list)
+        {
+            if (list.Count == 0) return default;
+            T elem = list[0];
+            list.RemoveAt(0);
+            return elem;
+        }
+        #endregion
     }
 }
