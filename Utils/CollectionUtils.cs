@@ -79,6 +79,12 @@ namespace Fractural.Utils
             return -1;
         }
 
+        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
+        {
+            TV value;
+            return dict.TryGetValue(key, out value) ? value : defaultValue;
+        }
+
         #region List Queue Utils
         public static T PeekFront<T>(this IList<T> list, int indexFromFront = 0)
         {
