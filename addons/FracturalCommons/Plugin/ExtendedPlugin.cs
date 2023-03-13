@@ -3,7 +3,6 @@ using Fractural.Utils;
 using Godot;
 using Godot.Collections;
 using System;
-using System.Collections.Generic;
 using GDC = Godot.Collections;
 
 #if TOOLS
@@ -89,20 +88,29 @@ namespace Fractural.Plugin
         public GDC.Array<EditorExportPlugin> ManagedExportPlugins { get; } = new GDC.Array<EditorExportPlugin>();
         public GDC.Array<EditorSceneImporter> ManagedSceneImportPlugins { get; } = new GDC.Array<EditorSceneImporter>();
         public GDC.Array<EditorSpatialGizmoPlugin> ManagedSpatialGizmoPlugins { get; } = new GDC.Array<EditorSpatialGizmoPlugin>();
+        public GDC.Array<string> ManagedCustomTypes { get; } = new GDC.Array<string>();
 
         private void UnloadManagedObjects()
         {
             for (int i = ManagedControls.Count - 1; i >= 0; i--) DestroyManagedControl(i);
+            foreach (var type in ManagedCustomTypes) RemoveCustomType(type);
             foreach (var plugin in ManagedInspectorPlugins) RemoveInspectorPlugin(plugin);
             foreach (var plugin in ManagedImportPlugins) RemoveImportPlugin(plugin);
             foreach (var plugin in ManagedExportPlugins) RemoveExportPlugin(plugin);
             foreach (var plugin in ManagedSceneImportPlugins) RemoveSceneImportPlugin(plugin);
             foreach (var plugin in ManagedSpatialGizmoPlugins) RemoveSpatialGizmoPlugin(plugin);
+            ManagedCustomTypes.Clear();
             ManagedInspectorPlugins.Clear();
             ManagedImportPlugins.Clear();
             ManagedExportPlugins.Clear();
             ManagedSceneImportPlugins.Clear();
             ManagedSpatialGizmoPlugins.Clear();
+        }
+
+        public void AddManagedCustomType(string name, string @base, Script script, Texture icon)
+        {
+            ManagedCustomTypes.Add(name);
+            AddCustomType(name, @base, script, icon);
         }
 
         public void AddManagedInspectorPlugin(EditorInspectorPlugin plugin)

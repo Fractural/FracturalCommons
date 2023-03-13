@@ -76,12 +76,7 @@ namespace Fractural.Commons
         public override void Unload()
         {
             UnregisterCustomClasses();
-            if (refreshButton != null)
-            {
-                Plugin.DestroyManagedControl(refreshButton);
-                refreshButton.QueueFree();
-                refreshButton = null;
-            }
+            refreshButton = null;
         }
 
         public void RefreshCustomClasses()
