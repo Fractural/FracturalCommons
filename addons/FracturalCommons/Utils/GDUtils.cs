@@ -106,6 +106,37 @@ namespace Fractural.Utils
             return obj.Get(property) != null;
         }
 
+        public static bool IsRemoteInspectedObject(Godot.Object obj)
+        {
+            return obj.GetClass() == "ScriptEditorDebuggerInspectedObject";
+        }
+
+        /// <summary>
+        /// Gets a property from a remote Godot Object that is
+        /// casted to a certain type. Remote Godot Objects store all
+        /// their properties under "Members/"
+        /// </summary>
+        /// <param name="obj">Object being checked</param>
+        /// <param name="property">Name of the property</param>
+        /// <typeparam name="T">Type to cast the property's value too</typeparam>
+        /// <returns>The value of the property casted to "T"</returns>
+        public static T GetRemote<T>(this Godot.Object obj, string property)
+        {
+            return (T)obj.Get($"Members/{property}");
+        }
+
+        /// <summary>
+        /// Checks if a Godot Object has a property. Remote Godot Objects store all
+        /// their properties under "Members/"
+        /// </summary>
+        /// <param name="obj">Object being used</param>
+        /// <param name="property">Name of the property</param>
+        /// <returns>True if the object has the property</returns>
+        public static bool HasRemote(this Godot.Object obj, string property)
+        {
+            return obj.Get($"Members/{property}") != null;
+        }
+
         /// <summary>
         /// Calls a method on a Godot Object and returns the 
         /// result as a certain type.
