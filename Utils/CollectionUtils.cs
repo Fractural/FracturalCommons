@@ -79,6 +79,18 @@ namespace Fractural.Utils
             return -1;
         }
 
+        public static void Reverse<T>(this IList<T> list)
+        {
+            int zeroIndexedCount = list.Count - 1;
+            int halfOfCount = list.Count / 2;
+            for (int i = 0; i < halfOfCount; i++)
+            {
+                var temp = list[i];
+                list[i] = list[zeroIndexedCount - i];
+                list[zeroIndexedCount - i] = temp;
+            }
+        }
+
         public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
         {
             TV value;
