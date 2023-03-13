@@ -158,6 +158,16 @@ namespace Fractural.Utils
             return null;
         }
 
+        public static T GetStylebox<T>(this Theme theme, string name, string themeType) where T : StyleBox
+        {
+            return theme.GetStylebox(name, themeType) as T;
+        }
+
+        public static T GetFont<T>(this Theme theme, string name, string themeType) where T : Font
+        {
+            return theme.GetFont(name, themeType) as T;
+        }
+
         public static string ToGDJSON(this object obj) => JSON.Print(obj);
 
         public static object FromGDJSON(this string json)
