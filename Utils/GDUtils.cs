@@ -190,7 +190,7 @@ namespace Fractural.Utils
                 // The node wasn't a control
                 // If we aren't including non control parents in the search, then our search ends here.
                 return null;
-            return GetThemeFromAncestor(node.GetParent());
+            return GetThemeFromAncestor(node.GetParent(), scanNonControlParents);
         }
 
         public static T GetStylebox<T>(this Theme theme, string name, string themeType) where T : StyleBox
