@@ -42,6 +42,6 @@ namespace Fractural.IO
         public const bool CallReadyOnResources = true;
 
         /// Location of the IO.cs file relative to the project folder.
-        public const string IoScriptProjectPath = "addons/FracturalCommons/CustomTypes/IO.cs";
+        public const string IoScriptProjectPath = "addons/FracturalCommons/IO/IO.cs";
     };
 }
