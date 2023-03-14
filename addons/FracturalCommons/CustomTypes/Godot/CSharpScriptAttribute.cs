@@ -101,12 +101,12 @@ namespace Godot
 
         private static readonly object[] __emptyObj = new object[0];
         /// Returns a new instance of the script.
-        public static T New()
+        public static T New(params object[] args)
         {
             var script = GetCSharpScript();
             try
             {
-                var o = script.New();
+                var o = script.New(args);
                 var t = (T)o;
                 if (IOSettings.CallReadyOnResources && typeof(Resource).IsAssignableFrom(typeof(T)))
                 {
