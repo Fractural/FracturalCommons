@@ -97,6 +97,13 @@ namespace Fractural.Utils
             return dict.TryGetValue(key, out value) ? value : defaultValue;
         }
 
+        public static T ElementAt<T>(this IList array, params int[] indices)
+        {
+            for (int i = 0; i < indices.Length - 1; i++)
+                array = (IList)array[indices[i]];
+            return (T)array[indices[indices.Length - 1]];
+        }
+
         #region List Queue Utils
         public static T PeekFront<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {

@@ -182,12 +182,5 @@ namespace Fractural.Utils
             }
             return dict;
         }
-
-        public static T ElementAt<T>(this GDC.Array array, params int[] indices)
-        {
-            for (int i = 0; i < indices.Length - 1; i++)
-                array = (GDC.Array)array[indices[i]];
-            return (T)array[indices[indices.Length - 1]];
-        }
     }
 }
