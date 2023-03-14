@@ -54,9 +54,9 @@ namespace Fractural.IO
             callerPath = callerPath.Replace(System.IO.Path.DirectorySeparatorChar, '/');
             if (!callerPath.EndsWith("/" + IOSettings.IoScriptProjectPath))
             {
-                // If you get the following error, update the constant 'IOToolsSettings.IOSCRIPTPROJPATH' to match THIS file's new project path
-                GD.PushError("Failed to get project path. Path to IO.cs may have changed. Verify that the constant 'IOSCRIPTPROJPATH' in 'IOToolsSettings.cs' is correct.");
-                throw new System.Exception("Failed to get project path. Path to IO.cs may have changed. Verify that the constant 'IOSCRIPTPROJPATH' in 'IOToolsSettings.cs' is correct.");
+                // If you get the following error, update the constant 'IOToolsSettings.IoScriptProjectPath' to match THIS file's new project path
+                GD.PushError("Failed to get project path. Path to IO.cs may have changed. Verify that the constant 'IoScriptProjectPath' in 'IOToolsSettings.cs' is correct.");
+                throw new System.Exception("Failed to get project path. Path to IO.cs may have changed. Verify that the constant 'IoScriptProjectPath' in 'IOToolsSettings.cs' is correct.");
             }
             return callerPath.Remove(callerPath.Length - IOSettings.IoScriptProjectPath.Length);
         }
