@@ -238,6 +238,14 @@ namespace Fractural.Utils
 
         public static object[] Params(params object[] array) => array;
 
+        public static bool TryConnect(this Godot.Object obj, string signal, Godot.Object target, string method, GDC.Array binds = null, uint flags = 0)
+        {
+            if (obj.IsConnected(signal, target, method))
+                return false;
+            obj.Connect(signal, target, method, binds, flags);
+            return true;
+        }
+
         public static T GetMeta<T>(this Godot.Object obj, string key, T defaultReturn = default)
         {
             return (T)obj.GetMeta(key, defaultReturn);
