@@ -178,15 +178,19 @@ namespace Fractural.Utils
             );
         }
 
-        public static Theme GetThemeFromAncestor(this Node node)
+        public static Theme GetThemeFromAncestor(this Node node, bool scanNonControlParents = false)
         {
+            if (node == null) return null;
             if (node is Control control)
             {
                 if (control.Theme != null)
                     return control.Theme;
-                return GetThemeFromAncestor(control.GetParent());
             }
-            return null;
+            else if (!scanNonControlParents)
+                // The node wasn't a control
+                // If we aren't including non control parents in the search, then our search ends here.
+                return null;
+            return GetThemeFromAncestor(node.GetParent());
         }
 
         public static T GetStylebox<T>(this Theme theme, string name, string themeType) where T : StyleBox
