@@ -106,6 +106,27 @@ namespace Fractural.Utils
             return obj.Get(property) != null;
         }
 
+        /// <summary>
+        /// Checks if <paramref name="obj"/> is a remote object of type <typeparamref name="T"/>, 
+        /// such as a node in the remote view of the scene hierarchy when the game is playing.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool IsRemoteInspectedObject<T>(Godot.Object obj) where T : Godot.Object
+        {
+            if (obj.GetClass() != "ScriptEditorDebuggerInspectedObject") return false;
+            var script = obj.Get("script");
+            if (!(script is CSharpScript cSharpScript)) return false;
+            return cSharpScript.ResourcePath == CSharpScript<T>.ResourcePath;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="obj"/> is a remote object, such as a node in 
+        /// the remote view of the scene hierarchy when the game is playing.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static bool IsRemoteInspectedObject(Godot.Object obj)
         {
             return obj.GetClass() == "ScriptEditorDebuggerInspectedObject";
