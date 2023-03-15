@@ -9,7 +9,7 @@ namespace Fractural.Utils
     /// </summary>
     public static class EditorHackUtils
     {
-        public delegate bool PrintTreeCondition(Node node);
+        public delegate bool FindNodesCondition(Node node);
         public delegate void WalkTreeCallback(Node node);
 
         public static void WalkFromTop(Node node, WalkTreeCallback callback)
@@ -47,7 +47,7 @@ namespace Fractural.Utils
             FindNodes(root, (currNode) => true);
         }
 
-        public static void FindNodes(Node root, PrintTreeCondition condition)
+        public static void FindNodes(Node root, FindNodesCondition condition)
         {
             WalkTree(root, (currNode) =>
             {
