@@ -246,6 +246,14 @@ namespace Fractural.Utils
             return true;
         }
 
+        public static bool TryDisconnect(this Godot.Object obj, string signal, Godot.Object target, string method)
+        {
+            if (obj.IsConnected(signal, target, method))
+                return false;
+            obj.Disconnect(signal, target, method);
+            return true;
+        }
+
         public static T GetMeta<T>(this Godot.Object obj, string key, T defaultReturn = default)
         {
             return (T)obj.GetMeta(key, defaultReturn);
