@@ -105,13 +105,13 @@ namespace Fractural.Utils
         }
 
         #region List Queue Utils
-        public static T PeekFront<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
+        public static T PeekFrontReadonly<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {
             if (list.Count < (indexFromFront + 1)) return default;
             return list[indexFromFront];
         }
 
-        public static T PeekBack<T>(this IReadOnlyList<T> list, int indexFromBack = 0)
+        public static T PeekBackReadonly<T>(this IReadOnlyList<T> list, int indexFromBack = 0)
         {
             if (list.Count < (indexFromBack + 1)) return default;
             return list[list.Count - indexFromBack];
