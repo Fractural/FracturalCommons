@@ -248,7 +248,7 @@ namespace Fractural.Utils
 
         public static bool TryDisconnect(this Godot.Object obj, string signal, Godot.Object target, string method)
         {
-            if (obj.IsConnected(signal, target, method))
+            if (!obj.IsConnected(signal, target, method))
                 return false;
             obj.Disconnect(signal, target, method);
             return true;
