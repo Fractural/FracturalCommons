@@ -159,29 +159,29 @@ namespace Fractural.Utils
         #endregion
 
         #region IList Queue Utils
-        public static T PeekFront<T>(this IList list, int indexFromFront = 0)
+        public static T PeekFrontList<T>(this IList list, int indexFromFront = 0)
         {
             if (list.Count < (indexFromFront + 1)) return default;
             return (T)list[indexFromFront];
         }
 
-        public static T PeekBack<T>(this IList list, int indexFromBack = 0)
+        public static T PeekBackList<T>(this IList list, int indexFromBack = 0)
         {
             if (list.Count < (indexFromBack + 1)) return default;
             return (T)list[list.Count - indexFromBack];
         }
 
-        public static void PushBack<T>(this IList list, T element)
+        public static void PushBackList<T>(this IList list, T element)
         {
             list.Add(element);
         }
 
-        public static void PushFront<T>(this IList list, T element)
+        public static void PushFrontList<T>(this IList list, T element)
         {
             list.Insert(0, element);
         }
 
-        public static T PopBack<T>(this IList list)
+        public static T PopBackList<T>(this IList list)
         {
             if (list.Count == 0) return default;
             T elem = (T)list[list.Count - 1];
@@ -189,7 +189,7 @@ namespace Fractural.Utils
             return elem;
         }
 
-        public static T PopFront<T>(this IList list)
+        public static T PopFrontList<T>(this IList list)
         {
             if (list.Count == 0) return default;
             T elem = (T)list[0];
