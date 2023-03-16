@@ -107,28 +107,28 @@ namespace Fractural.Utils
         #region IReadonlyList<T> Queue Utils
         public static T PeekFrontReadonly<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {
-            if (list.Count < (indexFromFront + 1)) return default;
+            if (indexFromFront < 0 || list.Count < (indexFromFront + 1)) return default;
             return list[indexFromFront];
         }
 
         public static T PeekBackReadonly<T>(this IReadOnlyList<T> list, int indexFromBack = 0)
         {
-            if (list.Count < (indexFromBack + 1)) return default;
-            return list[list.Count - indexFromBack];
+            if (indexFromBack < 0 || list.Count < (indexFromBack + 1)) return default;
+            return list[list.Count - 1 - indexFromBack];
         }
         #endregion
 
         #region IList<T> Queue Utils
         public static T PeekFront<T>(this IList<T> list, int indexFromFront = 0)
         {
-            if (list.Count < (indexFromFront + 1)) return default;
+            if (indexFromFront < 0 || list.Count < (indexFromFront + 1)) return default;
             return list[indexFromFront];
         }
 
         public static T PeekBack<T>(this IList<T> list, int indexFromBack = 0)
         {
-            if (list.Count < (indexFromBack + 1)) return default;
-            return list[list.Count - indexFromBack];
+            if (indexFromBack < 0 || list.Count < (indexFromBack + 1)) return default;
+            return list[list.Count - 1 - indexFromBack];
         }
 
         public static void PushBack<T>(this IList<T> list, T element)
@@ -161,14 +161,14 @@ namespace Fractural.Utils
         #region IList Queue Utils
         public static T PeekFrontList<T>(this IList list, int indexFromFront = 0)
         {
-            if (list.Count < (indexFromFront + 1)) return default;
+            if (indexFromFront < 0 || list.Count < (indexFromFront + 1)) return default;
             return (T)list[indexFromFront];
         }
 
         public static T PeekBackList<T>(this IList list, int indexFromBack = 0)
         {
-            if (list.Count < (indexFromBack + 1)) return default;
-            return (T)list[list.Count - indexFromBack];
+            if (indexFromBack < 0 || list.Count < (indexFromBack + 1)) return default;
+            return (T)list[list.Count - 1 - indexFromBack];
         }
 
         public static void PushBackList<T>(this IList list, T element)
