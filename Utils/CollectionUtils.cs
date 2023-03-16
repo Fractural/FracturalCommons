@@ -104,7 +104,7 @@ namespace Fractural.Utils
             return (T)array[indices[indices.Length - 1]];
         }
 
-        #region List Queue Utils
+        #region IReadonlyList<T> Queue Utils
         public static T PeekFrontReadonly<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {
             if (list.Count < (indexFromFront + 1)) return default;
@@ -116,7 +116,9 @@ namespace Fractural.Utils
             if (list.Count < (indexFromBack + 1)) return default;
             return list[list.Count - indexFromBack];
         }
+        #endregion
 
+        #region IList<T> Queue Utils
         public static T PeekFront<T>(this IList<T> list, int indexFromFront = 0)
         {
             if (list.Count < (indexFromFront + 1)) return default;
@@ -151,6 +153,46 @@ namespace Fractural.Utils
         {
             if (list.Count == 0) return default;
             T elem = list[0];
+            list.RemoveAt(0);
+            return elem;
+        }
+        #endregion
+
+        #region IList Queue Utils
+        public static T PeekFront<T>(this IList list, int indexFromFront = 0)
+        {
+            if (list.Count < (indexFromFront + 1)) return default;
+            return (T)list[indexFromFront];
+        }
+
+        public static T PeekBack<T>(this IList list, int indexFromBack = 0)
+        {
+            if (list.Count < (indexFromBack + 1)) return default;
+            return (T)list[list.Count - indexFromBack];
+        }
+
+        public static void PushBack<T>(this IList list, T element)
+        {
+            list.Add(element);
+        }
+
+        public static void PushFront<T>(this IList list, T element)
+        {
+            list.Insert(0, element);
+        }
+
+        public static T PopBack<T>(this IList list)
+        {
+            if (list.Count == 0) return default;
+            T elem = (T)list[list.Count - 1];
+            list.RemoveAt(list.Count - 1);
+            return elem;
+        }
+
+        public static T PopFront<T>(this IList list)
+        {
+            if (list.Count == 0) return default;
+            T elem = (T)list[0];
             list.RemoveAt(0);
             return elem;
         }
