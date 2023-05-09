@@ -26,7 +26,6 @@ _global_script_class_icons={
 
 [FracturalCommons]
 
-Main/GenerateCSharpScriptsTable=false
 Main/GenerateVersionPreprocessorDefines=false
 "C# Resource Registry/ClassPrefix"=""
 "C# Resource Registry/SearchType"=0
