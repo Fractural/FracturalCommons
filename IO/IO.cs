@@ -30,8 +30,6 @@ SOFTWARE.
  
 */
 
-#nullable enable
-
 namespace Fractural.IO
 {
     /// Contains all io extension methods
@@ -600,7 +598,7 @@ namespace Fractural.IO
         /// <param name="typeHint"> String repr of resource type to load. </params>
         /// <param name="noCache"> If true, ignores cached resources and loads a new one. </params>
         /// <returns> The Resource or null if it doesn't exist or there was an error </returns>
-        public static Resource? LoadResourceOrNull(string path, string typeHint = "", bool noCache = false, [CallerFilePath] string callerPath = "")
+        public static Resource LoadResourceOrNull(string path, string typeHint = "", bool noCache = false, [CallerFilePath] string callerPath = "")
         {
             LocalizeIfRelative(ref path, callerPath);
             if (path.Empty())
@@ -633,7 +631,7 @@ namespace Fractural.IO
         /// <param name="typeHint"> String repr of resource type to load. </params>
         /// <param name="noCache"> If true, ignores cached resources and loads a new one. </params>
         /// <returns> The Resource or null if it doesn't exist or there was an error </returns>
-        public static TResource? LoadResourceOrNull<TResource>(string path, string typeHint = "", bool noCache = false, [CallerFilePath] string callerPath = "")
+        public static TResource LoadResourceOrNull<TResource>(string path, string typeHint = "", bool noCache = false, [CallerFilePath] string callerPath = "")
           where TResource : Resource
         {
             LocalizeIfRelative(ref path, callerPath);
