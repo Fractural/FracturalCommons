@@ -1,5 +1,3 @@
-#nullable enable
-
 /*
  
 MIT License
@@ -34,13 +32,13 @@ namespace Godot
     {
         private static readonly bool useGodotWeakPtr = typeof(Godot.Object).IsAssignableFrom(typeof(T));
 
-        private Godot.WeakRef? gdWeak;
-        private System.WeakReference<T>? stdWeak;
+        private Godot.WeakRef gdWeak;
+        private System.WeakReference<T> stdWeak;
 
         /// <summary> Create a new WeakRef with no target. </summary>
         public WeakRef() { }
         /// <summary> Create a new WeakRef pointing to the target provided. </summary>
-        public WeakRef(T? target) { if (target != null) { SetTarget(target); } }
+        public WeakRef(T target) { if (target != null) { SetTarget(target); } }
         /// <summary> Implicit conversion CSharp weak reference to this safer version. </summary>
         public static implicit operator WeakRef<T>(System.WeakReference<T> weak)
           => new WeakRef<T>(weak.TryGetTarget(out var strong) ? strong : null);
@@ -55,7 +53,7 @@ namespace Godot
 
         /// <summary> Sets the target object that is referenced. </summary>
         /// <param name="target"> The new target object. </param>
-        public void SetTarget(T? target)
+        public void SetTarget(T target)
         {
             if (target == null)
             {
@@ -75,7 +73,7 @@ namespace Godot
 
         /// <summary> Tries to get the target reference object. </summary>
         /// <returns> The reference object or null if it is dead or unset. </returns>
-        public T? GetTargetOrNull()
+        public T GetTargetOrNull()
         {
             if (useGodotWeakPtr)
             {
@@ -96,7 +94,7 @@ namespace Godot
         /// <returns> true if the target was retrieved; otherwise, false. </returns>
         public bool TryGetTarget(out T strong)
         {
-            strong = null!; // Try pattern, null ok
+            strong = null; // Try pattern, null ok
             if (useGodotWeakPtr)
             {
                 if (gdWeak != null && gdWeak.GetRef() is T t) { strong = t; return true; }

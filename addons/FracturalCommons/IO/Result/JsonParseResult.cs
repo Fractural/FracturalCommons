@@ -40,7 +40,7 @@ namespace Fractural.Results
 
         protected JsonParseResult() { } //Default constructor for Godot
                                         // See 'from_json_result'
-        public JsonParseResult(JSONParseResult jsonResult = null!) : base("Parse JSON string")
+        public JsonParseResult(JSONParseResult jsonResult = null) : base("Parse JSON string")
         {
             if (jsonResult != null) { FromJsonResult(jsonResult); }
         }

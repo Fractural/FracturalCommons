@@ -34,8 +34,8 @@ namespace Fractural.Results
         private bool hasData = false;
         public override bool HasData => hasData;
 
-        private T data = default!;
-        public void ClearData() { data = default!; }
+        private T data = default;
+        public void ClearData() { data = default; }
 
         public T Data
         {
@@ -51,7 +51,7 @@ namespace Fractural.Results
         public bool TryGetData<U>(out U data)
         {
             if (hasData && Data is U u) { data = u; return true; }
-            else { data = default!; return false; }
+            else { data = default; return false; }
         }
 
 

@@ -32,6 +32,7 @@ Main/GenerateVersionPreprocessorDefines=false
 "C# Resource Registry/ResourceScriptDirectories"=[ "res://" ]
 /GenerateCSharpScriptsTable=false
 /GenerateVersionPreprocessorDefines=false
+Main/GenerateCSharpScriptsTable=false
 
 [WAT]
 

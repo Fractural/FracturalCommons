@@ -41,8 +41,6 @@ SOFTWARE.
   // Report issues to the gist at: https://gist.github.com/cgbeutler/c4f00b98d744ac438b84e8840bbe1740
 */
 
-#nullable enable
-
 namespace Godot
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
@@ -88,7 +86,7 @@ namespace Godot
             }
         }
 
-        private static WeakRef? __csharpScript; //<CSharpScript>
+        private static WeakRef __csharpScript; //<CSharpScript>
         /// Get the CSharpScript Godot Resource
         public static CSharpScript GetCSharpScript()
         {
@@ -120,7 +118,7 @@ namespace Godot
                 GD.PrintErr("Exception in New(): " + e.ToString());
                 GD.PrintStack();
             }
-            return null!;
+            return null;
         }
 
         /// Returns the default value of the specified property.
