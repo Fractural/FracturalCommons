@@ -20,11 +20,12 @@ namespace Fractural.Plugin
         {
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
+
             _searchEntriesPopupMenu = new PopupMenu();
             _searchEntriesPopupMenu.PopupExclusive = false;
+            _searchEntriesPopupMenu.Connect("index_pressed", this, nameof(OnSearchMenuIndexPressed));
             AddChild(_searchEntriesPopupMenu);
 
-            _searchEntriesPopupMenu.Connect("index_pressed", this, nameof(OnSearchMenuIndexPressed));
             GetViewport().Connect("gui_focus_changed", this, nameof(OnFocusChanged));
             Connect("text_changed", this, nameof(OnTextChanged));
         }
@@ -34,7 +35,7 @@ namespace Fractural.Plugin
             if (SearchEntries.Length == 0)
                 return;
             UpdateSearchEntries();
-            PopupResults();
+            PopupSearchEntries();
         }
 
         private void UpdateSearchEntries()
@@ -47,7 +48,7 @@ namespace Fractural.Plugin
                     continue;
                 _searchEntriesPopupMenu.AddItem(entry);
                 index++;
-                if (index >= Limit)
+                if (Limit >= 0 && index >= Limit)
                     return;
             }
         }
@@ -58,7 +59,7 @@ namespace Fractural.Plugin
         private void OnFocusChanged(Control control)
         {
             if (control == this)
-                PopupResults();
+                PopupSearchEntries();
             else
                 _searchEntriesPopupMenu.Hide();
         }
@@ -69,14 +70,22 @@ namespace Fractural.Plugin
             EmitSignal("text_changed", Text);
         }
 
-        private void PopupResults()
+        private async void PopupSearchEntries()
         {
             UpdateSearchEntries();
             var globalRect = GetGlobalRect();
-            globalRect.Position += new Vector2(0, globalRect.Size.y);
+            // Force update to minsize
+            _searchEntriesPopupMenu.RectSize = Vector2.Zero;
+            var searchEntriesGlobalRect = _searchEntriesPopupMenu.GetGlobalRect();
+            if (globalRect.End.y + searchEntriesGlobalRect.Size.y > OS.WindowSize.y)
+                // Show on top, sine there's no room on the bottom
+                searchEntriesGlobalRect.Position = globalRect.Position - new Vector2(0, searchEntriesGlobalRect.Size.y);
+            else
+                // Show on bottom
+                searchEntriesGlobalRect.Position = globalRect.Position + new Vector2(0, globalRect.Size.y);
 
             _searchEntriesPopupMenu.FocusMode = FocusModeEnum.None;
-            _searchEntriesPopupMenu.Popup_(globalRect);
+            _searchEntriesPopupMenu.Popup_(searchEntriesGlobalRect);
         }
 
     }
