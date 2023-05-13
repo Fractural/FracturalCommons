@@ -8,6 +8,16 @@ using GDC = Godot.Collections;
 #if TOOLS
 namespace Fractural.Plugin
 {
+    public interface IManagedLoad
+    {
+        void Load();
+    }
+
+    public interface IManagedUnload
+    {
+        void Unload();
+    }
+
     public enum PrintMode
     {
         Text,
@@ -94,11 +104,31 @@ namespace Fractural.Plugin
         {
             for (int i = ManagedControls.Count - 1; i >= 0; i--) DestroyManagedControl(i);
             foreach (var type in ManagedCustomTypes) RemoveCustomType(type);
-            foreach (var plugin in ManagedInspectorPlugins) RemoveInspectorPlugin(plugin);
-            foreach (var plugin in ManagedImportPlugins) RemoveImportPlugin(plugin);
-            foreach (var plugin in ManagedExportPlugins) RemoveExportPlugin(plugin);
-            foreach (var plugin in ManagedSceneImportPlugins) RemoveSceneImportPlugin(plugin);
-            foreach (var plugin in ManagedSpatialGizmoPlugins) RemoveSpatialGizmoPlugin(plugin);
+            foreach (var plugin in ManagedInspectorPlugins)
+            {
+                if (plugin is IManagedUnload unload) unload.Unload();
+                RemoveInspectorPlugin(plugin);
+            }
+            foreach (var plugin in ManagedImportPlugins)
+            {
+                if (plugin is IManagedUnload unload) unload.Unload();
+                RemoveImportPlugin(plugin);
+            }
+            foreach (var plugin in ManagedExportPlugins)
+            {
+                if (plugin is IManagedUnload unload) unload.Unload();
+                RemoveExportPlugin(plugin);
+            }
+            foreach (var plugin in ManagedSceneImportPlugins)
+            {
+                if (plugin is IManagedUnload unload) unload.Unload();
+                RemoveSceneImportPlugin(plugin);
+            }
+            foreach (var plugin in ManagedSpatialGizmoPlugins)
+            {
+                if (plugin is IManagedUnload unload) unload.Unload();
+                RemoveSpatialGizmoPlugin(plugin);
+            }
             ManagedCustomTypes.Clear();
             ManagedInspectorPlugins.Clear();
             ManagedImportPlugins.Clear();
@@ -117,30 +147,35 @@ namespace Fractural.Plugin
         {
             ManagedInspectorPlugins.Add(plugin);
             AddInspectorPlugin(plugin);
+            if (plugin is IManagedLoad load) load.Load();
         }
 
         public void AddManagedImportPlugin(EditorImportPlugin plugin)
         {
             ManagedImportPlugins.Add(plugin);
             AddImportPlugin(plugin);
+            if (plugin is IManagedLoad load) load.Load();
         }
 
         public void AddManagedExportPlugin(EditorExportPlugin plugin)
         {
             ManagedExportPlugins.Add(plugin);
             AddExportPlugin(plugin);
+            if (plugin is IManagedLoad load) load.Load();
         }
 
         public void AddManagedSceneImportPlugin(EditorSceneImporter importer)
         {
             ManagedSceneImportPlugins.Add(importer);
             AddSceneImportPlugin(importer);
+            if (importer is IManagedLoad load) load.Load();
         }
 
         public void AddManagedSpatialGizmoPlugin(EditorSpatialGizmoPlugin plugin)
         {
             ManagedSpatialGizmoPlugins.Add(plugin);
             AddSpatialGizmoPlugin(plugin);
+            if (plugin is IManagedLoad load) load.Load();
         }
 
         public void AddManagedControl(Control control)
