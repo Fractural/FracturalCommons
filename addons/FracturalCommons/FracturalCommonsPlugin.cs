@@ -6,7 +6,7 @@ using Godot;
 namespace Fractural.Commons
 {
     [Tool]
-    public class Plugin : ExtendedPlugin
+    public class FracturalCommonsPlugin : ExtendedPlugin
     {
         public override string PluginName => "FracturalCommons";
 
@@ -14,6 +14,7 @@ namespace Fractural.Commons
         {
             AddSubPlugin(new MainPlugin());
             AddSubPlugin(new CSharpResourceRegistryPlugin());
+            AddSubPlugin(new EditorUtilsPlugin());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using Fractural.Commons;
+using Godot;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -44,5 +45,12 @@ namespace Fractural.Utils
             }
             return node.GetType();
         }
+
+#if TOOLS
+        public static void SoloEditorPopup(this Popup popup, Action callPopupFunc = null)
+        {
+            EditorUtilsPlugin.Global.SoloPopup(popup, callPopupFunc);
+        }
+#endif
     }
 }

@@ -227,7 +227,7 @@ namespace Fractural.Commons
 
         private static IEnumerable<Type> GetCustomRegisteredTypes()
         {
-            var assembly = Assembly.GetAssembly(typeof(Plugin));
+            var assembly = Assembly.GetAssembly(typeof(FracturalCommonsPlugin));
             return assembly.GetTypes().Where(t => !t.IsAbstract
                 && Attribute.IsDefined(t, typeof(RegisteredTypeAttribute))
                 && (t.IsSubclassOf(typeof(Node)) || t.IsSubclassOf(typeof(Resource)))

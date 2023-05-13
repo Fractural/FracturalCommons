@@ -39,4 +39,7 @@
 		<EmbeddedResource Remove="addons\FracturalCommons\InspectorCSharpEvents\**" />
 		<EmbeddedResource Remove="addons\FracturalCommons\Misc\**" />
 	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="addons\FracturalCommons\Plugin\Components\NewFolder\" />
+	</ItemGroup>
 </Project>

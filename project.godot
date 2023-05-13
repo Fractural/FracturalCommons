@@ -55,7 +55,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/WAT/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/TestPlugin/plugin.cfg", "res://addons/WAT/plugin.cfg" )
 
 [mono]
 
