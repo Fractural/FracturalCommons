@@ -90,10 +90,12 @@ namespace Fractural.Plugin
             RectSize = popupSize;
         }
 
-        private void OnPopup()
+        private async void OnPopup()
         {
             _searchBar.GrabFocus();
             _searchEntriesItemList.RectMinSize = Vector2.Zero;
+
+            await ToSignal(GetTree(), "idle_frame");
 
             // Reset entries
             UpdateSearchEntries();

@@ -97,8 +97,9 @@ namespace Fractural.Plugin
             RectSize = popupSize;
         }
 
-        private void OnPopup()
+        private async void OnPopup()
         {
+            await ToSignal(GetTree(), "idle_frame");
             UpdateSizing();
         }
     }
