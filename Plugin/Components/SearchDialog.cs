@@ -11,7 +11,18 @@ namespace Fractural.Plugin
         public delegate void EntrySelected(string entry);
 
         [Export]
-        public string[] SearchEntries { get; set; } = new string[0];
+        private string[] _searchEntries = new string[0];
+        public string[] SearchEntries
+        {
+            get => _searchEntries;
+            set
+            {
+                var old = _searchEntries;
+                _searchEntries = value;
+                if (old != _searchEntries && IsInsideTree())
+                    UpdateSearchEntries();
+            }
+        }
         [Export]
         public bool CaseSensitive { get; set; } = false;
 

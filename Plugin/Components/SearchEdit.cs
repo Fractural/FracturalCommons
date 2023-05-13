@@ -8,7 +8,18 @@ namespace Fractural.Plugin
     public class SearchEdit : LineEdit
     {
         [Export]
-        public string[] SearchEntries { get; set; } = new string[0];
+        private string[] _searchEntries = new string[0];
+        public string[] SearchEntries
+        {
+            get => _searchEntries;
+            set
+            {
+                var old = _searchEntries;
+                _searchEntries = value;
+                if (old != _searchEntries && IsInsideTree())
+                    UpdateSearchEntries();
+            }
+        }
         [Export]
         public int Limit { get; set; } = 5;
         [Export]
