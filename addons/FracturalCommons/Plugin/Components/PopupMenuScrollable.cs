@@ -42,7 +42,7 @@ namespace Fractural.Plugin
         public void Clear()
         {
             _items.Clear();
-            if (GetParent() != null)
+            if (IsInsideTree())
                 UpdateSizing();
         }
 
@@ -57,7 +57,7 @@ namespace Fractural.Plugin
             if (idx < 0)
                 idx = _items.Count;
             _items.Insert(idx, label);
-            if (GetParent() != null)
+            if (IsInsideTree())
             {
                 _itemList.AddItem(label);
                 UpdateSizing();
@@ -67,7 +67,7 @@ namespace Fractural.Plugin
         public void RemoveItem(int idx)
         {
             _items.RemoveAt(idx);
-            if (GetParent() != null)
+            if (IsInsideTree())
             {
                 _itemList.RemoveItem(idx);
                 UpdateSizing();

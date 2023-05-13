@@ -13,7 +13,18 @@ namespace Fractural.Plugin
         [Export]
         public Vector2 MaxSize { get; set; } = new Vector2(300, 600);
         [Export]
-        public string[] SearchEntries { get; set; } = new string[0];
+        private string[] _searchEntries = new string[0];
+        public string[] SearchEntries
+        {
+            get => _searchEntries;
+            set
+            {
+                var old = _searchEntries;
+                _searchEntries = value;
+                if (old != _searchEntries && IsInsideTree())
+                    UpdateSearchEntries();
+            }
+        }
         [Export]
         public bool CaseSensitive { get; set; } = false;
         [Export]
