@@ -51,6 +51,11 @@ namespace Fractural.Utils
         {
             EditorUtilsPlugin.Global.SoloWindowPopup(window, callPopupFunc);
         }
+
+        public static void BuildCSharpSolution()
+        {
+            EditorUtilsPlugin.Global.BuildCSharpSolution();
+        }
 #endif
     }
 }
