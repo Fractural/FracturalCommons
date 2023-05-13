@@ -10,14 +10,15 @@ namespace Fractural.Plugin
 {
     [CSharpScript]
     [Tool]
-    public class NodeSelectPopup : AcceptDialog
+    public class NodeSelectDialog : AcceptDialog
     {
         [Signal]
         public delegate void NodeSelected(Node node);
 
-        private LineEdit searchBar;
-        private Tree nodeTree;
-        private Node currentNode;
+        public Node CurrentNode { get; set; }
+
+        private LineEdit _searchBar;
+        private Tree _nodeTree;
 
         public override void _Ready()
         {
@@ -33,46 +34,47 @@ namespace Fractural.Plugin
             RectSize = new Vector2(400, 200);
             WindowTitle = "Select a Node";
 
-            searchBar = new LineEdit();
-            searchBar.PlaceholderText = "Filter nodes";
-            searchBar.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
-            searchBar.RightIcon = GetIcon("Search", "EditorIcons");
+            _searchBar = new LineEdit();
+            _searchBar.PlaceholderText = "Filter nodes";
+            _searchBar.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            _searchBar.RightIcon = GetIcon("Search", "EditorIcons");
 
-            nodeTree = new Tree();
-            nodeTree.SizeFlagsHorizontal = nodeTree.SizeFlagsVertical = (int)SizeFlags.ExpandFill;
+            _nodeTree = new Tree();
+            _nodeTree.SizeFlagsHorizontal = _nodeTree.SizeFlagsVertical = (int)SizeFlags.ExpandFill;
 
             var vBox = new VBoxContainer();
             vBox.SizeFlagsHorizontal = vBox.SizeFlagsVertical = (int)SizeFlags.ExpandFill;
-            vBox.AddChild(searchBar);
-            vBox.AddChild(nodeTree);
+            vBox.AddChild(_searchBar);
+            vBox.AddChild(_nodeTree);
 
             var marginContainer = new MarginContainer();
             marginContainer.AddChild(vBox);
             AddChild(marginContainer);
             marginContainer.SetAnchorsAndMarginsPreset(LayoutPreset.Wide);
 
-            searchBar.Connect("text_changed", this, nameof(OnSearchBarTextChanged));
-            nodeTree.Connect("item_activated", this, nameof(OnItemActivated));
-            nodeTree.Connect("item_selected", this, nameof(OnItemSelected));
+            _searchBar.Connect("text_changed", this, nameof(OnSearchBarTextChanged));
+            _nodeTree.Connect("item_activated", this, nameof(OnItemActivated));
+            _nodeTree.Connect("item_selected", this, nameof(OnItemSelected));
+
+            Connect("about_to_show", this, nameof(UpdateTree));
         }
 
         public void Popup(Node node)
         {
-            currentNode = node;
-            UpdateTree();
+            CurrentNode = node;
             PopupCenteredRatio();
         }
 
         public void UpdateTree()
         {
-            nodeTree.Clear();
+            _nodeTree.Clear();
 
             HashSet<Node> validNodes = null;
-            if (searchBar.Text != "")
+            if (_searchBar.Text != "")
             {
-                string lowercaseSearchText = searchBar.Text.ToLower();
+                string lowercaseSearchText = _searchBar.Text.ToLower();
                 var nodes = new List<Node>();
-                GetNodesRecursive(currentNode, nodes);
+                GetNodesRecursive(CurrentNode, nodes);
                 validNodes = nodes.Where(x => x.Name.ToLower().Find(lowercaseSearchText) > -1).ToHashSet();
                 // We clone an array from validNodes to allow us to add whilst traversing.
                 foreach (Node validNode in validNodes.ToArray())
@@ -86,7 +88,7 @@ namespace Fractural.Plugin
                     }
                 }
             }
-            CreateTreeRecursive(currentNode, null, validNodes);
+            CreateTreeRecursive(CurrentNode, null, validNodes);
         }
 
         private void OnCancelled()
@@ -113,7 +115,7 @@ namespace Fractural.Plugin
             if (validNodes != null && !validNodes.Contains(node))
                 return;
 
-            var item = nodeTree.CreateItem(parent);
+            var item = _nodeTree.CreateItem(parent);
             item.SetIcon(0, this.GetIconRecursive(node));
             item.SetText(0, node.Name);
             item.SetMeta("node", node);
@@ -124,7 +126,7 @@ namespace Fractural.Plugin
 
         private void OnItemActivated()
         {
-            EmitSignal(nameof(NodeSelected), nodeTree.GetSelected().GetMeta("node"));
+            EmitSignal(nameof(NodeSelected), _nodeTree.GetSelected().GetMeta("node"));
             Visible = false;
         }
 

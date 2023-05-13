@@ -10,7 +10,7 @@ namespace Fractural.Commons
         public override string PluginName => "Editor Utils";
 
         private ColorRect _tintRect;
-        private Popup _currSoloPopup;
+        private WindowDialog _currSoloWindow;
 
         public override async void Load()
         {
@@ -31,25 +31,26 @@ namespace Fractural.Commons
         /// <summary>
         /// Makes a popup that has a tint
         /// </summary>
-        public void SoloPopup(Popup popup, System.Action callPopupFunc = null)
+        public void SoloWindowPopup(WindowDialog window, System.Action callPopupFunc = null)
         {
-            if (_currSoloPopup != null)
-                OnSoloPopupHide();
-            _currSoloPopup = popup;
+            if (_currSoloWindow != null)
+                OnSoloWindowHide();
+            _currSoloWindow = window;
             if (callPopupFunc == null)
-                _currSoloPopup.PopupCentered();
+                _currSoloWindow.PopupCentered();
             else
                 callPopupFunc();
             _tintRect.Visible = true;
-            _currSoloPopup.Connect("popup_hide", this, nameof(OnSoloPopupHide));
+            GD.Print("tint_rect", _tintRect, _tintRect.Visible);
+            _currSoloWindow.Connect("popup_hide", this, nameof(OnSoloWindowHide));
         }
 
-        private void OnSoloPopupHide()
+        private void OnSoloWindowHide()
         {
-            if (_currSoloPopup.Visible)
-                _currSoloPopup.Hide();
-            _currSoloPopup.Disconnect("popup_hide", this, nameof(OnSoloPopupHide));
-            _currSoloPopup = null;
+            if (_currSoloWindow.Visible)
+                _currSoloWindow.Hide();
+            _currSoloWindow.Disconnect("popup_hide", this, nameof(OnSoloWindowHide));
+            _currSoloWindow = null;
             _tintRect.Visible = false;
         }
 

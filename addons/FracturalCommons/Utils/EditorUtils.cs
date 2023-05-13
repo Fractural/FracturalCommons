@@ -47,9 +47,9 @@ namespace Fractural.Utils
         }
 
 #if TOOLS
-        public static void SoloEditorPopup(this Popup popup, Action callPopupFunc = null)
+        public static void SoloEditorWindowPopup(this WindowDialog window, Action callPopupFunc = null)
         {
-            EditorUtilsPlugin.Global.SoloPopup(popup, callPopupFunc);
+            EditorUtilsPlugin.Global.SoloWindowPopup(window, callPopupFunc);
         }
 #endif
     }
