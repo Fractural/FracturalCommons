@@ -146,11 +146,16 @@ namespace TestPlugin
             testPopupSearchButton.Text = "Test Popup Search";
             testPopupSearchButton.Connect("pressed", this, nameof(OnTestPopupSearch));
 
+            var testBuildCSharpSolutionButton = new Button();
+            testBuildCSharpSolutionButton.Text = "Test Build CSharp Solution";
+            testBuildCSharpSolutionButton.Connect("pressed", this, nameof(OnTestBuildCSharpSolution));
+
             var hBox = new HBoxContainer();
             hBox.AddChild(testNodeSelectPopupButton);
             hBox.AddChild(testSearchPopupButton);
             hBox.AddChild(testPopupMenuScrollableButton);
             hBox.AddChild(testPopupSearchButton);
+            hBox.AddChild(testBuildCSharpSolutionButton);
             hBox.AddChild(_searchEdit);
 
             var vBox = new VBoxContainer();
@@ -212,6 +217,11 @@ namespace TestPlugin
         private void OnSearchEditTextChanged(string text)
         {
             _infoText.Text = $"{nameof(SearchEdit)}: Text changed to \"{text}\"";
+        }
+
+        private void OnTestBuildCSharpSolution()
+        {
+            EditorUtils.BuildCSharpSolution();
         }
     }
 }
