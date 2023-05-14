@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 #if TOOLS
 namespace Fractural.Plugin
@@ -23,8 +24,10 @@ namespace Fractural.Plugin
             set
             {
                 if (GetEditedObject() != null)
-                    GetEditedObject().Set(GetEditedProperty(), value);
+                    // This property is used as an editor property
+                    EmitChanged(GetEditedProperty(), value);
                 else
+                    // This property is used manually with a value override
                     _overrideEditedPropertyValue = value;
             }
         }

@@ -15,7 +15,15 @@ namespace Fractural.Plugin
         [Signal]
         public delegate void NodeSelected(Node node);
 
+        /// <summary>
+        /// Root node to build the node tree that's shown inside the dialog.
+        /// </summary>
         public Node CurrentNode { get; set; }
+        /// <summary>
+        /// Function that determines whether a node should be
+        /// shown in the dialog or not.
+        /// </summary>
+        public Func<Node, bool> NodeConditionFunc { get; set; } = (x) => true;
 
         private LineEdit _searchBar;
         private Tree _nodeTree;
@@ -69,26 +77,34 @@ namespace Fractural.Plugin
         {
             _nodeTree.Clear();
 
-            HashSet<Node> validNodes = null;
-            if (_searchBar.Text != "")
+            // Key:   Node
+            // Value: Whether the Node (stored as the key) meets NodeConditionFunc
+            Dictionary<Node, bool> validNodeAndConditionDict = new Dictionary<Node, bool>();
+
+            string lowercaseSearchText = _searchBar.Text.ToLower();
+            var nodes = new List<Node>();
+            GetNodesRecursive(CurrentNode, nodes);
+            foreach (var node in nodes)
             {
-                string lowercaseSearchText = _searchBar.Text.ToLower();
-                var nodes = new List<Node>();
-                GetNodesRecursive(CurrentNode, nodes);
-                validNodes = nodes.Where(x => x.Name.ToLower().Find(lowercaseSearchText) > -1).ToHashSet();
-                // We clone an array from validNodes to allow us to add whilst traversing.
-                foreach (Node validNode in validNodes.ToArray())
+                if ((lowercaseSearchText == "" || node.Name.ToLower().Find(lowercaseSearchText) > -1) && NodeConditionFunc(node))
+                    validNodeAndConditionDict.Add(node, true);
+            }
+
+            // We clone an array from validNodes to allow us to add whilst traversing.
+            foreach (Node validNode in validNodeAndConditionDict.Keys.ToArray())
+            {
+                // Add parents of the valid nodes
+                var parent = validNode.GetParent();
+                while (parent != CurrentNode.GetParent())
                 {
-                    // Add parents of the valid nodes
-                    var parent = validNode.GetParent();
-                    while (parent != null)
-                    {
-                        validNodes.Add(parent);
-                        parent = parent.GetParent();
-                    }
+                    // If validNodes doesn't already contain the parent, then it must mean
+                    // this parent didn't meet the condition
+                    if (!validNodeAndConditionDict.ContainsKey(parent))
+                        validNodeAndConditionDict.Add(parent, false);
+                    parent = parent.GetParent();
                 }
             }
-            CreateTreeRecursive(CurrentNode, null, validNodes);
+            CreateTreeRecursive(CurrentNode, null, validNodeAndConditionDict);
         }
 
         private void OnCancelled()
@@ -108,20 +124,31 @@ namespace Fractural.Plugin
                 GetNodesRecursive(child, list);
         }
 
-        private void CreateTreeRecursive(Node node, TreeItem parent, HashSet<Node> validNodes)
+        private void CreateTreeRecursive(Node node, TreeItem parent, Dictionary<Node, bool> validNodeAndConditionDict)
         {
             if (node == null)
+            {
+                GD.Print("q");
                 return;
-            if (validNodes != null && !validNodes.Contains(node))
+            }
+            if (validNodeAndConditionDict != null && !validNodeAndConditionDict.ContainsKey(node))
+            {
+
+                GD.Print("w");
                 return;
+            }
 
             var item = _nodeTree.CreateItem(parent);
             item.SetIcon(0, this.GetIconRecursive(node));
             item.SetText(0, node.Name);
             item.SetMeta("node", node);
+            // This tree item is only selectable if NodeConditionFunc returned true for this node.
+            // Since validNodes must also contain the parent nodes of the valid nodes, the parent
+            // nodes might not always pass the NodeConditionFunc. Hence we have to check.
+            item.SetSelectable(0, validNodeAndConditionDict[node]);
 
             foreach (Node child in node.GetChildren())
-                CreateTreeRecursive(child, item, validNodes);
+                CreateTreeRecursive(child, item, validNodeAndConditionDict);
         }
 
         private void OnItemActivated()
