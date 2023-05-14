@@ -6,11 +6,42 @@ namespace Fractural.Plugin
     [Tool]
     public abstract class ExtendedEditorProperty : EditorProperty
     {
-        private Godot.Object _overrideEditedObject;
+        public delegate void PropertyValueChanged(object value);
+
+        protected Godot.Object _overrideEditedObject;
         public Godot.Object EditedObject { get => GetEditedObject(); set => _overrideEditedObject = value; }
 
-        private string _overrideEditedProperty;
+        protected object _overrideEditedPropertyValue;
+        public object EditedPropertyValue
+        {
+            get
+            {
+                if (_overrideEditedPropertyValue != null)
+                    return _overrideEditedPropertyValue;
+                return GetEditedObject()?.Get(GetEditedProperty());
+            }
+            set
+            {
+                if (GetEditedObject() != null)
+                    GetEditedObject().Set(GetEditedProperty(), value);
+                else
+                    _overrideEditedPropertyValue = value;
+            }
+        }
+
+        protected string _overrideEditedProperty;
         public string EditedProperty { get => GetEditedProperty(); set => _overrideEditedProperty = value; }
+
+        public ExtendedEditorProperty() { }
+        public ExtendedEditorProperty(Godot.Object editedObject, string editedProperty)
+        {
+            _overrideEditedObject = editedObject;
+            _overrideEditedProperty = editedProperty;
+        }
+        public ExtendedEditorProperty(object editedPropertyValue)
+        {
+            _overrideEditedPropertyValue = editedPropertyValue;
+        }
 
         public new Godot.Object GetEditedObject()
         {
@@ -25,12 +56,28 @@ namespace Fractural.Plugin
                 return _overrideEditedProperty;
             return base.GetEditedProperty();
         }
+
+        public void EmitChanged()
+        {
+            EmitSignal(nameof(PropertyValueChanged), EditedPropertyValue);
+        }
     }
 
     [Tool]
-    public abstract class ExtendedEditorProperty<T> : ExtendedEditorProperty where T : Godot.Object
+    public abstract class ExtendedEditorProperty<T> : ExtendedEditorProperty
     {
-        public T EditedObjectTyped { get => (T)EditedObject; set => EditedObject = value; }
+        public T EditedPropertyValueTyped { get => (T)EditedPropertyValue; set => EditedPropertyValue = value; }
+
+        public ExtendedEditorProperty() { }
+        public ExtendedEditorProperty(Godot.Object editedObject, string editedProperty)
+        {
+            _overrideEditedObject = editedObject;
+            _overrideEditedProperty = editedProperty;
+        }
+        public ExtendedEditorProperty(T editedPropertyValue)
+        {
+            _overrideEditedPropertyValue = editedPropertyValue;
+        }
     }
 }
 #endif
