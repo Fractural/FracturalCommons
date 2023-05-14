@@ -23,7 +23,7 @@ namespace Fractural.Utils
 
         public static Type GetCSharpType(this Node node)
         {
-            var attachedCSharpScript = ((CSharpScript)node.GetScript());
+            var attachedCSharpScript = (CSharpScript)node.GetScript();
             if (attachedCSharpScript != null)
                 return GetCSharpType(attachedCSharpScript.ResourcePath);
             return node.GetType();

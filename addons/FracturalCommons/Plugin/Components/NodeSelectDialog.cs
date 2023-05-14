@@ -127,16 +127,9 @@ namespace Fractural.Plugin
         private void CreateTreeRecursive(Node node, TreeItem parent, Dictionary<Node, bool> validNodeAndConditionDict)
         {
             if (node == null)
-            {
-                GD.Print("q");
                 return;
-            }
             if (validNodeAndConditionDict != null && !validNodeAndConditionDict.ContainsKey(node))
-            {
-
-                GD.Print("w");
                 return;
-            }
 
             var item = _nodeTree.CreateItem(parent);
             item.SetIcon(0, this.GetIconRecursive(node));

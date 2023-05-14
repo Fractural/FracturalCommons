@@ -36,9 +36,7 @@
 	<ItemGroup>
 		<Compile Remove="addons\FracturalCommons\InspectorCSharpEvents\**" />
 		<Compile Remove="addons\FracturalCommons\Misc\**" />
-		<Compile Remove="addons\FracturalCommons\Plugin\Components\NewFolder\**" />
 		<EmbeddedResource Remove="addons\FracturalCommons\InspectorCSharpEvents\**" />
 		<EmbeddedResource Remove="addons\FracturalCommons\Misc\**" />
-		<EmbeddedResource Remove="addons\FracturalCommons\Plugin\Components\NewFolder\**" />
 	</ItemGroup>
 </Project>
