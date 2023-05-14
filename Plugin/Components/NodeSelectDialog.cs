@@ -139,6 +139,8 @@ namespace Fractural.Plugin
             // Since validNodes must also contain the parent nodes of the valid nodes, the parent
             // nodes might not always pass the NodeConditionFunc. Hence we have to check.
             item.SetSelectable(0, validNodeAndConditionDict[node]);
+            if (!validNodeAndConditionDict[node])
+                item.SetCustomColor(0, new Color(GetColor("disabled_font_color", "Editor"), 0.5f));
 
             foreach (Node child in node.GetChildren())
                 CreateTreeRecursive(child, item, validNodeAndConditionDict);
