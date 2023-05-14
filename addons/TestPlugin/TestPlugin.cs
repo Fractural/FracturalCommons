@@ -97,6 +97,7 @@ namespace TestPlugin
 
         private Control _uiControl;
         private NodeSelectDialog _nodeSelectDialog;
+        private NodeSelectDialog _conditionNodeSelectDialog;
         private Label _infoText;
         private SearchEdit _searchEdit;
         private SearchDialog _searchDialog;
@@ -106,8 +107,14 @@ namespace TestPlugin
         protected override void Load()
         {
             _uiControl = new MarginContainer();
-            _nodeSelectDialog = new NodeSelectDialog();
             _infoText = new Label();
+
+            _nodeSelectDialog = new NodeSelectDialog();
+            _nodeSelectDialog.CurrentNode = GetTree().Root;
+
+            _conditionNodeSelectDialog = new NodeSelectDialog();
+            _conditionNodeSelectDialog.CurrentNode = GetTree().Root;
+            _conditionNodeSelectDialog.NodeConditionFunc = (node) => node is Button;
 
             _searchEdit = new SearchEdit();
             _searchEdit.RectMinSize = new Vector2(150, 0);
@@ -134,6 +141,10 @@ namespace TestPlugin
             testNodeSelectPopupButton.Text = "Test Node Popup";
             testNodeSelectPopupButton.Connect("pressed", this, nameof(OnTestNodeSelectDialog));
 
+            var testConditionNodeSelectPopupButton = new Button();
+            testConditionNodeSelectPopupButton.Text = "Test Condition Node Popup";
+            testConditionNodeSelectPopupButton.Connect("pressed", this, nameof(OnTestConditionNodeSelectDialog));
+
             var testSearchPopupButton = new Button();
             testSearchPopupButton.Text = "Test Search Popup";
             testSearchPopupButton.Connect("pressed", this, nameof(OnTestSearchDialog));
@@ -152,6 +163,7 @@ namespace TestPlugin
 
             var hBox = new HBoxContainer();
             hBox.AddChild(testNodeSelectPopupButton);
+            hBox.AddChild(testConditionNodeSelectPopupButton);
             hBox.AddChild(testSearchPopupButton);
             hBox.AddChild(testPopupMenuScrollableButton);
             hBox.AddChild(testPopupSearchButton);
@@ -163,9 +175,11 @@ namespace TestPlugin
             vBox.AddChild(hBox);
 
             _nodeSelectDialog.Connect(nameof(NodeSelectDialog.NodeSelected), this, nameof(OnNodeSelected));
+            _conditionNodeSelectDialog.Connect(nameof(NodeSelectDialog.NodeSelected), this, nameof(OnConditionNodeSelected));
 
             _uiControl.AddChild(vBox);
             _uiControl.AddChild(_nodeSelectDialog);
+            _uiControl.AddChild(_conditionNodeSelectDialog);
             AddManagedControlToBottomPanel(_uiControl, "Test Plugin");
         }
 
@@ -176,12 +190,22 @@ namespace TestPlugin
 
         private void OnTestNodeSelectDialog()
         {
-            _nodeSelectDialog.SoloEditorWindowPopup(() => _nodeSelectDialog.Popup(GetTree().Root));
+            _nodeSelectDialog.SoloEditorWindowPopup(() => _nodeSelectDialog.PopupCenteredRatio());
+        }
+
+        private void OnTestConditionNodeSelectDialog()
+        {
+            _conditionNodeSelectDialog.SoloEditorWindowPopup(() => _conditionNodeSelectDialog.PopupCenteredRatio());
         }
 
         private void OnNodeSelected(Node node)
         {
             _infoText.Text = $"{nameof(NodeSelectDialog)}: Selected node \"{node}\" at root path \"{GetTree().Root.GetPathTo(node)}\"";
+        }
+
+        private void OnConditionNodeSelected(Node node)
+        {
+            _infoText.Text = $"{nameof(NodeSelectDialog)}: Using condition node is Control, selected node \"{node}\" at root path \"{GetTree().Root.GetPathTo(node)}\"";
         }
 
         private void OnTestSearchDialog()
