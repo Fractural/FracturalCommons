@@ -56,7 +56,6 @@ namespace Fractural.Commons
             else
                 callPopupFunc();
             _tintRect.Visible = true;
-            GD.Print("tint_rect", _tintRect, _tintRect.Visible);
             _currSoloWindow.Connect("popup_hide", this, nameof(OnSoloWindowHide));
         }
 
