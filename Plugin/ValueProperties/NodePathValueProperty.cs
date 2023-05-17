@@ -7,19 +7,20 @@ using GDC = Godot.Collections;
 namespace Fractural.Plugin
 {
     [Tool]
-    public class NodePathSelectEditorProperty : EditorProperty
+    public class NodePathValueProperty : ValueProperty<NodePath>
     {
-        public delegate bool NodeConditionFuncDelegate(Node node, Godot.Object editedObject);
+        public Node RelativeToNode { get; set; }
+
         private NodeSelectDialog _nodeSelectDialog;
         private ForwardDragDropButton _selectButton;
         private Button _clearButton;
 
-        public NodePathSelectEditorProperty() { }
-        public NodePathSelectEditorProperty(Node currentNode, NodeConditionFuncDelegate nodeConditionFunc)
+        public NodePathValueProperty() { }
+        public NodePathValueProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeConditionFunc)
         {
             _nodeSelectDialog = new NodeSelectDialog();
-            _nodeSelectDialog.CurrentNode = currentNode;
-            _nodeSelectDialog.NodeConditionFunc = (node) => nodeConditionFunc(node, GetEditedObject());
+            _nodeSelectDialog.RootNode = selectRootNode;
+            _nodeSelectDialog.NodeConditionFunc = nodeConditionFunc;
             _nodeSelectDialog.Connect(nameof(NodeSelectDialog.NodeSelected), this, nameof(OnNodeSelected));
             AddChild(_nodeSelectDialog);
 
@@ -47,7 +48,7 @@ namespace Fractural.Plugin
 
         public override void UpdateProperty()
         {
-            var nodePath = GetEditedObject().Get<NodePath>(GetEditedProperty());
+            var nodePath = Value;
             if (nodePath == null || nodePath.IsEmpty())
             {
                 _selectButton.Icon = null;
@@ -55,14 +56,16 @@ namespace Fractural.Plugin
                 return;
             }
 
-            if (((Node)GetEditedObject()).HasNode(nodePath))
+            if (RelativeToNode != null && RelativeToNode.HasNode(nodePath))
             {
-                var node = ((Node)GetEditedObject()).GetNode(nodePath);
+                // Path relative to RelativeNode
+                var node = RelativeToNode.GetNode(nodePath);
                 _selectButton.Icon = GetIcon(node.GetType().Name, "EditorIcons");
-                _selectButton.Text = node.Name;
+                _selectButton.Text = nodePath.GetName(nodePath.GetNameCount() - 1);
             }
             else
             {
+                // Path relative to RootNode
                 _selectButton.Icon = null;
                 _selectButton.Text = nodePath.ToString();
             }
@@ -85,15 +88,24 @@ namespace Fractural.Plugin
         {
             var dataDict = data as GDC.Dictionary;
             var firstDroppedNodePath = dataDict.Get<GDC.Array>("nodes").ElementAt<NodePath>(0);
-            if (GetEditedObject() is Node node)
-                EmitChanged(GetEditedProperty(), node.GetPathTo(GetNode(firstDroppedNodePath)));
+            UpdatePath(GetNode(firstDroppedNodePath));
+        }
+
+        private void UpdatePath(Node selectedNode)
+        {
+            if (selectedNode == null)
+                Value = new NodePath();
+            else if (RelativeToNode != null)
+                // Use relative path if RelativeToNode exists
+                Value = RelativeToNode.GetPathTo(selectedNode);
             else
-                EmitChanged(GetEditedProperty(), firstDroppedNodePath);
+                // Use root path
+                Value = _nodeSelectDialog.RootNode.GetPathTo(selectedNode);
         }
 
         private void OnSelectButtonPressed() => _nodeSelectDialog.SoloEditorWindowPopup(() => _nodeSelectDialog.PopupCenteredRatio());
-        private void OnNodeSelected(Node node) => EmitChanged(GetEditedProperty(), ((Node)GetEditedObject()).GetPathTo(node));
-        private void OnClearButtonPressed() => EmitChanged(GetEditedProperty(), new NodePath());
+        private void OnNodeSelected(Node node) => UpdatePath(node);
+        private void OnClearButtonPressed() => UpdatePath(null);
     }
 }
 #endif

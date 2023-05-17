@@ -14,16 +14,17 @@ namespace Fractural.Plugin
     {
         [Signal]
         public delegate void NodeSelected(Node node);
+        public delegate bool NodeConditionFuncDelegate(Node node);
 
         /// <summary>
         /// Root node to build the node tree that's shown inside the dialog.
         /// </summary>
-        public Node CurrentNode { get; set; }
+        public Node RootNode { get; set; }
         /// <summary>
         /// Function that determines whether a node should be
         /// shown in the dialog or not.
         /// </summary>
-        public Func<Node, bool> NodeConditionFunc { get; set; } = (x) => true;
+        public NodeConditionFuncDelegate NodeConditionFunc { get; set; } = (x) => true;
 
         private LineEdit _searchBar;
         private Tree _nodeTree;
@@ -69,7 +70,7 @@ namespace Fractural.Plugin
 
         public void Popup(Node node)
         {
-            CurrentNode = node;
+            RootNode = node;
             PopupCenteredRatio();
         }
 
@@ -83,7 +84,7 @@ namespace Fractural.Plugin
 
             string lowercaseSearchText = _searchBar.Text.ToLower();
             var nodes = new List<Node>();
-            GetNodesRecursive(CurrentNode, nodes);
+            GetNodesRecursive(RootNode, nodes);
             foreach (var node in nodes)
             {
                 if ((lowercaseSearchText == "" || node.Name.ToLower().Find(lowercaseSearchText) > -1) && NodeConditionFunc(node))
@@ -95,7 +96,7 @@ namespace Fractural.Plugin
             {
                 // Add parents of the valid nodes
                 var parent = validNode.GetParent();
-                while (parent != CurrentNode.GetParent())
+                while (parent != RootNode.GetParent())
                 {
                     // If validNodes doesn't already contain the parent, then it must mean
                     // this parent didn't meet the condition
@@ -104,7 +105,7 @@ namespace Fractural.Plugin
                     parent = parent.GetParent();
                 }
             }
-            CreateTreeRecursive(CurrentNode, null, validNodeAndConditionDict);
+            CreateTreeRecursive(RootNode, null, validNodeAndConditionDict);
         }
 
         private void OnCancelled()
