@@ -24,6 +24,7 @@ namespace Fractural.Plugin
             }
         }
 
+        public void SetValue
         public virtual void UpdateProperty() { }
         protected void InvokeValueChanged(object value) => ValueChanged?.Invoke(value);
     }

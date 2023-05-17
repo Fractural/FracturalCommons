@@ -20,7 +20,8 @@ namespace Fractural.Plugin
         {
             _nodeSelectDialog = new NodeSelectDialog();
             _nodeSelectDialog.RootNode = selectRootNode;
-            _nodeSelectDialog.NodeConditionFunc = nodeConditionFunc;
+            if (nodeConditionFunc != null)
+                _nodeSelectDialog.NodeConditionFunc = nodeConditionFunc;
             _nodeSelectDialog.Connect(nameof(NodeSelectDialog.NodeSelected), this, nameof(OnNodeSelected));
             AddChild(_nodeSelectDialog);
 
