@@ -110,10 +110,10 @@ namespace TestPlugin
             _infoText = new Label();
 
             _nodeSelectDialog = new NodeSelectDialog();
-            _nodeSelectDialog.CurrentNode = GetTree().Root;
+            _nodeSelectDialog.RootNode = GetTree().Root;
 
             _conditionNodeSelectDialog = new NodeSelectDialog();
-            _conditionNodeSelectDialog.CurrentNode = GetTree().Root;
+            _conditionNodeSelectDialog.RootNode = GetTree().Root;
             _conditionNodeSelectDialog.NodeConditionFunc = (node) => node is Button;
 
             _searchEdit = new SearchEdit();
