@@ -4,7 +4,7 @@ using Godot;
 using System;
 
 #if TOOLS
-namespace TestPlugin
+namespace Tests
 {
     /// <summary>
     /// Plugin to test Fractural Commons' functionality.
@@ -181,6 +181,8 @@ namespace TestPlugin
             _uiControl.AddChild(_nodeSelectDialog);
             _uiControl.AddChild(_conditionNodeSelectDialog);
             AddManagedControlToBottomPanel(_uiControl, "Test Plugin");
+
+            AddManagedInspectorPlugin(new TestInspectorPlugin(this));
         }
 
         protected override void Unload()

@@ -1,3 +1,11 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://tests/manual/CustomInspectors/CustomInspectors.cs" type="Script" id=1]
 
 [node name="Node" type="Node"]
+script = ExtResource( 1 )
+TestInt = 1
+TestFloat = 43.4234
+TestBool = true
+TestString = "dfsdfdsf"
+TestNodePath = NodePath("")

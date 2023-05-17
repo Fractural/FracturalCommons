@@ -4,11 +4,11 @@
 namespace Fractural.Plugin
 {
     [Tool]
-    public class IntegerValueProperty : ValueProperty<int>
+    public class FloatValueProperty : ValueProperty<float>
     {
         private SpinBox _spinBox;
 
-        public IntegerValueProperty()
+        public FloatValueProperty()
         {
             _spinBox = new SpinBox();
             _spinBox.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
@@ -23,7 +23,7 @@ namespace Fractural.Plugin
 
         private void OnSpinBoxChanged(float newValue)
         {
-            Value = (int)newValue;
+            Value = newValue;
         }
     }
 }

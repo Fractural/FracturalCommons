@@ -33,6 +33,12 @@ namespace Fractural.Plugin
             _valueProperty = valueProperty;
             _valueProperty.ValueChanged += (newValue) => InvokeValueChanged(newValue);
         }
+
+        public override void _Ready()
+        {
+            if (ValueProperty != null)
+                ValueProperty.Reparent(this);
+        }
     }
 }
 #endif

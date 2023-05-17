@@ -20,6 +20,15 @@ namespace Fractural.Plugin
         {
             ValueProperty = valueProperty;
             AddChild(valueProperty);
+            ValueProperty.ValueChanged += (newValue) =>
+            {
+                EmitChanged(GetEditedProperty(), newValue);
+            };
+        }
+
+        public override void UpdateProperty()
+        {
+            ValueProperty.Value = GetEditedObject().Get(GetEditedProperty());
         }
     }
 }

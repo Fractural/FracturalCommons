@@ -3,24 +3,18 @@ using System;
 
 namespace Tests
 {
-
+    [Tool]
     public class CustomInspectors : Node
     {
-        // Declare member variables here. Examples:
-        // private int a = 2;
-        // private string b = "text";
-
-        // Called when the node enters the scene tree for the first time.
-        public override void _Ready()
-        {
-
-        }
-
-        //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-        //  public override void _Process(float delta)
-        //  {
-        //      
-        //  }
+        [Export]
+        public int TestInt { get; set; }
+        [Export]
+        public float TestFloat { get; set; }
+        [Export]
+        public bool TestBool { get; set; }
+        [Export]
+        public string TestString { get; set; }
+        [Export]
+        public NodePath TestNodePath { get; set; }
     }
-
 }
