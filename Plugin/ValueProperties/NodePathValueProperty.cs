@@ -15,8 +15,7 @@ namespace Fractural.Plugin
         private ForwardDragDropButton _selectButton;
         private Button _clearButton;
 
-        public NodePathValueProperty() { }
-        public NodePathValueProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeConditionFunc)
+        public NodePathValueProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeConditionFunc) : base()
         {
             _nodeSelectDialog = new NodeSelectDialog();
             _nodeSelectDialog.RootNode = selectRootNode;
@@ -38,7 +37,7 @@ namespace Fractural.Plugin
             var hBox = new HBoxContainer();
             hBox.AddChild(_selectButton);
             hBox.AddChild(_clearButton);
-
+            hBox.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
             AddChild(hBox);
         }
 
@@ -62,7 +61,7 @@ namespace Fractural.Plugin
                 // Path relative to RelativeNode
                 var node = RelativeToNode.GetNode(nodePath);
                 _selectButton.Icon = GetIcon(node.GetType().Name, "EditorIcons");
-                _selectButton.Text = nodePath.GetName(nodePath.GetNameCount() - 1);
+                _selectButton.Text = node.Name;
             }
             else
             {
@@ -89,10 +88,10 @@ namespace Fractural.Plugin
         {
             var dataDict = data as GDC.Dictionary;
             var firstDroppedNodePath = dataDict.Get<GDC.Array>("nodes").ElementAt<NodePath>(0);
-            UpdatePath(GetNode(firstDroppedNodePath));
+            SelectPathTo(GetNode(firstDroppedNodePath));
         }
 
-        private void UpdatePath(Node selectedNode)
+        private void SelectPathTo(Node selectedNode)
         {
             if (selectedNode == null)
                 Value = new NodePath();
@@ -105,8 +104,8 @@ namespace Fractural.Plugin
         }
 
         private void OnSelectButtonPressed() => _nodeSelectDialog.SoloEditorWindowPopup(() => _nodeSelectDialog.PopupCenteredRatio());
-        private void OnNodeSelected(Node node) => UpdatePath(node);
-        private void OnClearButtonPressed() => UpdatePath(null);
+        private void OnNodeSelected(Node node) => SelectPathTo(node);
+        private void OnClearButtonPressed() => SelectPathTo(null);
     }
 }
 #endif

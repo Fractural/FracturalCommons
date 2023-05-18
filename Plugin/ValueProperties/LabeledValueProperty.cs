@@ -22,14 +22,14 @@ namespace Fractural.Plugin
 
         private Label _label;
 
-        public LabeledValueProperty() { }
-        public LabeledValueProperty(string propertyName)
+        public LabeledValueProperty(string propertyName) : base()
         {
             _propertyName = propertyName;
         }
 
         public override void _Ready()
         {
+            base._Ready();
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
 

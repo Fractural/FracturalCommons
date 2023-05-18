@@ -1,4 +1,5 @@
 ﻿using Godot;
+using System;
 
 #if TOOLS
 namespace Fractural.Plugin
@@ -6,19 +7,23 @@ namespace Fractural.Plugin
     [Tool]
     public class FloatValueProperty : ValueProperty<float>
     {
-        private SpinBox _spinBox;
+        private EditorSpinSlider _spinSlider;
 
-        public FloatValueProperty()
+        public FloatValueProperty(float step = 0.0001f) : base()
         {
-            _spinBox = new SpinBox();
-            _spinBox.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
-            _spinBox.Connect("changed", this, nameof(OnSpinBoxChanged));
-            AddChild(_spinBox);
+            _spinSlider = new EditorSpinSlider();
+            _spinSlider.Step = step;
+            _spinSlider.AllowLesser = true;
+            _spinSlider.AllowGreater = true;
+            _spinSlider.HideSlider = true;
+            _spinSlider.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            _spinSlider.Connect("value_changed", this, nameof(OnSpinBoxChanged));
+            AddChild(_spinSlider);
         }
 
         public override void UpdateProperty()
         {
-            _spinBox.Value = Value;
+            _spinSlider.Value = Value;
         }
 
         private void OnSpinBoxChanged(float newValue)

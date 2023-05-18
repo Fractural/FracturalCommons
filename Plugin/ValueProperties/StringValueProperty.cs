@@ -8,7 +8,7 @@ namespace Fractural.Plugin
     {
         private LineEdit _lineEdit;
 
-        public StringValueProperty()
+        public StringValueProperty() : base()
         {
             _lineEdit = new LineEdit();
             _lineEdit.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;

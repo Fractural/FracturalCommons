@@ -27,8 +27,7 @@ namespace Fractural.Plugin
             set => ValueProperty.Value = value;
         }
 
-        public WrappedValueProperty() { }
-        public WrappedValueProperty(ValueProperty valueProperty)
+        public WrappedValueProperty(ValueProperty valueProperty) : base()
         {
             _valueProperty = valueProperty;
             _valueProperty.ValueChanged += (newValue) => InvokeValueChanged(newValue);
@@ -36,6 +35,9 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
+            base._Ready();
+            if (NodeUtils.IsInEditorSceneTab(this))
+                return;
             if (ValueProperty != null)
                 ValueProperty.Reparent(this);
         }
