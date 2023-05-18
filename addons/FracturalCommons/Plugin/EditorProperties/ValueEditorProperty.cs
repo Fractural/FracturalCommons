@@ -15,7 +15,6 @@ namespace Fractural.Plugin
     {
         public ValueProperty ValueProperty { get; set; }
 
-        public ValueEditorProperty() { }
         public ValueEditorProperty(ValueProperty valueProperty)
         {
             ValueProperty = valueProperty;
@@ -24,11 +23,12 @@ namespace Fractural.Plugin
             {
                 EmitChanged(GetEditedProperty(), newValue);
             };
+            ValueProperty.SetBottomEditor = SetBottomEditor;
         }
 
         public override void UpdateProperty()
         {
-            ValueProperty.Value = GetEditedObject().Get(GetEditedProperty());
+            ValueProperty.SetValue(GetEditedObject().Get(GetEditedProperty()), false);
         }
     }
 }

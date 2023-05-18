@@ -16,5 +16,15 @@ namespace Tests
         public string TestString { get; set; }
         [Export]
         public NodePath TestNodePath { get; set; }
+        [Export]
+        public int ValueInt { get; set; }
+        [Export]
+        public float ValueFloat { get; set; }
+        [Export]
+        public bool ValueBool { get; set; }
+        [Export]
+        public string ValueString { get; set; }
+        [Export]
+        public NodePath ValueNodePath { get; set; }
     }
 }

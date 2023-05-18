@@ -8,26 +8,21 @@ namespace Fractural.Plugin
     public class NodePathSelectEditorProperty : EditorProperty
     {
         private NodePathValueProperty _nodePathValueProperty;
-        private Node _selectRootNode;
-        private NodeSelectDialog.NodeConditionFuncDelegate _nodeCondition;
 
-        public NodePathSelectEditorProperty() { }
         public NodePathSelectEditorProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeCondition = null)
         {
-            _selectRootNode = selectRootNode;
-            _nodeCondition = nodeCondition;
-        }
-
-        public override void _Ready()
-        {
-            _nodePathValueProperty = new NodePathValueProperty(_selectRootNode, _nodeCondition);
-            _nodePathValueProperty.RelativeToNode = GetEditedObject() as Node;
+            _nodePathValueProperty = new NodePathValueProperty(selectRootNode, nodeCondition);
             _nodePathValueProperty.ValueChanged += (newPath) =>
             {
                 EmitChanged(GetEditedProperty(), newPath);
             };
+            AddChild(_nodePathValueProperty);
+        }
 
-            _nodePathValueProperty = new NodePathValueProperty();
+        public override void _Ready()
+        {
+            _nodePathValueProperty.RelativeToNode = GetEditedObject() as Node;
+
             if (GetEditedObject() is Node node)
                 _nodePathValueProperty.RelativeToNode = node;
         }
@@ -35,7 +30,7 @@ namespace Fractural.Plugin
         public override void UpdateProperty()
         {
             var nodePath = GetEditedObject().Get<NodePath>(GetEditedProperty());
-            _nodePathValueProperty.Value = nodePath; // ValueProperty.UpdateProperty is called automatically when the Value is changed.
+            _nodePathValueProperty.SetValue(nodePath, false); // ValueProperty.UpdateProperty is called automatically when the Value is changed.
         }
     }
 }

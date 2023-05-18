@@ -8,9 +8,13 @@ namespace Fractural.Plugin
     {
         private SpinBox _spinBox;
 
-        public IntegerValueProperty()
+        public IntegerValueProperty() : base()
         {
             _spinBox = new SpinBox();
+            _spinBox.Rounded = true;
+            _spinBox.Step = 1;
+            _spinBox.AllowGreater = true;
+            _spinBox.AllowLesser = true;
             _spinBox.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
             _spinBox.Connect("changed", this, nameof(OnSpinBoxChanged));
             AddChild(_spinBox);

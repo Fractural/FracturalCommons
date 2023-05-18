@@ -4,8 +4,14 @@
 
 [node name="Node" type="Node"]
 script = ExtResource( 1 )
+__meta__ = {
+"_editor_description_": ""
+}
 TestInt = 1
-TestFloat = 43.4234
+TestFloat = 34934.4
 TestBool = true
-TestString = "dfsdfdsf"
+TestString = "fdsfds1sdf"
 TestNodePath = NodePath("")
+ValueFloat = 23.23
+ValueBool = true
+ValueNodePath = NodePath(".")
