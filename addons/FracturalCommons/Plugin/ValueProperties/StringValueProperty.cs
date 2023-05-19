@@ -12,7 +12,8 @@ namespace Fractural.Plugin
         {
             _lineEdit = new LineEdit();
             _lineEdit.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
-            _lineEdit.Connect("text_changed", this, nameof(OnLineEditChanged));
+            _lineEdit.Connect("text_entered", this, nameof(OnTextEntered));
+            _lineEdit.Connect("focus_exited", this, nameof(OnFocusExited));
             AddChild(_lineEdit);
         }
 
@@ -21,9 +22,14 @@ namespace Fractural.Plugin
             _lineEdit.Text = Value;
         }
 
-        private void OnLineEditChanged(string newText)
+        private void OnTextEntered(string newText)
         {
             Value = newText;
+        }
+
+        private void OnFocusExited()
+        {
+            Value = _lineEdit.Text;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Fractural.Utils;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,25 @@ namespace Fractural.Plugin
     {
         public ValueProperty ValueProperty { get; set; }
 
+        public ValueEditorProperty() { }
         public ValueEditorProperty(ValueProperty valueProperty)
         {
             ValueProperty = valueProperty;
-            AddChild(valueProperty);
             ValueProperty.ValueChanged += (newValue) =>
             {
                 EmitChanged(GetEditedProperty(), newValue);
             };
-            ValueProperty.SetBottomEditor = SetBottomEditor;
+            ValueProperty.SetBottomEditor = OnSetBottomEditor;
+            AddChild(valueProperty);
+        }
+
+        private void OnSetBottomEditor(Control control)
+        {
+            if (control != null)
+            {
+                control.Reparent(this);
+                SetBottomEditor(control);
+            }
         }
 
         public override void UpdateProperty()

@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Fractural.Utils
@@ -53,7 +56,7 @@ namespace Fractural.Utils
         /// <returns></returns>
         public static Type GetGenericParentFromTypeDefinition(this Type type, Type genericBaseType)
         {
-            while (type != typeof(object))
+            while (type != typeof(object) && type != null)
             {
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == genericBaseType)
                     return type;

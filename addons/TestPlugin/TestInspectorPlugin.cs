@@ -42,7 +42,7 @@ namespace Tests
                         AddPropertyEditor(path, new NodePathSelectEditorProperty(_plugin.GetEditorInterface().GetEditedSceneRoot()));
                         return true;
                     case Variant.Type.Dictionary:
-                        var args = hintText.Split(",");
+                        var args = hintText.Split(":");
                         if (args.Length != 2) break;
                         string key = args[0].Trim();
                         string value = args[1].Trim();

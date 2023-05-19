@@ -12,6 +12,19 @@ TestFloat = 34934.4
 TestBool = true
 TestString = "fdsfds1sdf"
 TestNodePath = NodePath("")
-ValueFloat = 23.23
+ValueFloat = 23.2354
 ValueBool = true
 ValueNodePath = NodePath(".")
+ValueStringToIntDictionary = {
+"1": 0,
+"2": 234,
+"3xddd": 0,
+"5": 34349,
+"joe": 0,
+"lolxd": 0,
+"mama": -1349
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0

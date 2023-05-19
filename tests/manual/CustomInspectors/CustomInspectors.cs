@@ -1,5 +1,7 @@
+using Fractural;
 using Godot;
 using System;
+using GDC = Godot.Collections;
 
 namespace Tests
 {
@@ -17,6 +19,8 @@ namespace Tests
         [Export]
         public NodePath TestNodePath { get; set; }
         [Export]
+        public GDC.Dictionary TestDictionary { get; set; } = new GDC.Dictionary();
+        [Export]
         public int ValueInt { get; set; }
         [Export]
         public float ValueFloat { get; set; }
@@ -26,5 +30,17 @@ namespace Tests
         public string ValueString { get; set; }
         [Export]
         public NodePath ValueNodePath { get; set; }
+        public GDC.Dictionary ValueStringToIntDictionary { get; set; } = new GDC.Dictionary();
+
+        public override GDC.Array _GetPropertyList()
+        {
+            var builder = new PropertyListBuilder();
+            builder.AddItem(
+                name: nameof(ValueStringToIntDictionary),
+                type: Variant.Type.Dictionary,
+                hintString: $"{typeof(string).Name}:{typeof(int).Name}"
+            );
+            return builder.Build();
+        }
     }
 }

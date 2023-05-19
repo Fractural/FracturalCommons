@@ -15,6 +15,7 @@ namespace Fractural.Plugin
         private ForwardDragDropButton _selectButton;
         private Button _clearButton;
 
+        public NodePathValueProperty() { }
         public NodePathValueProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeConditionFunc) : base()
         {
             _nodeSelectDialog = new NodeSelectDialog();

@@ -27,6 +27,7 @@ namespace Fractural.Plugin
             set => ValueProperty.Value = value;
         }
 
+        public WrappedValueProperty() { }
         public WrappedValueProperty(ValueProperty valueProperty) : base()
         {
             _valueProperty = valueProperty;
