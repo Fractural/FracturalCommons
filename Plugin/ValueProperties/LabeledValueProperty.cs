@@ -22,7 +22,8 @@ namespace Fractural.Plugin
 
         private Label _label;
 
-        public LabeledValueProperty(string propertyName) : base()
+        public LabeledValueProperty() { }
+        public LabeledValueProperty(string propertyName, ValueProperty valueProperty) : base(valueProperty)
         {
             _propertyName = propertyName;
         }

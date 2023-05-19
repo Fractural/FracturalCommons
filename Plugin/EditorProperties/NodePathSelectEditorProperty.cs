@@ -9,6 +9,7 @@ namespace Fractural.Plugin
     {
         private NodePathValueProperty _nodePathValueProperty;
 
+        public NodePathSelectEditorProperty() { }
         public NodePathSelectEditorProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeCondition = null)
         {
             _nodePathValueProperty = new NodePathValueProperty(selectRootNode, nodeCondition);

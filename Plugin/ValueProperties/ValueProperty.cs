@@ -15,22 +15,21 @@ namespace Fractural.Plugin
         #region Static
         private static Dictionary<Type, Type> _typeToValuePropertyDict = new Dictionary<Type, Type>();
         public static IReadOnlyDictionary<Type, Type> TypeToValuePropertyDict => _typeToValuePropertyDict;
-        public static ValueProperty GetValueProperty(Type type) => Activator.CreateInstance(_typeToValuePropertyDict[type]) as ValueProperty;
-        public static ValueProperty<T> GetValueProperty<T>() => GetValueProperty(typeof(T)) as ValueProperty<T>;
+        public static ValueProperty CreateValueProperty(Type type) => InstanceUtils.CreateInstance(_typeToValuePropertyDict[type]) as ValueProperty;
+        public static ValueProperty<T> CreateValueProperty<T>() => CreateValueProperty(typeof(T)) as ValueProperty<T>;
 
         static ValueProperty()
         {
-            // TODO: Maybe use compiled constructors for better performance: https://vagifabilov.wordpress.com/2010/04/02/dont-use-activator-createinstance-or-constructorinfo-invoke-use-compiled-lambda-expressions/
-
             var valuePropertyTypes =
                 from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from type in assembly.GetTypes()
-                where type.IsSubclassOf(typeof(ValueProperty<>)) && !type.IsAbstract && type.GetConstructor(Type.EmptyTypes) != null
+                where type.IsSubclassOfGeneric(typeof(ValueProperty<>)) && !type.IsAbstract && type.GetConstructor(Type.EmptyTypes) != null
                 select type;
+
             foreach (var valuePropertyType in valuePropertyTypes)
             {
-                Type valuePropertGenericInstance = valuePropertyType.GetGenericParentFromTypeDefinition(typeof(ValueProperty<>));
-                Type valuePropertyValueType = valuePropertGenericInstance.GetGenericArguments()[0];
+                Type valuePropertyGenericInstance = valuePropertyType.GetGenericParentFromTypeDefinition(typeof(ValueProperty<>));
+                Type valuePropertyValueType = valuePropertyGenericInstance.GetGenericArguments()[0];
                 _typeToValuePropertyDict[valuePropertyValueType] = valuePropertyType;
             }
         }
@@ -44,10 +43,7 @@ namespace Fractural.Plugin
         public virtual object Value
         {
             get => _value;
-            set
-            {
-                SetValue(value, true);
-            }
+            set => SetValue(value, true);
         }
 
         public void SetValue(object value, bool triggerValueChange = false)
@@ -68,7 +64,10 @@ namespace Fractural.Plugin
             SetBottomEditor = (node) =>
             {
                 if (node != null)
+                {
+                    node.Reparent(this);
                     MoveChild(node, GetChildCount() - 1);
+                }
             };
         }
     }
@@ -82,7 +81,7 @@ namespace Fractural.Plugin
             get => (T)base.Value;
             set
             {
-                if (!base.Value.Equals(value))
+                if ((base.Value == null && value != null) || !base.Value.Equals(value))
                     ValueChanged?.Invoke(value);
                 base.Value = value;
             }
