@@ -31,6 +31,9 @@ namespace Tests
         [Export]
         public NodePath ValueNodePath { get; set; }
         public GDC.Dictionary ValueStringToIntDictionary { get; set; } = new GDC.Dictionary();
+        public GDC.Dictionary ValueFloatToNodePathDictionary { get; set; } = new GDC.Dictionary();
+        public GDC.Dictionary ValueBoolToStringDictionary { get; set; } = new GDC.Dictionary();
+        public GDC.Dictionary ValueNodePathToStringDictionary { get; set; } = new GDC.Dictionary();
 
         public override GDC.Array _GetPropertyList()
         {
@@ -38,7 +41,22 @@ namespace Tests
             builder.AddItem(
                 name: nameof(ValueStringToIntDictionary),
                 type: Variant.Type.Dictionary,
-                hintString: $"{typeof(string).Name}:{typeof(int).Name}"
+                hintString: HintString.GetTypedDictionary<string, int>()
+            );
+            builder.AddItem(
+                name: nameof(ValueFloatToNodePathDictionary),
+                type: Variant.Type.Dictionary,
+                hintString: HintString.GetTypedDictionary<float, NodePath>()
+            );
+            builder.AddItem(
+                name: nameof(ValueBoolToStringDictionary),
+                type: Variant.Type.Dictionary,
+                hintString: HintString.GetTypedDictionary<bool, string>()
+            );
+            builder.AddItem(
+                name: nameof(ValueNodePathToStringDictionary),
+                type: Variant.Type.Dictionary,
+                hintString: HintString.GetTypedDictionary<NodePath, string>()
             );
             return builder.Build();
         }

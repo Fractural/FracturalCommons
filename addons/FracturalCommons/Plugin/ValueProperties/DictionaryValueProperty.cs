@@ -1,5 +1,4 @@
 ﻿using Fractural.Utils;
-using FracturalCommons.Utils;
 using Godot;
 using System;
 using System.Collections;
@@ -10,6 +9,7 @@ using GDC = Godot.Collections;
 namespace Fractural.Plugin
 {
     // TODO LATER: Add pagination
+    // TODO NOW: Fix nodepath as key.
     [Tool]
     public class DictionaryValueProperty : ValueProperty<GDC.Dictionary>
     {
@@ -20,17 +20,18 @@ namespace Fractural.Plugin
 
         private Type _keyType;
         private Type _valueType;
+        private Node _sceneRoot;
         private string EditButtonText => $"[{_keyType.Name}]:{_valueType.Name} [{Value.Count}]";
 
         public DictionaryValueProperty() { }
-        public DictionaryValueProperty(Type keyType, Type valueType) : base()
+        public DictionaryValueProperty(Type keyType, Type valueType, Node sceneRoot) : base()
         {
             _keyType = keyType;
             _valueType = valueType;
+            _sceneRoot = sceneRoot;
 
             _editButton = new Button();
             _editButton.ToggleMode = true;
-            _editButton.Pressed = true;
             _editButton.ClipText = true;
             _editButton.Connect("toggled", this, nameof(OnEditToggled));
             AddChild(_editButton);
@@ -57,7 +58,6 @@ namespace Fractural.Plugin
                 return;
 
             _addElementButton.Icon = GetIcon("Add", "EditorIcons");
-
             GetViewport().Connect("gui_focus_changed", this, nameof(OnFocusChanged));
         }
 
@@ -78,6 +78,9 @@ namespace Fractural.Plugin
 
         public override void UpdateProperty()
         {
+            _marginContainer.Visible = this.GetMeta<bool>("visible", false);
+            _editButton.Pressed = _marginContainer.Visible;
+
             _editButton.Text = EditButtonText;
 
             int index = 0;
@@ -140,6 +143,14 @@ namespace Fractural.Plugin
             _addElementButton.Disabled = Value.Contains(nextKey);
         }
 
+        private new ValueProperty CreateValueProperty(Type type)
+        {
+            var property = ValueProperty.CreateValueProperty(type);
+            if (type == typeof(NodePath) && property is NodePathValueProperty valueProperty)
+                valueProperty.SelectRootNode = _sceneRoot;
+            return property;
+        }
+
         private DictionaryValuePropertyKeyValueEntry CreateDefaultEntry()
         {
             var entry = new DictionaryValuePropertyKeyValueEntry(CreateValueProperty(_keyType), CreateValueProperty(_valueType));
@@ -148,6 +159,7 @@ namespace Fractural.Plugin
             entry.Deleted += OnDictKeyDeleted;
             // Add entry if we ran out of existing ones
             _keyValueEntriesVBox.AddChild(entry);
+
             return entry;
         }
 
@@ -191,6 +203,7 @@ namespace Fractural.Plugin
 
         private void OnEditToggled(bool toggled)
         {
+            SetMeta("visible", toggled);
             _marginContainer.Visible = toggled;
         }
     }

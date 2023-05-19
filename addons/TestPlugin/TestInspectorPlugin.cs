@@ -41,17 +41,6 @@ namespace Tests
                     case Variant.Type.NodePath:
                         AddPropertyEditor(path, new NodePathSelectEditorProperty(_plugin.GetEditorInterface().GetEditedSceneRoot()));
                         return true;
-                    case Variant.Type.Dictionary:
-                        var args = hintText.Split(":");
-                        if (args.Length != 2) break;
-                        string key = args[0].Trim();
-                        string value = args[1].Trim();
-                        Type keyType = ReflectionUtils.FindTypeName(key);
-                        if (keyType == null) break;
-                        Type valueType = ReflectionUtils.FindTypeName(value);
-                        if (valueType == null) break;
-                        AddPropertyEditor(path, new ValueEditorProperty(new DictionaryValueProperty(keyType, valueType)));
-                        return true;
                 }
             return false;
         }

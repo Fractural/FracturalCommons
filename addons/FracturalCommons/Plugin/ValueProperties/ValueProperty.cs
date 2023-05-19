@@ -36,6 +36,7 @@ namespace Fractural.Plugin
         #endregion
 
         public event Action<object> ValueChanged;
+        public event Action<string, object> MetaChanged;
         public delegate void SetBottomEditorDelegate(Control control);
         public SetBottomEditorDelegate SetBottomEditor { get; set; }
 
@@ -58,6 +59,13 @@ namespace Fractural.Plugin
         }
         public virtual void UpdateProperty() { }
         protected void InvokeValueChanged(object value) => ValueChanged?.Invoke(value);
+        public new void SetMeta(string key, object value) => SetMeta(key, value, true);
+        public void SetMeta(string key, object value, bool triggerMetaChanged)
+        {
+            if (triggerMetaChanged)
+                MetaChanged?.Invoke(key, value);
+            base.SetMeta(key, value);
+        }
 
         public ValueProperty()
         {

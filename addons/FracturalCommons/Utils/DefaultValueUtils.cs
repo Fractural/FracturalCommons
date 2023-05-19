@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FracturalCommons.Utils
+namespace Fractural.Utils
 {
     public static class DefaultValueUtils
     {
@@ -31,7 +31,11 @@ namespace FracturalCommons.Utils
 
         public static object GetDefault(Type type, IEnumerable previousValues = null)
         {
-            return _typeToDefaultProviderDict[type].NextDefaultvalue(previousValues);
+            if (_typeToDefaultProviderDict.TryGetValue(type, out DefaultValueProvider provider))
+                return provider.NextDefaultvalue(previousValues);
+            if (type.IsValueType)
+                return Activator.CreateInstance(type);
+            return null;
         }
 
         public static T GetDefault<T>(IEnumerable<T> previousValues = null)

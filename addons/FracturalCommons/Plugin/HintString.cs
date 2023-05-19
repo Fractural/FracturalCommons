@@ -6,7 +6,7 @@
     public partial class HintString
     {
         /// <summary>
-        /// Usage: TypedDictionary=[KeyType]:[ValueType]
+        /// Usage: TypedDictionary,[KeyType]:[ValueType]
         /// 
         /// KeyType:
         /// - float
@@ -23,5 +23,11 @@
         /// - NodePath
         /// </summary>
         public const string TypedDictionary = nameof(TypedDictionary);
+
+        public static string GetTypedDictionary<TKey, TValue>()
+        {
+            return $"{TypedDictionary},{typeof(TKey).Name}:{typeof(TValue).Name}";
+        }
+
     }
 }

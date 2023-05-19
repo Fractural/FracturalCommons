@@ -275,9 +275,17 @@ namespace Fractural.Utils
             return true;
         }
 
-        public static T GetMeta<T>(this Godot.Object obj, string key, T defaultReturn = default)
+        /// <summary>
+        /// Returns the object's metadata for a give name
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="name"></param>
+        /// <param name="defaultReturn"></param>
+        /// <returns></returns>
+        public static T GetMeta<T>(this Godot.Object obj, string name, T defaultReturn = default)
         {
-            return (T)obj.GetMeta(key, defaultReturn);
+            return (T)obj.GetMeta(name, defaultReturn);
         }
     }
 }

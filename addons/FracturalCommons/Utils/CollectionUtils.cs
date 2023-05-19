@@ -104,6 +104,39 @@ namespace Fractural.Utils
             return (T)array[indices[indices.Length - 1]];
         }
 
+        public static bool Contains<T>(this IList<T> list, T value) => Contains(list as IList, value);
+        public static bool Contains(this IList list, object value)
+        {
+            for (int i = 0; i < list.Count; i++)
+                if (list[i]?.Equals(value) ?? false)
+                    return true;
+            return false;
+        }
+
+        public static bool IndexEquals<T>(this IList<T> list, int index, T value) => IndexEquals(list as IList, index, value);
+        public static bool IndexEquals(this IList list, int index, object value)
+        {
+            if (list.Count <= index || index < 0)
+                return false;
+            return list[index]?.Equals(value) ?? false;
+        }
+
+        public static T After<T>(this IList<T> list, T obj, int index)
+        {
+            object result = After(list as IList, obj, index);
+            if (result is T instance)
+                return instance;
+            return default(T);
+        }
+        public static object After(this IList list, object obj, int index)
+        {
+            int objIndex = list.IndexOf(obj);
+            int offsetIndex = objIndex + index;
+            if (list.Count <= offsetIndex || offsetIndex < 0)
+                return null;
+            return list[offsetIndex];
+        }
+
         #region IReadonlyList<T> Queue Utils
         public static T PeekFrontReadonly<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {

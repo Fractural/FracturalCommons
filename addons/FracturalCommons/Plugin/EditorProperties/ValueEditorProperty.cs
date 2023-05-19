@@ -24,6 +24,12 @@ namespace Fractural.Plugin
             {
                 EmitChanged(GetEditedProperty(), newValue);
             };
+            ValueProperty.MetaChanged += (key, value) =>
+            {
+                GD.Print("Saving meta ", key, " = ", value);
+                GetEditedObject().SetMeta($"{GetEditedProperty()}/{key}", value);
+            };
+
             ValueProperty.SetBottomEditor = OnSetBottomEditor;
             AddChild(valueProperty);
         }
@@ -39,7 +45,16 @@ namespace Fractural.Plugin
 
         public override void UpdateProperty()
         {
-            ValueProperty.SetValue(GetEditedObject().Get(GetEditedProperty()), false);
+            var editedObject = GetEditedObject();
+            var editedProperty = GetEditedProperty();
+            foreach (var metaKey in editedObject.GetMetaList())
+                if (metaKey.StartsWith($"{editedProperty}/"))
+                {
+                    GD.Print("Updating meta ", metaKey.TrimPrefix($"{editedProperty}/"), " = ", editedObject.GetMeta(metaKey));
+                    ValueProperty.SetMeta(metaKey.TrimPrefix($"{editedProperty}/"), editedObject.GetMeta(metaKey), false);
+                }
+
+            ValueProperty.SetValue(editedObject.Get(editedProperty), false);
         }
     }
 }
