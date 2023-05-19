@@ -15,6 +15,7 @@ namespace Fractural.Commons
             AddSubPlugin(new MainPlugin());
             AddSubPlugin(new CSharpResourceRegistryPlugin());
             AddSubPlugin(new EditorUtilsPlugin());
+            AddSubPlugin(new CustomEditorPropertiesPlugin());
         }
     }
 }

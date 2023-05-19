@@ -1,5 +1,7 @@
 ﻿using Fractural.Plugin;
+using Fractural.Utils;
 using Godot;
+using System;
 using static Godot.EditorPlugin;
 
 #if TOOLS

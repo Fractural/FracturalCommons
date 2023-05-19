@@ -10,18 +10,38 @@ namespace Fractural.Plugin
     public class NodePathValueProperty : ValueProperty<NodePath>
     {
         public Node RelativeToNode { get; set; }
+        private Node _selectRootNode;
+        public Node SelectRootNode
+        {
+            get => _selectRootNode;
+            set
+            {
+                _selectRootNode = value;
+                _nodeSelectDialog.RootNode = value;
+            }
+        }
+        private NodeSelectDialog.NodeConditionFuncDelegate _nodeConditionFunc;
+        public NodeSelectDialog.NodeConditionFuncDelegate NodeConditionFunc
+        {
+            get => _nodeConditionFunc;
+            set
+            {
+                _nodeConditionFunc = value;
+                if (_nodeConditionFunc != null)
+                    _nodeSelectDialog.NodeConditionFunc = value;
+            }
+        }
 
         private NodeSelectDialog _nodeSelectDialog;
         private ForwardDragDropButton _selectButton;
         private Button _clearButton;
 
-        public NodePathValueProperty() { }
-        public NodePathValueProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeConditionFunc) : base()
+        public NodePathValueProperty() : this(null, null) { }
+        public NodePathValueProperty(Node selectRootNode = null, NodeSelectDialog.NodeConditionFuncDelegate nodeConditionFunc = null) : base()
         {
             _nodeSelectDialog = new NodeSelectDialog();
-            _nodeSelectDialog.RootNode = selectRootNode;
-            if (nodeConditionFunc != null)
-                _nodeSelectDialog.NodeConditionFunc = nodeConditionFunc;
+            SelectRootNode = selectRootNode;
+            NodeConditionFunc = nodeConditionFunc;
             _nodeSelectDialog.Connect(nameof(NodeSelectDialog.NodeSelected), this, nameof(OnNodeSelected));
             AddChild(_nodeSelectDialog);
 
