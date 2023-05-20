@@ -26,7 +26,6 @@ namespace Fractural.Plugin
             };
             ValueProperty.MetaChanged += (key, value) =>
             {
-                GD.Print("Saving meta ", key, " = ", value);
                 GetEditedObject().SetMeta($"{GetEditedProperty()}/{key}", value);
             };
 
@@ -50,7 +49,6 @@ namespace Fractural.Plugin
             foreach (var metaKey in editedObject.GetMetaList())
                 if (metaKey.StartsWith($"{editedProperty}/"))
                 {
-                    GD.Print("Updating meta ", metaKey.TrimPrefix($"{editedProperty}/"), " = ", editedObject.GetMeta(metaKey));
                     ValueProperty.SetMeta(metaKey.TrimPrefix($"{editedProperty}/"), editedObject.GetMeta(metaKey), false);
                 }
 

@@ -5,6 +5,10 @@
 [node name="Node" type="Node"]
 script = ExtResource( 1 )
 __meta__ = {
+"ValueBoolToStringDictionary/visible": true,
+"ValueFloatToNodePathDictionary/visible": true,
+"ValueNodePathToStringDictionary/visible": true,
+"ValueStringToIntDictionary/visible": true,
 "_editor_description_": ""
 }
 TestInt = 1
@@ -23,6 +27,20 @@ ValueStringToIntDictionary = {
 "joe": 0,
 "lolxd": 0,
 "mama": -1349
+}
+ValueFloatToNodePathDictionary = {
+1.0: NodePath("MarginContainer"),
+2.0: null,
+3.0: NodePath(".")
+}
+ValueBoolToStringDictionary = {
+false: "0",
+true: "0"
+}
+ValueNodePathToStringDictionary = {
+NodePath("MarginContainer"): "0",
+NodePath("."): "0",
+NodePath(""): "0"
 }
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
