@@ -122,4 +122,12 @@ namespace Fractural.Utils
             return true;
         }
     }
+
+    public class NodePathDefaultProvider : DefaultValueProvider<NodePath>
+    {
+        public override NodePath NextDefaultValue(IEnumerable<NodePath> previousValues = null)
+        {
+            return new NodePath();
+        }
+    }
 }

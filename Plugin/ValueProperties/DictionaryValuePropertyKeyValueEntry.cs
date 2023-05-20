@@ -30,6 +30,12 @@ namespace Fractural.Plugin
         public DictionaryValuePropertyKeyValueEntry() { }
         public DictionaryValuePropertyKeyValueEntry(ValueProperty keyProperty, ValueProperty valueProperty)
         {
+            var control = new Control();
+            control.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            control.SizeFlagsStretchRatio = 0.25f;
+            control.RectSize = new Vector2(24, 0);
+            AddChild(control);
+
             KeyProperty = keyProperty;
             KeyProperty.ValueChanged += OnKeyChanged;
             KeyProperty.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
@@ -40,6 +46,7 @@ namespace Fractural.Plugin
 
             var label = new Label();
             label.Text = ":  ";
+            label.ClipText = true;
             AddChild(label);
 
             AddChild(ValueProperty);

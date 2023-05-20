@@ -9,12 +9,11 @@ using GDC = Godot.Collections;
 namespace Fractural.Plugin
 {
     // TODO LATER: Add pagination
-    // TODO NOW: Fix nodepath as key.
     [Tool]
     public class DictionaryValueProperty : ValueProperty<GDC.Dictionary>
     {
         private Button _editButton;
-        private MarginContainer _marginContainer;
+        private Control _container;
         private Button _addElementButton;
         private VBoxContainer _keyValueEntriesVBox;
 
@@ -36,19 +35,21 @@ namespace Fractural.Plugin
             _editButton.Connect("toggled", this, nameof(OnEditToggled));
             AddChild(_editButton);
 
-            var vBox = new VBoxContainer();
             _addElementButton = new Button();
             _addElementButton.Text = "Add Key Value Pair";
             _addElementButton.Connect("pressed", this, nameof(OnAddElementPressed));
-            vBox.AddChild(_addElementButton);
+            _addElementButton.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            _addElementButton.RectMinSize = new Vector2(24 * 4, 0);
 
             _keyValueEntriesVBox = new VBoxContainer();
-            vBox.AddChild(_keyValueEntriesVBox);
 
-            _marginContainer = new MarginContainer();
-            _marginContainer.AddConstantOverride("margin_left", 24);
-            _marginContainer.AddChild(vBox);
-            AddChild(_marginContainer);
+            var vbox = new VBoxContainer();
+            vbox.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            vbox.AddChild(_addElementButton);
+            vbox.AddChild(_keyValueEntriesVBox);
+
+            _container = vbox;
+            AddChild(_container);
         }
 
         public override void _Ready()
@@ -68,7 +69,7 @@ namespace Fractural.Plugin
                 _setBottomEditorFrameTimer--;
             else
             {
-                SetBottomEditor(_marginContainer);
+                SetBottomEditor(_container);
                 SetProcess(false);
             }
         }
@@ -78,8 +79,8 @@ namespace Fractural.Plugin
 
         public override void UpdateProperty()
         {
-            _marginContainer.Visible = this.GetMeta<bool>("visible", false);
-            _editButton.Pressed = _marginContainer.Visible;
+            _container.Visible = this.GetMeta<bool>("visible", false);
+            _editButton.Pressed = _container.Visible;
 
             _editButton.Text = EditButtonText;
 
@@ -168,6 +169,8 @@ namespace Fractural.Plugin
             var newKey = entry.CurrentKey;
             if (Value.Contains(newKey))
             {
+                // Revert CurrentKey back
+                entry.CurrentKey = oldKey;
                 // Reject change since the newKey already exists
                 entry.KeyProperty.SetValue(oldKey);
                 return;
@@ -204,7 +207,7 @@ namespace Fractural.Plugin
         private void OnEditToggled(bool toggled)
         {
             SetMeta("visible", toggled);
-            _marginContainer.Visible = toggled;
+            _container.Visible = toggled;
         }
     }
 }
