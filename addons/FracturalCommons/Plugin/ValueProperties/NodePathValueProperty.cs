@@ -112,6 +112,12 @@ namespace Fractural.Plugin
             SelectPathTo(GetNode(firstDroppedNodePath));
         }
 
+        protected override void OnDisabled(bool disabled)
+        {
+            _selectButton.Disabled = disabled;
+            _clearButton.Disabled = disabled;
+        }
+
         private void SelectPathTo(Node selectedNode)
         {
             if (selectedNode == null)

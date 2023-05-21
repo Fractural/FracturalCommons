@@ -42,6 +42,13 @@ namespace Fractural.Plugin
             }
         }
 
+        public override bool _Set(string property, object value)
+        {
+            if (property == "read_only")
+                ValueProperty.Disabled = (bool)value;
+            return base._Set(property, value);
+        }
+
         public override void UpdateProperty()
         {
             var editedObject = GetEditedObject();

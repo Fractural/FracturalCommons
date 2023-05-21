@@ -42,6 +42,8 @@ namespace Fractural.Plugin
             if (ValueProperty != null)
                 ValueProperty.Reparent(this);
         }
+
+        protected override void OnDisabled(bool disabled) => ValueProperty.Disabled = disabled;
     }
 }
 #endif

@@ -47,6 +47,18 @@ namespace Fractural.Plugin
             set => SetValue(value, true);
         }
 
+        private bool _disabled;
+        public virtual bool Disabled
+        {
+            get => _disabled;
+            set
+            {
+                _disabled = value;
+                OnDisabled(value);
+            }
+        }
+
+        protected virtual void OnDisabled(bool disabled) { }
         public void SetValue(object value, bool triggerValueChange = false)
         {
             if (_value != value)

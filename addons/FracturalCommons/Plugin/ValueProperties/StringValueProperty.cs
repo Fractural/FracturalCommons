@@ -22,6 +22,8 @@ namespace Fractural.Plugin
             _lineEdit.Text = Value;
         }
 
+        protected override void OnDisabled(bool disabled) => _lineEdit.Editable = !disabled;
+
         private void OnTextEntered(string newText)
         {
             Value = newText;

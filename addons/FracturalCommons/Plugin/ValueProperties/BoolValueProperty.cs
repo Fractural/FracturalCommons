@@ -22,6 +22,8 @@ namespace Fractural.Plugin
             _checkBox.SetPressedNoSignal(Value);
         }
 
+        protected override void OnDisabled(bool disabled) => _checkBox.Disabled = disabled;
+
         private void OnCheckBoxToggled(bool pressed)
         {
             Value = pressed;
