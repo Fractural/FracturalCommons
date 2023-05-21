@@ -29,6 +29,8 @@ namespace Fractural.Plugin
             _spinSlider.SetBlockSignals(false);
         }
 
+        protected override void OnDisabled(bool disabled) => _spinSlider.ReadOnly = disabled;
+
         private void OnSpinSliderChanged(float newValue)
         {
             Value = newValue;

@@ -24,6 +24,22 @@ namespace Fractural.Plugin
         public object CurrentKey { get; set; }
         public ValueProperty KeyProperty { get; set; }
         public ValueProperty ValueProperty { get; set; }
+        private bool _disabled;
+        public bool Disabled
+        {
+            get => _disabled;
+            set
+            {
+                _disabled = value;
+
+                if (IsInsideTree())
+                {
+                    KeyProperty.Disabled = value;
+                    ValueProperty.Disabled = value;
+                    _deleteButton.Disabled = value;
+                }
+            }
+        }
 
         private Button _deleteButton;
 

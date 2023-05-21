@@ -144,6 +144,12 @@ namespace Fractural.Plugin
             _addElementButton.Disabled = Value.Contains(nextKey);
         }
 
+        protected override void OnDisabled(bool disabled)
+        {
+            foreach (DictionaryValuePropertyKeyValueEntry entry in _keyValueEntriesVBox.GetChildren())
+                entry.Disabled = disabled;
+        }
+
         private new ValueProperty CreateValueProperty(Type type)
         {
             var property = ValueProperty.CreateValueProperty(type);

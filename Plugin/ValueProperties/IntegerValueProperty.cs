@@ -27,6 +27,8 @@ namespace Fractural.Plugin
             _spinBox.SetBlockSignals(false);
         }
 
+        protected override void OnDisabled(bool disabled) => _spinBox.Editable = !disabled;
+
         private void OnSpinBoxChanged(float newValue)
         {
             Value = (int)newValue;
