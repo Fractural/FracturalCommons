@@ -55,9 +55,7 @@ namespace Fractural.Plugin
             var editedProperty = GetEditedProperty();
             foreach (var metaKey in editedObject.GetMetaList())
                 if (metaKey.StartsWith($"{editedProperty}/"))
-                {
                     ValueProperty.SetMeta(metaKey.TrimPrefix($"{editedProperty}/"), editedObject.GetMeta(metaKey), false);
-                }
 
             ValueProperty.SetValue(editedObject.Get(editedProperty), false);
         }

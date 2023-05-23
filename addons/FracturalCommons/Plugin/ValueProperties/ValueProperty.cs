@@ -61,13 +61,10 @@ namespace Fractural.Plugin
         protected virtual void OnDisabled(bool disabled) { }
         public void SetValue(object value, bool triggerValueChange = false)
         {
-            if (_value != value)
-            {
-                _value = value;
-                if (IsInsideTree() && triggerValueChange)
-                    InvokeValueChanged(_value);
-                UpdateProperty();
-            }
+            _value = value;
+            if (IsInsideTree() && triggerValueChange)
+                InvokeValueChanged(_value);
+            UpdateProperty();
         }
         public virtual void UpdateProperty() { }
         protected void InvokeValueChanged(object value) => ValueChanged?.Invoke(value);
