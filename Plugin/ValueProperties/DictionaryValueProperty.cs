@@ -20,14 +20,16 @@ namespace Fractural.Plugin
         private Type _keyType;
         private Type _valueType;
         private Node _sceneRoot;
+        private Node _relativeToNode;
         private string EditButtonText => $"[{_keyType.Name}]:{_valueType.Name} [{Value.Count}]";
 
         public DictionaryValueProperty() { }
-        public DictionaryValueProperty(Type keyType, Type valueType, Node sceneRoot) : base()
+        public DictionaryValueProperty(Type keyType, Type valueType, Node sceneRoot, Node relativeToNode) : base()
         {
             _keyType = keyType;
             _valueType = valueType;
             _sceneRoot = sceneRoot;
+            _relativeToNode = relativeToNode;
 
             _editButton = new Button();
             _editButton.ToggleMode = true;
@@ -154,7 +156,10 @@ namespace Fractural.Plugin
         {
             var property = ValueProperty.CreateValueProperty(type);
             if (type == typeof(NodePath) && property is NodePathValueProperty valueProperty)
+            {
                 valueProperty.SelectRootNode = _sceneRoot;
+                valueProperty.RelativeToNode = _relativeToNode;
+            }
             return property;
         }
 

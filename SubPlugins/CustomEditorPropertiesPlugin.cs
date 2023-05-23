@@ -64,7 +64,7 @@ namespace Fractural.Commons
                     GD.PushError($"{nameof(CustomEditorPropertiesInspectorPlugin)}: Could not find value type \"{value}\" for {nameof(HintString.TypedDictionary)}.");
                     return true;
                 }
-                AddPropertyEditor(path, new ValueEditorProperty(new DictionaryValueProperty(keyType, valueType, _plugin.GetEditorInterface().GetEditedSceneRoot())));
+                AddPropertyEditor(path, new ValueEditorProperty(new DictionaryValueProperty(keyType, valueType, _plugin.GetEditorInterface().GetEditedSceneRoot(), @object as Node)));
                 return false;
             }
             return true;
