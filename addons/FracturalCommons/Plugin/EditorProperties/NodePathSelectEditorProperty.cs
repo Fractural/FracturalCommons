@@ -7,12 +7,14 @@ namespace Fractural.Plugin
     [Tool]
     public class NodePathSelectEditorProperty : EditorProperty
     {
+        public delegate bool NodeConditionFuncDelegate(Node node, Godot.Object editedObject);
+
         private NodePathValueProperty _nodePathValueProperty;
 
         public NodePathSelectEditorProperty() { }
-        public NodePathSelectEditorProperty(Node selectRootNode, NodeSelectDialog.NodeConditionFuncDelegate nodeCondition = null)
+        public NodePathSelectEditorProperty(Node selectRootNode, NodeConditionFuncDelegate nodeCondition = null)
         {
-            _nodePathValueProperty = new NodePathValueProperty(selectRootNode, nodeCondition);
+            _nodePathValueProperty = new NodePathValueProperty(selectRootNode, (node) => nodeCondition(node, GetEditedObject()));
             _nodePathValueProperty.ValueChanged += (newPath) =>
             {
                 EmitChanged(GetEditedProperty(), newPath);
