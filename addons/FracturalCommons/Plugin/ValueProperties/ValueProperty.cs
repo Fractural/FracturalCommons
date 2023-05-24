@@ -96,14 +96,14 @@ namespace Fractural.Plugin
         public new T Value
         {
             get => (T)base.Value;
-            set
-            {
-                if ((base.Value == null && value != null) || !base.Value.Equals(value))
-                    ValueChanged?.Invoke(value);
-                base.Value = value;
-            }
+            set => SetValue((T)base.Value, true);
         }
-        public void SetValue(T value, bool triggerPropertyUpdate = false) => base.SetValue(value, triggerPropertyUpdate);
+        public void SetValue(T value, bool triggerValueChange = false)
+        {
+            if (IsInsideTree() && triggerValueChange)
+                ValueChanged?.Invoke(value);
+            SetValue((object)value, triggerValueChange);
+        }
         protected void InvokeValueChanged(T value) => base.InvokeValueChanged(value);
     }
 }
