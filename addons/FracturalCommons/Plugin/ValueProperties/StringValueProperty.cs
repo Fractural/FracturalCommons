@@ -19,7 +19,9 @@ namespace Fractural.Plugin
 
         public override void UpdateProperty()
         {
+            _lineEdit.SetBlockSignals(true);
             _lineEdit.Text = Value;
+            _lineEdit.SetBlockSignals(false);
         }
 
         protected override void OnDisabled(bool disabled) => _lineEdit.Editable = !disabled;
