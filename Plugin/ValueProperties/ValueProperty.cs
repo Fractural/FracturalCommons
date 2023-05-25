@@ -77,7 +77,7 @@ namespace Fractural.Plugin
             UpdateProperty();
         }
         public virtual void UpdateProperty() { }
-        protected void InvokeValueChanged(object value) => ValueChanged?.Invoke(value);
+        protected virtual void InvokeValueChanged(object value) => ValueChanged?.Invoke(value);
         public new void SetMeta(string key, object value) => SetMeta(key, value, true);
         public void SetMeta(string key, object value, bool triggerMetaChanged)
         {
@@ -106,27 +106,13 @@ namespace Fractural.Plugin
         public new T Value
         {
             get => (T)base.Value;
-            set => SetValue((T)value, true);
+            set => SetValue(value, true);
         }
-        private int _settingValueCounter = 0;
-        public void SetValue(T value, bool triggerValueChange = false)
+        public void SetValue(T value, bool triggerValueChange = false) => SetValue((object)value, triggerValueChange);
+        protected void InvokeValueChanged(T value) => InvokeValueChanged((object)value);
+        protected override void InvokeValueChanged(object value)
         {
-            int currCounter = ++_settingValueCounter;
-            if (IsInsideTree() && triggerValueChange)
-            {
-                InvokeValueChanged(value);
-                if (currCounter != _settingValueCounter)
-                {
-                    // We called SetValue again due to the ValueChanged event, so
-                    // we bail since we want only the latest setValue to run.
-                    return;
-                }
-            }
-            SetValue((object)value, triggerValueChange);
-        }
-        protected void InvokeValueChanged(T value)
-        {
-            ValueChanged?.Invoke(value);
+            ValueChanged?.Invoke((T)value);
             base.InvokeValueChanged(value);
         }
     }
