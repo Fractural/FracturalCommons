@@ -80,9 +80,10 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
-            base._Ready();
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
+#endif
             _deleteButton.Icon = GetIcon("Remove", "EditorIcons");
         }
 

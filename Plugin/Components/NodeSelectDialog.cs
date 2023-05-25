@@ -31,9 +31,10 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             GetOk().Disabled = true;
             GetOk().Connect("pressed", this, nameof(OnItemActivated));
 
