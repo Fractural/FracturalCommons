@@ -44,8 +44,18 @@ namespace Fractural.Plugin
         public virtual object Value
         {
             get => _value;
-            set => SetValue(value, true);
+            set
+            {
+                if (Validate != null && !Validate(value))
+                {
+                    UpdateProperty();
+                    return;
+                }
+                SetValue(value, true);
+            }
         }
+
+        public Func<object, bool> Validate { get; set; }
 
         private bool _disabled;
         public virtual bool Disabled
@@ -107,6 +117,14 @@ namespace Fractural.Plugin
         {
             get => (T)base.Value;
             set => SetValue(value, true);
+        }
+        public new Func<T, bool> Validate
+        {
+            set
+            {
+                if (value != null)
+                    base.Validate = (obj) => value((T)obj);
+            }
         }
         public void SetValue(T value, bool triggerValueChange = false) => SetValue((object)value, triggerValueChange);
         protected void InvokeValueChanged(T value) => InvokeValueChanged((object)value);
