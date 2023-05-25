@@ -59,11 +59,21 @@ namespace Fractural.Plugin
         }
 
         protected virtual void OnDisabled(bool disabled) { }
+        private int _settingValueCounter = 0;
         public void SetValue(object value, bool triggerValueChange = false)
         {
             _value = value;
+            int currCounter = ++_settingValueCounter;
             if (IsInsideTree() && triggerValueChange)
+            {
                 InvokeValueChanged(_value);
+                if (currCounter != _settingValueCounter)
+                {
+                    // We called SetValue again due to the ValueChanged event, so
+                    // we bail since we want only the latest setValue to run.
+                    return;
+                }
+            }
             UpdateProperty();
         }
         public virtual void UpdateProperty() { }
@@ -98,13 +108,27 @@ namespace Fractural.Plugin
             get => (T)base.Value;
             set => SetValue((T)value, true);
         }
+        private int _settingValueCounter = 0;
         public void SetValue(T value, bool triggerValueChange = false)
         {
+            int currCounter = ++_settingValueCounter;
             if (IsInsideTree() && triggerValueChange)
-                ValueChanged?.Invoke(value);
+            {
+                InvokeValueChanged(value);
+                if (currCounter != _settingValueCounter)
+                {
+                    // We called SetValue again due to the ValueChanged event, so
+                    // we bail since we want only the latest setValue to run.
+                    return;
+                }
+            }
             SetValue((object)value, triggerValueChange);
         }
-        protected void InvokeValueChanged(T value) => base.InvokeValueChanged(value);
+        protected void InvokeValueChanged(T value)
+        {
+            ValueChanged?.Invoke(value);
+            base.InvokeValueChanged(value);
+        }
     }
 }
 #endif
