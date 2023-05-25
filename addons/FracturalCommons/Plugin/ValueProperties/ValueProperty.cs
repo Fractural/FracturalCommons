@@ -96,7 +96,7 @@ namespace Fractural.Plugin
         public new T Value
         {
             get => (T)base.Value;
-            set => SetValue((T)base.Value, true);
+            set => SetValue((T)value, true);
         }
         public void SetValue(T value, bool triggerValueChange = false)
         {
