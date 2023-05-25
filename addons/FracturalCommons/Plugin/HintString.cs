@@ -22,11 +22,9 @@
         /// - string
         /// - NodePath
         /// </summary>
-        public const string TypedDictionary = nameof(TypedDictionary);
-
-        public static string GetTypedDictionary<TKey, TValue>()
+        public static string TypedDictionary<TKey, TValue>()
         {
-            return $"{TypedDictionary},{typeof(TKey).Name}:{typeof(TValue).Name}";
+            return $"{nameof(TypedDictionary)},{typeof(TKey).Name}:{typeof(TValue).Name}";
         }
 
     }

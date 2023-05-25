@@ -48,7 +48,7 @@ namespace Fractural.Plugin
         {
             var control = new Control();
             control.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
-            control.SizeFlagsStretchRatio = 0.25f;
+            control.SizeFlagsStretchRatio = 0.1f;
             control.RectSize = new Vector2(24, 0);
             AddChild(control);
 
@@ -58,14 +58,20 @@ namespace Fractural.Plugin
             ValueProperty = valueProperty;
             ValueProperty.ValueChanged += OnValueChanged;
             ValueProperty.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
-            AddChild(KeyProperty);
+
+            var hBox = new HBoxContainer();
+            hBox.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            hBox.SizeFlagsStretchRatio = 0.9f;
+            AddChild(hBox);
+
+            hBox.AddChild(KeyProperty);
 
             var label = new Label();
             label.Text = ":  ";
             label.ClipText = true;
-            AddChild(label);
+            hBox.AddChild(label);
 
-            AddChild(ValueProperty);
+            hBox.AddChild(ValueProperty);
 
             _deleteButton = new Button();
             _deleteButton.Connect("pressed", this, nameof(OnDeletePressed));

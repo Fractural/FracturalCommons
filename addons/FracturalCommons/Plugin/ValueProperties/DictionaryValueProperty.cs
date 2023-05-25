@@ -64,16 +64,12 @@ namespace Fractural.Plugin
             GetViewport().Connect("gui_focus_changed", this, nameof(OnFocusChanged));
         }
 
-        private int _setBottomEditorFrameTimer = 1;
         public override void _Process(float delta)
         {
-            if (_setBottomEditorFrameTimer > 0)
-                _setBottomEditorFrameTimer--;
-            else
-            {
-                SetBottomEditor(_container);
-                SetProcess(false);
-            }
+            // We need SetBottomEditor to run here because it won't work in _Ready due to
+            // the tree being busy setting up nodes.
+            SetBottomEditor(_container);
+            SetProcess(false);
         }
 
         private Control _currentFocused;

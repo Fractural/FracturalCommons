@@ -42,9 +42,9 @@ namespace Fractural.Commons
 
         private bool TryParseDictionary(Godot.Object @object, int type, string path, int hint, string hintText, int usage, string[] hintArgs)
         {
-            if (type == (int)Variant.Type.Dictionary && hintArgs.Contains(HintString.TypedDictionary))
+            if (type == (int)Variant.Type.Dictionary && hintArgs.Contains(nameof(HintString.TypedDictionary)))
             {
-                var args = hintArgs.After(HintString.TypedDictionary, 1).Split(":");
+                var args = hintArgs.After(nameof(HintString.TypedDictionary), 1).Split(":");
                 if (args.Length != 2)
                 {
                     GD.PushError($"{nameof(CustomEditorPropertiesInspectorPlugin)}: Expected {nameof(HintString.TypedDictionary)} to have Key:Value as second hint string argument.");
