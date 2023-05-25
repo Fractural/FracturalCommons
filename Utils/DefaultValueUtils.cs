@@ -130,4 +130,61 @@ namespace Fractural.Utils
             return new NodePath();
         }
     }
+
+    public class Vector2DefaultProvider : DefaultValueProvider<Vector2>
+    {
+        public override Vector2 NextDefaultValue(IEnumerable<Vector2> previousValues = null)
+        {
+            var prevValuesSet = new HashSet<Vector2>(previousValues ?? new Vector2[0]);
+            for (int x = 0; x <= int.MaxValue; x++)
+            {
+                for (int y = 0; y <= int.MaxValue; y++)
+                {
+                    var vec = new Vector2(x, y);
+                    if (!prevValuesSet.Contains(vec))
+                        return vec;
+                }
+            }
+            return Vector2.Zero;
+        }
+    }
+
+    public class Vector2IntDefaultProvider : DefaultValueProvider<Vector2Int>
+    {
+        public override Vector2Int NextDefaultValue(IEnumerable<Vector2Int> previousValues = null)
+        {
+            var prevValuesSet = new HashSet<Vector2Int>(previousValues ?? new Vector2Int[0]);
+            for (int x = 0; x <= int.MaxValue; x++)
+            {
+                for (int y = 0; y <= int.MaxValue; y++)
+                {
+                    var vec = new Vector2Int(x, y);
+                    if (!prevValuesSet.Contains(vec))
+                        return vec;
+                }
+            }
+            return Vector2Int.Zero;
+        }
+    }
+
+    public class Vector3DefaultProvider : DefaultValueProvider<Vector3>
+    {
+        public override Vector3 NextDefaultValue(IEnumerable<Vector3> previousValues = null)
+        {
+            var prevValuesSet = new HashSet<Vector3>(previousValues ?? new Vector3[0]);
+            for (int x = 0; x <= int.MaxValue; x++)
+            {
+                for (int y = 0; y <= int.MaxValue; y++)
+                {
+                    for (int z = 0; z <= int.MaxValue; z++)
+                    {
+                        var vec = new Vector3(x, y, z);
+                        if (!prevValuesSet.Contains(vec))
+                            return vec;
+                    }
+                }
+            }
+            return Vector3.Zero;
+        }
+    }
 }
