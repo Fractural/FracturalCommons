@@ -39,9 +39,10 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             _searchBar = new LineEdit();
             _searchBar.PlaceholderText = "Filter";
             _searchBar.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;

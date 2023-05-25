@@ -29,9 +29,10 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             _searchEntriesPopupMenu = new PopupMenu();
             _searchEntriesPopupMenu.PopupExclusive = false;
             _searchEntriesPopupMenu.Connect("index_pressed", this, nameof(OnSearchMenuIndexPressed));

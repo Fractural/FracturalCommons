@@ -56,10 +56,10 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
-            base._Ready();
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             _addElementButton.Icon = GetIcon("Add", "EditorIcons");
             GetViewport().Connect("gui_focus_changed", this, nameof(OnFocusChanged));
         }

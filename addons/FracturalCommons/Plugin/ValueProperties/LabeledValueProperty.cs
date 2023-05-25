@@ -31,9 +31,10 @@ namespace Fractural.Plugin
         public override void _Ready()
         {
             base._Ready();
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             _label = new Label();
             _label.Text = PropertyName;
             _label.SizeFlagsHorizontal = ValueProperty.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;

@@ -26,9 +26,10 @@ namespace Fractural.Plugin
 
         public override void _Ready()
         {
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             _itemList = new ItemList();
             _itemList.Connect("item_activated", this, nameof(OnItemActivated));
             foreach (string item in Items)
