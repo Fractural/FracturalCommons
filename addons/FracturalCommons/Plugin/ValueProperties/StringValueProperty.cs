@@ -24,7 +24,13 @@ namespace Fractural.Plugin
             _lineEdit.SetBlockSignals(false);
         }
 
-        protected override void OnDisabled(bool disabled) => _lineEdit.Editable = !disabled;
+        protected override void OnDisabled(bool disabled)
+        {
+            if (disabled)
+                _lineEdit.ReleaseFocus();
+            _lineEdit.FocusMode = disabled ? FocusModeEnum.None : FocusModeEnum.All;
+            _lineEdit.Editable = !disabled;
+        }
 
         private void OnTextEntered(string newText)
         {
@@ -33,7 +39,8 @@ namespace Fractural.Plugin
 
         private void OnFocusExited()
         {
-            Value = _lineEdit.Text;
+            if (!Disabled)
+                Value = _lineEdit.Text;
         }
     }
 }
