@@ -6,30 +6,30 @@ namespace Fractural
 {
     public class PropertyListItem
     {
-        public string name;
-        public Variant.Type type;
-        public PropertyHint hint;
-        public string hintString;
-        public PropertyUsageFlags usage;
+        public string Name { get; set; }
+        public Variant.Type Type { get; set; }
+        public PropertyHint Hint { get; set; }
+        public string HintString { get; set; }
+        public PropertyUsageFlags Usage { get; set; }
 
         public PropertyListItem(string name, Variant.Type type, PropertyHint hint = PropertyHint.None, string hintString = "", PropertyUsageFlags usage = PropertyUsageFlags.Default)
         {
-            this.name = name;
-            this.type = type;
-            this.hint = hint;
-            this.hintString = hintString;
-            this.usage = usage;
+            this.Name = name;
+            this.Type = type;
+            this.Hint = hint;
+            this.HintString = hintString;
+            this.Usage = usage;
         }
 
         public GDC.Dictionary ToGDDict()
         {
             return new GDC.Dictionary
             {
-                ["name"] = name,
-                ["type"] = type,
-                ["hint"] = hint,
-                ["hint_string"] = hintString,
-                ["usage"] = usage
+                ["name"] = Name,
+                ["type"] = Type,
+                ["hint"] = Hint,
+                ["hint_string"] = HintString,
+                ["usage"] = Usage
             };
         }
 
