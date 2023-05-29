@@ -109,17 +109,12 @@ namespace Fractural.Utils
     {
         public override bool NextDefaultValue(IEnumerable<bool> previousValues = null)
         {
-            bool trueTaken = false;
-            if (previousValues != null)
+            if (previousValues != null && previousValues.Count() > 0)
             {
-                foreach (var value in previousValues)
-                {
-                    if (value)
-                        trueTaken = true;
-                }
-                if (trueTaken) return false;
+                if (!previousValues.First())
+                    return true;
             }
-            return true;
+            return false;
         }
     }
 
