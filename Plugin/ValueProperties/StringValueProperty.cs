@@ -6,6 +6,12 @@ namespace Fractural.Plugin
     [Tool]
     public class StringValueProperty : ValueProperty<string>
     {
+        public string PlaceholderText 
+        {
+            get => _lineEdit.PlaceholderText;
+            set => _lineEdit.PlaceholderText = value;
+        }
+        
         private LineEdit _lineEdit;
 
         public StringValueProperty() : base()
