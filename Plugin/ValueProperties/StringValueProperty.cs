@@ -11,6 +11,12 @@ namespace Fractural.Plugin
             get => _lineEdit.PlaceholderText;
             set => _lineEdit.PlaceholderText = value;
         }
+
+        public Font Font 
+        {
+            get => _lineEdit.GetFont("font");
+            set => _lineEdit.AddFontOverride("font", value);
+        }
         
         private LineEdit _lineEdit;
 
