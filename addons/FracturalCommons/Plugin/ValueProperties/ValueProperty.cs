@@ -44,15 +44,7 @@ namespace Fractural.Plugin
         public virtual object Value
         {
             get => _value;
-            set
-            {
-                if (Validate != null && !Validate(value))
-                {
-                    UpdateProperty();
-                    return;
-                }
-                SetValue(value, true);
-            }
+            set => SetValue(value, true);
         }
 
         public Func<object, bool> Validate { get; set; }
@@ -72,6 +64,11 @@ namespace Fractural.Plugin
         private int _settingValueCounter = 0;
         public void SetValue(object value, bool triggerValueChange = false)
         {
+            if (Validate != null && !Validate(value))
+            {
+                UpdateProperty();
+                return;
+            }
             _value = value;
             int currCounter = ++_settingValueCounter;
             if (IsInsideTree() && triggerValueChange)
