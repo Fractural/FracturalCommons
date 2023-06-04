@@ -10,7 +10,7 @@ using Expression = System.Linq.Expressions.Expression;
 namespace Fractural.Plugin
 {
     [Tool]
-    public abstract class ValueProperty : VBoxContainer
+    public abstract class ValueProperty : VBoxContainer, ISerializationListener
     {
         #region Static
         private static Dictionary<Type, Type> _typeToValuePropertyDict = new Dictionary<Type, Type>();
@@ -92,6 +92,13 @@ namespace Fractural.Plugin
                 MetaChanged?.Invoke(key, value);
             base.SetMeta(key, value);
         }
+
+        public void OnBeforeSerialize()
+        {
+            Validate = null;
+        }
+
+        public void OnAfterDeserialize() { }
 
         public ValueProperty()
         {
