@@ -133,7 +133,7 @@ namespace Tests
             _uiControl.AddChild(_popupMenuScrollable);
 
             _popupSearch = new PopupSearch();
-            _popupSearch.SearchEntries = TestStringArray;
+            _popupSearch.SearchEntries = SearchEntry.FromStringArray(TestStringArray);
             _popupSearch.Connect(nameof(PopupSearch.EntrySelected), this, nameof(OnPopupSearchEntrySelected));
             _uiControl.AddChild(_popupSearch);
 

@@ -12,9 +12,8 @@ namespace Fractural.Plugin
 
         [Export]
         public Vector2 MaxSize { get; set; } = new Vector2(300, 600);
-        [Export]
-        private string[] _searchEntries = new string[0];
-        public string[] SearchEntries
+        private SearchEntry[] _searchEntries = new SearchEntry[0];
+        public SearchEntry[] SearchEntries
         {
             get => _searchEntries;
             set
@@ -76,9 +75,9 @@ namespace Fractural.Plugin
             _searchEntriesItemList.Clear();
             foreach (var entry in SearchEntries)
             {
-                if (_searchBar.Text != "" && ((CaseSensitive && entry.Find(_searchBar.Text) < 0) || entry.ToLower().Find(_searchBar.Text.ToLower()) < 0))
+                if (_searchBar.Text != "" && ((CaseSensitive && entry.Text.Find(_searchBar.Text) < 0) || entry.Text.ToLower().Find(_searchBar.Text.ToLower()) < 0))
                     continue;
-                _searchEntriesItemList.AddItem(entry);
+                _searchEntriesItemList.AddItem(entry.Text, entry.Icon);
             }
 
             // Find sizing to fit content or hit max height
