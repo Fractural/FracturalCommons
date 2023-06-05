@@ -1,7 +1,6 @@
 using Fractural.Plugin;
 using Fractural.Utils;
 using Godot;
-using System;
 
 #if TOOLS
 namespace Tests
@@ -118,11 +117,11 @@ namespace Tests
 
             _searchEdit = new SearchEdit();
             _searchEdit.RectMinSize = new Vector2(150, 0);
-            _searchEdit.SearchEntries = SearchEntry.FromStringArray(TestStringArray);
+            _searchEdit.SearchEntries = SearchEntry.ArrayFromStringEnumerable(TestStringArray);
             _searchEdit.Connect("text_changed", this, nameof(OnSearchEditTextChanged));
 
             _searchDialog = new SearchDialog();
-            _searchDialog.SearchEntries = SearchEntry.FromStringArray(TestStringArray);
+            _searchDialog.SearchEntries = SearchEntry.ArrayFromStringEnumerable(TestStringArray);
             _searchDialog.Connect(nameof(SearchDialog.EntrySelected), this, nameof(OnSearchDialogEntrySelected));
             _uiControl.AddChild(_searchDialog);
 
@@ -133,7 +132,7 @@ namespace Tests
             _uiControl.AddChild(_popupMenuScrollable);
 
             _popupSearch = new PopupSearch();
-            _popupSearch.SearchEntries = SearchEntry.FromStringArray(TestStringArray);
+            _popupSearch.SearchEntries = SearchEntry.ArrayFromStringEnumerable(TestStringArray);
             _popupSearch.Connect(nameof(PopupSearch.EntrySelected), this, nameof(OnPopupSearchEntrySelected));
             _uiControl.AddChild(_popupSearch);
 
