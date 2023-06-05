@@ -118,11 +118,11 @@ namespace Tests
 
             _searchEdit = new SearchEdit();
             _searchEdit.RectMinSize = new Vector2(150, 0);
-            _searchEdit.SearchEntries = TestStringArray;
+            _searchEdit.SearchEntries = SearchEntry.FromStringArray(TestStringArray);
             _searchEdit.Connect("text_changed", this, nameof(OnSearchEditTextChanged));
 
             _searchDialog = new SearchDialog();
-            _searchDialog.SearchEntries = TestStringArray;
+            _searchDialog.SearchEntries = SearchEntry.FromStringArray(TestStringArray);
             _searchDialog.Connect(nameof(SearchDialog.EntrySelected), this, nameof(OnSearchDialogEntrySelected));
             _uiControl.AddChild(_searchDialog);
 
