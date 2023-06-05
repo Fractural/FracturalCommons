@@ -1,8 +1,23 @@
 ﻿using Fractural.Utils;
 using Godot;
+using System.Linq;
 
 namespace Fractural.Plugin
 {
+    public struct SearchEntry
+    {
+        public SearchEntry(string text, Texture icon = null)
+        {
+            Text = text;
+            Icon = icon;
+        }
+
+        public string Text { get; set; }
+        public Texture Icon { get; set; }
+
+        public static SearchEntry[] FromStringArray(string[] values) => values.Select(x => new SearchEntry(x)).ToArray();
+    }
+
     [CSharpScript]
     [Tool]
     public class SearchDialog : AcceptDialog
@@ -10,9 +25,8 @@ namespace Fractural.Plugin
         [Signal]
         public delegate void EntrySelected(string entry);
 
-        [Export]
-        private string[] _searchEntries = new string[0];
-        public string[] SearchEntries
+        private SearchEntry[] _searchEntries = new SearchEntry[0];
+        public SearchEntry[] SearchEntries
         {
             get => _searchEntries;
             set
@@ -81,9 +95,9 @@ namespace Fractural.Plugin
             _searchEntriesItemList.Clear();
             foreach (var entry in SearchEntries)
             {
-                if (_searchBar.Text != "" && ((CaseSensitive && entry.Find(_searchBar.Text) < 0) || entry.ToLower().Find(_searchBar.Text.ToLower()) < 0))
+                if (_searchBar.Text != "" && ((CaseSensitive && entry.Text.Find(_searchBar.Text) < 0) || entry.Text.ToLower().Find(_searchBar.Text.ToLower()) < 0))
                     continue;
-                _searchEntriesItemList.AddItem(entry);
+                _searchEntriesItemList.AddItem(entry.Text, entry.Icon);
             }
         }
 

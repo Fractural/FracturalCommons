@@ -7,9 +7,8 @@ namespace Fractural.Plugin
     [Tool]
     public class SearchEdit : LineEdit
     {
-        [Export]
-        private string[] _searchEntries = new string[0];
-        public string[] SearchEntries
+        private SearchEntry[] _searchEntries = new SearchEntry[0];
+        public SearchEntry[] SearchEntries
         {
             get => _searchEntries;
             set
@@ -56,9 +55,12 @@ namespace Fractural.Plugin
             int index = 0;
             foreach (var entry in SearchEntries)
             {
-                if (Text != "" && ((CaseSensitive && entry.Find(Text) < 0) || entry.ToLower().Find(Text.ToLower()) < 0))
+                if (Text != "" && ((CaseSensitive && entry.Text.Find(Text) < 0) || entry.Text.ToLower().Find(Text.ToLower()) < 0))
                     continue;
-                _searchEntriesPopupMenu.AddItem(entry);
+                if (entry.Icon != null)
+                    _searchEntriesPopupMenu.AddIconItem(entry.Icon, entry.Text);
+                else
+                    _searchEntriesPopupMenu.AddItem(entry.Text);
                 index++;
                 if (Limit >= 0 && index >= Limit)
                     return;
