@@ -16,7 +16,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
       - name: Install Dependencies
         run: |
@@ -24,8 +24,6 @@ jobs:
           mkdir -p .mono/assemblies/Debug
           cp /usr/local/bin/GodotSharp/Api/Release/* .mono/assemblies/Debug
 
-          apt update
-          apt install libc6
           python -m pip install -r requirements.txt
 
       - name: Compile
