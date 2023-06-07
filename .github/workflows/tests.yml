@@ -23,6 +23,9 @@ jobs:
           nuget restore
           mkdir -p .mono/assemblies/Debug
           cp /usr/local/bin/GodotSharp/Api/Release/* .mono/assemblies/Debug
+
+          apt update
+          apt install libc6
           python -m pip install -r requirements.txt
 
       - name: Compile
