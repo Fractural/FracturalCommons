@@ -17,14 +17,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          cache: "pip"
 
       - name: Install Dependencies
         run: |
           nuget restore
           mkdir -p .mono/assemblies/Debug
           cp /usr/local/bin/GodotSharp/Api/Release/* .mono/assemblies/Debug
-          pip install -r requirements.txt
+          sudo apt install python3-pip
+          pip3 install -r requirements.txt
 
       - name: Compile
         run: msbuild
