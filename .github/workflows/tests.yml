@@ -24,8 +24,8 @@ jobs:
           mkdir -p .mono/assemblies/Debug
           cp /usr/local/bin/GodotSharp/Api/Release/* .mono/assemblies/Debug
 
-          sudo apt update
-          sudo apt install python3-pip
+          apt update
+          apt install python3-pip
           pip3 install -r requirements.txt
 
       - name: Compile
