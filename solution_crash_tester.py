@@ -46,6 +46,7 @@ print(f"{Fore.LIGHTGREEN_EX}  Press Ctrl+C to exit{Fore.RESET}")
 print(DIVIDER)
 
 time.sleep(begin_test_delay);
+success = False
 
 try:
   while True:
@@ -78,6 +79,7 @@ try:
     
     if godot_process.poll() != None:
       print(f"{Fore.RED}FAIL: Godot crashed. A marshalling bug exists in the project{Fore.RESET}");
+      success = False
       break
     else:
       success_count += 1
@@ -85,6 +87,7 @@ try:
     
     if success_count >= required_success_count:
       print(f"{Fore.LIGHTGREEN_EX}SUCCESS: Godot survived the rebuilds.")
+      success = True
       break
     print(DIVIDER)
 except KeyboardInterrupt:
@@ -94,3 +97,8 @@ if godot_process.poll() == None:
   godot_process.kill()
 
 print(f"{Fore.LIGHTGREEN_EX}Exited...{Fore.RESET}");
+
+if success:
+  sys.exit()
+else:
+  sys.exit(1)

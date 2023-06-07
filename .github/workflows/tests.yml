@@ -13,17 +13,26 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
       - name: Install Dependencies
         run: |
           nuget restore
           mkdir -p .mono/assemblies/Debug
           cp /usr/local/bin/GodotSharp/Api/Release/* .mono/assemblies/Debug
+          pip install -r requirements.txt
 
       - name: Compile
         run: msbuild
 
-      - name: Run
+      - name: Run Unit Tests
         run: godot addons/WAT/cli.tscn run=all
+
+      - name: Run Solution Crash Test
+        run: python solution_crash_tester.py
 
       - name: Upload Test Results
         if: always()
