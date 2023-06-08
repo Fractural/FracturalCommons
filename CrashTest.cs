@@ -3,8 +3,8 @@ using Godot;
 
 public class CrashTest 
 {
-    public void Test() 
+    public void TestTwo() 
     {
-        GD.Print("Test");
+        GD.Print("TestTwo");
     }
 }

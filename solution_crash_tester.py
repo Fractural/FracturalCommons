@@ -74,7 +74,6 @@ try:
     start = time.time()
     build_command = ["dotnet", "build"]
     if build_type == "msbuild":
-      print("using msbuild")
       build_command = ["msbuild"]
     result = subprocess.run(build_command, stdout=subprocess.PIPE)
     end = time.time()
