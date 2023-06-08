@@ -34,7 +34,7 @@ jobs:
         run: godot addons/WAT/cli.tscn run=all
 
       - name: Run Solution Crash Test
-        run: python solution_crash_tester.py
+        run: python3 solution_crash_tester.py
 
       - name: Upload Test Results
         if: always()
