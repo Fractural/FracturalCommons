@@ -39,13 +39,13 @@ if len(sys.argv) > 1 and sys.argv[1]:
    delay = int(sys.argv[1])
   
 if len(sys.argv) > 2 and sys.argv[2]:
-   build_command = sys.argv[2]
+   build_type = sys.argv[2]
 
 godot_process = subprocess.Popen(['godot', '--editor', '.'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 required_success_count = 30;
 success_count = 0
 
-print(f"{Fore.LIGHTGREEN_EX}Solution Crash Tester(Delay: {delay} ms, Required Successes: {required_success_count}):{Fore.RESET}")
+print(f"{Fore.LIGHTGREEN_EX}Solution Crash Tester(Delay: {delay} ms, Required Successes: {required_success_count}):{Fore.RESET}, Build CLI {build_type}")
 print(f"{Fore.LIGHTGREEN_EX}  Press Ctrl+C to exit{Fore.RESET}")
 print(DIVIDER)
 
