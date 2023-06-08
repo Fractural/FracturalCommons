@@ -94,8 +94,8 @@ namespace Fractural.Plugin.AssetsRegistry
 
         public void OnBeforeSerialize()
         {
-            // LoadedAssets = null;
-            // processors = null;
+            LoadedAssets = null;
+            processors = null;
         }
 
         public void OnAfterDeserialize() { }
