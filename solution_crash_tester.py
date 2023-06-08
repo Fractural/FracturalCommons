@@ -34,8 +34,12 @@ DIVIDER = f"{Fore.LIGHTBLACK_EX}---------------------------------{Fore.RESET}"
 
 begin_test_delay = 10;
 delay = 0;
+build_type = "dotnet"
 if len(sys.argv) > 1 and sys.argv[1]:
    delay = int(sys.argv[1])
+  
+if len(sys.argv) > 2 and sys.argv[2]:
+   build_command = sys.argv[2]
 
 godot_process = subprocess.Popen(['godot', '--editor', '.'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 required_success_count = 30;
@@ -68,7 +72,10 @@ try:
     time.sleep(delay/1000)
     print(f"{Fore.LIGHTBLUE_EX}  Running Build:{Fore.RESET}")
     start = time.time()
-    result = subprocess.run(["dotnet", "build"], stdout=subprocess.PIPE)
+    build_command = ["dotnet", "build"]
+    if build_type == "msbuild":
+      build_command = ["msbuild"]
+    result = subprocess.run(build_command, stdout=subprocess.PIPE)
     end = time.time()
     if (result.returncode == 0):
       print(f"{Fore.BLUE}    Success (%.2f s){Fore.RESET}" % (end - start))
