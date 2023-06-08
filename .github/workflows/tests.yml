@@ -13,16 +13,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
       - name: Install Python Dependencies
         run: |
-          apt-get update
-          apt-get install libc6
-          python -m pip install -r requirements.txt
+          apt-get -yq update
+          apt-get -yq install software-properties-common
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt-get -yq update
+          apt-get -yq install python3.10
+          python3 -m pip install -r requirements.txt
 
       - name: Install Dependencies
         run: |
