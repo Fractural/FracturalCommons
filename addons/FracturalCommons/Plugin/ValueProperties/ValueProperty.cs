@@ -93,12 +93,12 @@ namespace Fractural.Plugin
             base.SetMeta(key, value);
         }
 
-        public void OnBeforeSerialize()
+        public virtual void OnBeforeSerialize()
         {
             Validate = null;
         }
 
-        public void OnAfterDeserialize() { }
+        public virtual void OnAfterDeserialize() { }
 
         public ValueProperty()
         {
