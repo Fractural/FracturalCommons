@@ -16,13 +16,14 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
 
+      - name: Install Python Dependencies
+        run: python -m pip install -r requirements.txt
+
       - name: Install Dependencies
         run: |
           nuget restore
           mkdir -p .mono/assemblies/Debug
           cp /usr/local/bin/GodotSharp/Api/Release/* .mono/assemblies/Debug
-
-          python -m pip install -r requirements.txt
 
       - name: Compile
         run: msbuild
