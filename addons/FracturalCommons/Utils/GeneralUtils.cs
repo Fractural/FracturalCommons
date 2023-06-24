@@ -34,6 +34,10 @@ namespace Fractural.Utils
                 foreach (var elem in enumerable)
                     code = CombineHashCodes(code, elem.GetHashCode());
             }
+            else
+            {
+                code = obj.GetHashCode();
+            }
             return code;
         }
     }
