@@ -137,6 +137,23 @@ namespace Fractural.Utils
             return list[offsetIndex];
         }
 
+        public static IList<T> Slice<T>(this IList<T> list, int begin, int end = int.MaxValue, int step = 1)
+        {
+            var newList = new List<T>();
+            for (int i = begin; i < list.Count && i < end; i++)
+                newList.Add(list[i]);
+            return newList;
+        }
+        public static T[] Slice<T>(this T[] list, int begin, int end = int.MaxValue, int step = 1)
+        {
+            if (end > list.Length)
+                end = list.Length;
+            var newList = new T[end - begin];
+            for (int i = begin; i < end; i++)
+                newList[i - begin] = list[i];
+            return newList;
+        }
+
         #region IReadonlyList<T> Queue Utils
         public static T PeekFrontReadonly<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {
