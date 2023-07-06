@@ -100,6 +100,42 @@ namespace Fractural.Utils
             return defaultReturn;
         }
 
+        public static T GetSerializedPrimitive<T>(this GDC.Dictionary dictionary, object key, T defaultReturn = default) where T : struct
+        {
+            if (dictionary.Contains(key))
+            {
+                var value = dictionary[key];
+                if (value is byte[] byteArray)
+                    return byteArray.DeserializePrimitive<T>();
+                else
+                    return (T)value;
+            }
+            return defaultReturn;
+        }
+
+        public static T GetSerialized<T>(this GDC.Dictionary dictionary, object key, T defaultReturn = default) where T : IBufferSerializable, new()
+        {
+            if (dictionary.Contains(key))
+            {
+                var value = dictionary[key];
+                if (value is byte[] byteArray)
+                    return byteArray.Deserialize<T>();
+                else
+                    return (T)value;
+            }
+            return defaultReturn;
+        }
+
+        public static void SetSerializedPrimitive<T>(this GDC.Dictionary dictionary, object key, T value) where T : struct
+        {
+            dictionary[key] = value.SerializePrimitive<T>();
+        }
+
+        public static void SetSerialized<T>(this GDC.Dictionary dictionary, object key, T value) where T : IBufferSerializable, new()
+        {
+            dictionary[key] = value.Serialize();
+        }
+
         public static GDC.Dictionary ToGDDict(this object obj)
         {
             if (obj == null)
