@@ -40,5 +40,10 @@ namespace Fractural.Utils
             }
             return code;
         }
+
+        public static T TypedClone<T>(T obj) where T : ICloneable
+        {
+            return (T)obj.Clone();
+        }
     }
 }
