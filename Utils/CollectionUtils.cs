@@ -154,6 +154,12 @@ namespace Fractural.Utils
             return newList;
         }
 
+        public static void AddRange<T>(this IList<T> list, IEnumerable<T> enumerable)
+        {
+            foreach (var elem in enumerable)
+                list.Add(elem);
+        }
+
         #region IReadonlyList<T> Queue Utils
         public static T PeekFrontReadonly<T>(this IReadOnlyList<T> list, int indexFromFront = 0)
         {
