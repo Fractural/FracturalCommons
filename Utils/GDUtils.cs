@@ -287,5 +287,17 @@ namespace Fractural.Utils
         {
             return (T)obj.GetMeta(name, defaultReturn);
         }
+
+        /// <summary>
+        /// Returns a random element from a list
+        /// </summary>
+        /// <param name="rng"></param>
+        /// <param name="list"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T RandElem<T>(this RandomNumberGenerator rng, IList<T> list)
+        {
+            return list[(int)rng.Randi() % list.Count];
+        }
     }
 }
