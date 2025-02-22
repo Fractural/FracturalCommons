@@ -3,12 +3,13 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using GDC = Godot.Collections;
+#if TOOLS
 using static Godot.EditorPlugin;
+#endif
 using System.Linq;
 using Fractural.Utils;
 using System.Reflection;
 
-#if TOOLS
 namespace Fractural.Commons
 {
     [AttributeUsage(System.AttributeTargets.Class)]
@@ -26,6 +27,7 @@ namespace Fractural.Commons
         }
     }
 
+#if TOOLS
     public class CSharpResourceRegistryPlugin : SubPlugin
     {
         public static class Settings
@@ -250,5 +252,5 @@ namespace Fractural.Commons
             RefreshCustomClasses();
         }
     }
-}
 #endif
+}
